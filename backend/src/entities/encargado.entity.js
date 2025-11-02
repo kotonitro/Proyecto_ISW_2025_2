@@ -12,6 +12,7 @@ export const Encargado = new EntitySchema({
     rut: {
       type: "varchar",
       length: 8,
+      unique: true,
     },
     nombre: {
       type: "varchar",
@@ -20,6 +21,7 @@ export const Encargado = new EntitySchema({
     correo: {
       type: "varchar",
       length: 255,
+      unique: true,
     },
     contraseña: {
       type: "varchar",
@@ -27,7 +29,8 @@ export const Encargado = new EntitySchema({
     },
     telefono: {
       type: "int",
-      length: 20,
+      length: 8,
+      unique: true,
     },
   },
 });
