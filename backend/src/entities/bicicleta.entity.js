@@ -4,12 +4,12 @@ export const Bicicleta = new EntitySchema({
   name: "Bicicleta",
   tableName: "bicicletas",
   columns: {
-    id_bicicleta: {
+    idBicicleta: {
       primary: true,
       type: "int",
       generated: "increment",
     },
-    id_usuario: {
+    idUsuario: {
       type: "int",
     },
     marca: {
@@ -32,7 +32,7 @@ export const Bicicleta = new EntitySchema({
         target: "Usuario",
         type: "many-to-one",
         joinColumn: {
-          name: "id_usuario",
+          name: "idUsuario",
         },
       },
     },
