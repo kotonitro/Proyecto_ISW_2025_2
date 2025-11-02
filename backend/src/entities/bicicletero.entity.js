@@ -2,23 +2,27 @@ import { EntitySchema } from "typeorm"
 
 
 export const Usuario = new EntitySchema({
-    name: "Usuario",
-    tableName: "usuarios",
+    name: "Bicicletero",
+    tableName: "bicicleteros",
     columns: {
-        id_usuario: {
+        id_bicicletero: {
             primary: true,
             type: "int",
             generated: "increment",
         },
-        rut: {
+        ubicacion: {
             type: "varchar",
-            length: 8,
+            length: 255,
             unique: true,
             nullable: false,
         },
-        nombre: {
-            type: "varchar",
+        capacidad: {
+            type: "int",
             lenght: 255,
+            nullable: false,
+        },
+        monitoreo: {
+            type: "bool",
             nullable: false,
         },
     }
