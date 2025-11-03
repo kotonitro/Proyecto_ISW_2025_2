@@ -4,7 +4,7 @@ export const Encargado = new EntitySchema({
   name: "Encargado",
   tableName: "encargados",
   columns: {
-    id_encargado: {
+    idEncargado: {
       type: "int",
       primary: true,
       generated: "increment",
@@ -23,7 +23,7 @@ export const Encargado = new EntitySchema({
       length: 255,
       unique: true,
     },
-    contraseña: {
+    contrasena: {
       type: "varchar",
       length: 255,
     },
