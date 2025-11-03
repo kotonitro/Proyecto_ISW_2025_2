@@ -21,5 +21,11 @@ export const Usuario = new EntitySchema({
             lenght: 255,
             nullable: false,
         },
+        correo: {
+            type: "varchar",
+            length: 255,
+            unique: true,
+            nullable: false,
+    },
     }
 });
