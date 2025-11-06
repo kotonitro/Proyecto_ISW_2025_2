@@ -13,6 +13,7 @@ export const Encargado = new EntitySchema({
       type: "varchar",
       length: 8,
       unique: true,
+      nullable: false,
     },
     nombre: {
       type: "varchar",
@@ -22,15 +23,18 @@ export const Encargado = new EntitySchema({
       type: "varchar",
       length: 255,
       unique: true,
+      nullable: false,
     },
-    contraseña: {
+    contrasena: {
       type: "varchar",
       length: 255,
+      nullable: false,
     },
     telefono: {
       type: "int",
       length: 8,
       unique: true,
+      nullable: false,
     },
     esAdmin: {
       type: "boolean",
