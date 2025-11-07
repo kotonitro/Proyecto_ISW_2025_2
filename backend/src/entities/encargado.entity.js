@@ -33,7 +33,6 @@ export const Encargado = new EntitySchema({
     },
     telefono: {
       type: "int",
-      length: 8,
       unique: true,
     },
   },

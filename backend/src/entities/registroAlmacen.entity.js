@@ -1,4 +1,6 @@
 import { EntitySchema } from "typeorm";
+import { Bicicletero } from "./bicicletero.entity.js";
+import { Bicicleta } from "./bicicleta.entity.js";
 
 export const registroAlmacen = new EntitySchema({
   name: "RegistroAlmacen",
@@ -23,20 +25,20 @@ export const registroAlmacen = new EntitySchema({
       type: "date",
       nullable: true,
     },
-    relations: {
-      bicicletero: {
-        type: "many-to-one",
-        target: "bicicletero",
-        joinColumn: {
-          name: "idBicicletero",
-        },
+  },
+  relations: {
+    bicicletero: {
+      type: "many-to-one",
+      target: () => Bicicletero,
+      joinColumn: {
+        name: "idBicicletero",
       },
-      bicicleta: {
-        type: "many-to-one",
-        target: "bicicleta",
-        joinColumn: {
-          name: "idBicicleta",
-        },
+    },
+    bicicleta: {
+      type: "many-to-one",
+      target: () => Bicicleta,
+      joinColumn: {
+        name: "idBicicleta",
       },
     },
   },
