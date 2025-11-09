@@ -1,21 +1,28 @@
 import { EntitySchema } from "typeorm";
 import { Bicicletero } from "./bicicletero.entity.js";
 import { Bicicleta } from "./bicicleta.entity.js";
+import { Encargado } from "./encargado.entity.js";
 
 export const registroAlmacen = new EntitySchema({
   name: "RegistroAlmacen",
-  tableName: "registro_almacen",
+  tableName: "registroalmacen",
   columns: {
     idRegistroAlmacen: {
       primary: true,
       type: "int",
       generated: "increment",
     },
+    idEncargado: {
+      type: "int",
+      nullable: false,
+    },
     idBicicletero: {
       type: "int",
+      nullable: false,
     },
     idBicicleta: {
       type: "int",
+      nullable: false,
     },
     fechaEntrada: {
       type: "date",
@@ -39,6 +46,13 @@ export const registroAlmacen = new EntitySchema({
       target: () => Bicicleta,
       joinColumn: {
         name: "idBicicleta",
+      },
+    },
+    encargado: {
+      type: "many-to-one",
+      target: () => Encargado,
+      joinColumn: {
+        name: "idEncargado",
       },
     },
   },

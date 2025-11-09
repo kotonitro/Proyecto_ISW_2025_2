@@ -15,17 +15,17 @@ export const Bicicleta = new EntitySchema({
     },
     marca: {
       type: "varchar",
-      lenght: 255,
+      length: 255,
       nullable: false,
     },
     modelo: {
       type: "varchar",
-      lenght: 255,
+      length: 255,
       nullable: false,
     },
     color: {
       type: "varchar",
-      lenght: 255,
+      length: 255,
       nullable: false,
     },
     relations: {

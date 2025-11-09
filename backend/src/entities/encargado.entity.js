@@ -9,6 +9,10 @@ export const Encargado = new EntitySchema({
       primary: true,
       generated: "increment",
     },
+    esAdmin: {
+      type: "boolean",
+      nullable: false,
+    },
     rut: {
       type: "varchar",
       length: 8,
