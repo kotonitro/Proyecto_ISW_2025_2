@@ -1,21 +1,20 @@
+import { AppDataSource } from "../config/configDB.js";
+import { Encargado } from "../entities/user.entity.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { findUserByEmail } from "./encargado.service.js";
 
-export async function loginUser(email, password) {
-  const user = await findUserByEmail(email);
-  if (!user) {
-    throw new Error("Credenciales incorrectas");
-  }
+export const encargadoRepository = AppDataSource.getRepository(Encargado);
 
-  const isMatch = bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    throw new Error("Credenciales incorrectas");
-  }
+export async function createEncargado(data) {
+  const hashedPassword = await bcrypt.hash(data.contrasena, 10);
 
-  const payload = { sub: user.id, email: user.email };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+  const newEncargado = encargadoRepository.create({
+    email: data.email,
+    contrasena: hashedPassword,
+  });
 
-  delete user.password;
-  return { user, token };
+  return await encargadoRepository.save(newEncargado);
+}
+
+export async function findEncargadoByEmail(email) {
+  return await encargadoRepository.findOneBy({ email });
 }
