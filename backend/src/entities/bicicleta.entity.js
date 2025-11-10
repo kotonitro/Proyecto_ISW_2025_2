@@ -1,4 +1,5 @@
 import { EntitySchema } from "typeorm";
+import { Usuario } from "./usuario.entity.js";
 
 export const Bicicleta = new EntitySchema({
   name: "Bicicleta",
@@ -14,22 +15,22 @@ export const Bicicleta = new EntitySchema({
     },
     marca: {
       type: "varchar",
-      lenght: 255,
+      length: 255,
       nullable: false,
     },
     modelo: {
       type: "varchar",
-      lenght: 255,
+      length: 255,
       nullable: false,
     },
     color: {
       type: "varchar",
-      lenght: 255,
+      length: 255,
       nullable: false,
     },
     relations: {
       usuario: {
-        target: "Usuario",
+        target: () => Usuario,
         type: "many-to-one",
         joinColumn: {
           name: "idUsuario",
