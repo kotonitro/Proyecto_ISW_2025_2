@@ -11,7 +11,7 @@ export const Encargado = new EntitySchema({
     },
     esAdmin: {
       type: "boolean",
-      default: "false",
+      default: false,
       nullable: false,
     },
     rut: {
