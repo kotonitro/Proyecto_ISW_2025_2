@@ -1,6 +1,6 @@
 "use strict";
 import Joi from "joi";
-import { COLOR_PALETA } from "../utils/paletaColorBcicicleta.js";
+import { COLOR_PALETA } from "../utils/paletaColorBicicleta.js";
 
 //letras, números, espacios y guiones
 const nombreMarcaModeloPattern = /^[A-Za-z0-9À-ÖØ-öø-ÿ\s\-]+$/;
