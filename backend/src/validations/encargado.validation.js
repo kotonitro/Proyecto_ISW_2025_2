@@ -36,11 +36,11 @@ export const encargadoValidation = Joi.object({
 
   nombre: Joi.string()
     .trim()
-    .max(50)
+    .max(255)
     .pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/)
     .required()
     .messages({
-      "string.max": "El nombre debe tener como máximo 50 caracteres",
+      "string.max": "El nombre debe tener como máximo 255 caracteres",
       "string.pattern.base": "El nombre sólo puede contener letras y espacios",
       "any.required": "El nombre es obligatorio",
     }),
@@ -56,15 +56,15 @@ export const encargadoValidation = Joi.object({
     }),
 
   contrasena: Joi.string()
-    .min(6)
-    .max(12)
-    // exige al menos 3 dígitos en cualquier posición
-    .pattern(/(?=(.*\d){3,})/)
+    .min(8)
+    .max(16)
+    // Exige una mayuscula, un numero y un caracter especial
+    .pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*\W).*$/)
     .required()
     .messages({
-      "string.min": "La contraseña debe tener al menos 6 caracteres",
-      "string.max": "La contraseña debe tener como máximo 12 caracteres",
-      "string.pattern.base": "La contraseña debe contener al menos 3 números",
+      "string.min": "La contraseña debe tener al menos 8 caracteres",
+      "string.max": "La contraseña debe tener como máximo 16 caracteres",
+      "string.pattern.base": "La contraseña debe contener una mayuscula, un número y un caracter especial",
       "any.required": "La contraseña es obligatoria",
     }),
 
@@ -77,6 +77,7 @@ export const encargadoValidation = Joi.object({
       "any.required": "El teléfono es obligatorio",
     }),
 });
+
 // --- LOGIN ---
 export const loginEncargado = Joi.object({
   correo: Joi.string()
