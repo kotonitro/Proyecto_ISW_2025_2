@@ -17,13 +17,11 @@ export const bicicleteroValidation = Joi.object({
   capacidad: Joi.number()
     .integer()
     .positive()
-    .max(15) 
     .required()
     .messages({
       "number.base": "La capacidad debe ser un número",
       "number.integer": "La capacidad debe ser un número entero",
       "number.positive": "La capacidad debe ser un número positivo",
-      "number.max": "La capacidad no puede ser mayor a 15",
       "any.required": "La capacidad es obligatoria"
     }),
 
