@@ -24,7 +24,7 @@ export const Encargado = new EntitySchema({
       type: "varchar",
       length: 255,
     },
-    correo: {
+    email: {
       type: "varchar",
       length: 255,
       unique: true,
