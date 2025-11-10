@@ -16,7 +16,7 @@ export const Encargado = new EntitySchema({
     },
     rut: {
       type: "varchar",
-      length: 8,
+      length: 10,
       unique: true,
       nullable: false,
     },
@@ -33,7 +33,7 @@ export const Encargado = new EntitySchema({
     },
     contrasena: {
       type: "varchar",
-      length: 255,
+      length: 16,
       nullable: false,
     },
     telefono: {
