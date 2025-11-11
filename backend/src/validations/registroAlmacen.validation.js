@@ -1,22 +1,87 @@
 "use strict";
 import Joi from "joi";
 
-export const registroAlmacenValidation = Joi.object({
-  
-  fechaEntrada: Joi.date().iso().required().messages({
-    "date.base": "fechaEntrada debe ser una fecha válida",
-    "date.format": "fechaEntrada debe usar formato ISO (YYYY-MM-DD)",
-    "any.required": "fechaEntrada es obligatoria"
-  }),
+const rutPattern = /^[0-9]{7,8}$/;
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  fechaSalida: Joi.date()
-    .iso()
-    .min(Joi.ref("fechaEntrada"))
-    .optional()
-    .allow(null)
+export const registroEntradaValidation = Joi.object({
+  rutUsuario: Joi.string()
+    .trim()
+    .pattern(rutPattern)
+    .required()
     .messages({
-      "date.base": "fechaSalida debe ser una fecha válida",
-      "date.format": "fechaSalida debe usar formato ISO (YYYY-MM-DD)",
-      "date.min": "fechaSalida no puede ser anterior a fechaEntrada"
-    })
+      "string.base": "RUT debe ser una cadena",
+      "string.empty": "RUT no puede estar vacío",
+      "string.pattern.base": "RUT debe contener 7 u 8 dígitos",
+      "any.required": "RUT es obligatorio"
+    }),
+
+  nombreUsuario: Joi.string()
+    .trim()
+    .max(255)
+    .required()
+    .messages({
+      "string.base": "Nombre debe ser una cadena",
+      "string.empty": "Nombre no puede estar vacío",
+      "string.max": "Nombre puede tener como máximo 255 caracteres",
+      "any.required": "Nombre es obligatorio"
+    }),
+
+  emailUsuario: Joi.string()
+    .trim()
+    .lowercase()
+    .pattern(emailPattern)
+    .required()
+    .messages({
+      "string.base": "Email debe ser una cadena",
+      "string.empty": "Email no puede estar vacío",
+      "string.pattern.base": "Email debe ser válido",
+      "any.required": "Email es obligatorio"
+    }),
+
+  telefonoUsuario: Joi.number()
+    .integer()
+    .positive()
+    .required()
+    .messages({
+      "number.base": "Teléfono debe ser un número",
+      "number.integer": "Teléfono debe ser un número entero",
+      "number.positive": "Teléfono debe ser positivo",
+      "any.required": "Teléfono es obligatorio"
+    }),
+
+  idBicicleta: Joi.number()
+    .integer()
+    .positive()
+    .required()
+    .messages({
+      "number.base": "ID de bicicleta debe ser un número",
+      "number.integer": "ID de bicicleta debe ser un número entero",
+      "number.positive": "ID de bicicleta debe ser positivo",
+      "any.required": "ID de bicicleta es obligatorio"
+    }),
+
+  idBicicletero: Joi.number()
+    .integer()
+    .positive()
+    .required()
+    .messages({
+      "number.base": "ID de bicicletero debe ser un número",
+      "number.integer": "ID de bicicletero debe ser un número entero",
+      "number.positive": "ID de bicicletero debe ser positivo",
+      "any.required": "ID de bicicletero es obligatorio"
+    }),
+});
+
+export const registroSalidaValidation = Joi.object({
+  idRegistroAlmacen: Joi.number()
+    .integer()
+    .positive()
+    .required()
+    .messages({
+      "number.base": "ID del registro debe ser un número",
+      "number.integer": "ID del registro debe ser un número entero",
+      "number.positive": "ID del registro debe ser positivo",
+      "any.required": "ID del registro es obligatorio"
+    }),
 });

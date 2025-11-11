@@ -21,13 +21,38 @@ export const RegistroAlmacen = new EntitySchema({
       type: "int",
       nullable: false,
     },
-    fechaEntrada: {
-      type: "date",
+    rutUsuario: {
+      type: "varchar",
+      length: 8,
       nullable: false,
     },
-    fechaSalida: {
-      type: "date",
+    nombreUsuario: {
+      type: "varchar",
+      length: 255,
+      nullable: false,
+    },
+    emailUsuario: {
+      type: "varchar",
+      length: 255,
+      nullable: false,
+    },
+    telefonoUsuario: {
+      type: "int",
+      nullable: false,
+    },
+    horaEntrada: {
+      type: "datetime",
+      nullable: false,
+      default: () => "CURRENT_TIMESTAMP",
+    },
+    horaSalida: {
+      type: "datetime",
       nullable: true,
+    },
+    estado: {
+      type: "enum",
+      enum: ["entrada", "salida"],
+      nullable: false,
     },
   },
   relations: {
