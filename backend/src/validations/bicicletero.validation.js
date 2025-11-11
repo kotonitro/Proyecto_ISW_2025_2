@@ -2,14 +2,12 @@
 import Joi from "joi";
 
 export const bicicleteroValidation = Joi.object({
-
+  
   ubicacion: Joi.string()
     .trim()
-    .max(50)
     .required()
     .messages({
       "string.empty": "La ubicación es obligatoria",
-      "string.max": "La ubicación no puede exceder los 50 caracteres",
       "string.base": "La ubicación debe ser una cadena de texto",
       "any.required": "La ubicación es obligatoria"
     }),
@@ -24,9 +22,4 @@ export const bicicleteroValidation = Joi.object({
       "number.positive": "La capacidad debe ser un número positivo",
       "any.required": "La capacidad es obligatoria"
     }),
-
-  //opcion actualizar
-  idBicicletero: Joi.number()
-    .integer()
-    .positive()
 });

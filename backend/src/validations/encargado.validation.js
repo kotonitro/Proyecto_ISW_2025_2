@@ -77,18 +77,3 @@ export const encargadoValidation = Joi.object({
       "any.required": "El teléfono es obligatorio",
     }),
 });
-
-// --- LOGIN ---
-export const loginEncargado = Joi.object({
-  correo: Joi.string()
-    .email({ tlds: { allow: false } })
-    .required()
-    .messages({
-      "string.email": "El correo debe ser un email válido",
-      "any.required": "El correo es obligatorio",
-    }),
-
-  contrasena: Joi.string().required().messages({
-    "any.required": "La contraseña es obligatoria",
-  }),
-});

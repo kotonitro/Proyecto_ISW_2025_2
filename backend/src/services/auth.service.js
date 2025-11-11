@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { findEncargadoByEmail } from "./encargado.service.js";
+import { getEncargadoByEmail } from "./encargado.service.js";
 
 export async function loginEncargado(email, contrasena) {
-  const encargado = await findEncargadoByEmail(email);
+  const encargado = await getEncargadoByEmail(email);
   if (!encargado) {
     throw new Error("Credenciales incorrectas");
   }
