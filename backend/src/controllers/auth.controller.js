@@ -1,7 +1,7 @@
 import { loginEncargado } from "../services/auth.service.js";
 import { handleSuccess, handleErrorClient} from "../handlers/responseHandlers.js";
 
-export async function login(req, res) {
+export async function handleLogin(req, res) {
   try {
     const { email, contrasena } = req.body;
     
