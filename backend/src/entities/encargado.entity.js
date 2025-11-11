@@ -36,7 +36,8 @@ export const Encargado = new EntitySchema({
       nullable: false,
     },
     telefono: {
-      type: "int",
+      type: "varchar",
+      length: 8,
       unique: true,
       nullable: false,
     },
@@ -44,13 +45,13 @@ export const Encargado = new EntitySchema({
   relations: {
     registrosAlmacen: {
       type: "one-to-many",
-      target: "RegistroAlmacen", 
-      inverseSide: "encargado", 
+      target: "RegistroAlmacen",
+      inverseSide: "encargado",
     },
     informes: {
-          type: "one-to-many",
-          target: "Informe",
-          inverseSide: "encargados"
+      type: "one-to-many",
+      target: "Informe",
+      inverseSide: "encargados",
     },
-  }
+  },
 });
