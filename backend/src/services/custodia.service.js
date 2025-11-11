@@ -4,9 +4,9 @@ export const registroAlmacenRepository = AppDataSource.getRepository("RegistroAl
 export const usuarioRepository = AppDataSource.getRepository("Usuario");
 export const bicicletaRepository = AppDataSource.getRepository("Bicicleta");
 
-/**
- * Valida si la hora actual está dentro del horario permitido (7:30 AM - 2:00 PM)
- */
+
+//Valida si la hora actual está dentro del horario permitido 
+ 
 export function isWithinAllowedHours() {
   const now = new Date();
   const hours = now.getHours();
@@ -21,8 +21,8 @@ export function isWithinAllowedHours() {
 
 /**
  * Determina el estado de una bicicleta basado en el registro
- * ALMACENADA: está en un bicicletero Y horaSalida es NULL
- * RETIRADA: horaSalida no es NULL
+ * almacenada: está en un bicicletero Y horaSalida es NULL
+ * retirada: horaSalida no es NULL
  */
 export function determineEstadoBicicleta(registro) {
   if (!registro) return null;
@@ -38,9 +38,7 @@ export function determineEstadoBicicleta(registro) {
   return "DESCONOCIDO";
 }
 
-/**
- * Registra la entrada de una bicicleta
- */
+//registro entrada de bicicleta
 export async function registerEntrada(data, idEncargado) {
   // Validar horario
   if (!isWithinAllowedHours()) {
@@ -111,9 +109,7 @@ export async function registerEntrada(data, idEncargado) {
   };
 }
 
-/**
- * Registra la salida de una bicicleta
- */
+//registra la salida de una bicicleta
 export async function registerSalida(idRegistroAlmacen, idEncargado) {
   // Validar horario
   if (!isWithinAllowedHours()) {
@@ -147,9 +143,7 @@ export async function registerSalida(idRegistroAlmacen, idEncargado) {
   };
 }
 
-/**
- * Obtiene todas las bicicletas almacenadas (horaSalida = NULL y en un bicicletero)
- */
+//obteer bicicletas almacenadas
 export async function getBicicletasAlmacenadas() {
   return await registroAlmacenRepository
     .createQueryBuilder("registro")
@@ -168,9 +162,7 @@ export async function getBicicletasAlmacenadas() {
     );
 }
 
-/**
- * Obtiene todas las bicicletas retiradas (horaSalida != NULL)
- */
+//obtener bicicletas retiradas
 export async function getBicicletasRetiradas() {
   return await registroAlmacenRepository
     .createQueryBuilder("registro")
@@ -188,9 +180,7 @@ export async function getBicicletasRetiradas() {
     );
 }
 
-/**
- * Obtiene todos los registros de almacén (con filtros opcionales)
- */
+//todos los registros del almacen
 export async function getAllRegistros(filtros = {}) {
   let query = registroAlmacenRepository.createQueryBuilder("registro")
     .leftJoinAndSelect("registro.bicicleta", "bicicleta")
@@ -232,9 +222,7 @@ export async function getAllRegistros(filtros = {}) {
   }));
 }
 
-/**
- * Obtiene un registro específico por ID
- */
+//registro específico
 export async function getRegistroById(idRegistroAlmacen) {
   const registro = await registroAlmacenRepository
     .createQueryBuilder("registro")

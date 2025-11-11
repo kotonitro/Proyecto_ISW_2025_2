@@ -8,10 +8,7 @@ import {
   getBicicletasRetiradas,
 } from "../services/custodia.service.js";
 
-/**
- * POST /api/custodia/entrada
- * Registra la entrada de una bicicleta
- */
+//registra la entrada de una bicicleta
 export async function createEntrada(req, res) {
   try {
     const { rutUsuario, nombreUsuario, emailUsuario, telefonoUsuario, idBicicleta, idBicicletero } = req.body;
@@ -35,10 +32,7 @@ export async function createEntrada(req, res) {
   }
 }
 
-/**
- * POST /api/custodia/salida
- * Registra la salida de una bicicleta
- */
+//registra la salida de una bicicleta
 export async function createSalida(req, res) {
   try {
     const { idRegistroAlmacen } = req.body;
@@ -52,10 +46,7 @@ export async function createSalida(req, res) {
   }
 }
 
-/**
- * GET /api/custodia/registros
- * Obtiene todos los registros (con filtros opcionales)
- */
+//obtiene todos los registros 
 export async function getRegistros(req, res) {
   try {
     const { idEncargado, estado, rutUsuario, estadoBicicleta } = req.query;
@@ -74,10 +65,7 @@ export async function getRegistros(req, res) {
   }
 }
 
-/**
- * GET /api/custodia/registros/:id
- * Obtiene un registro específico
- */
+//registro específico
 export async function getRegistroDetalle(req, res) {
   try {
     const { id } = req.params;
@@ -99,10 +87,7 @@ export async function getRegistroDetalle(req, res) {
   }
 }
 
-/**
- * GET /api/custodia/bicicletas/almacenadas
- * Obtiene todas las bicicletas almacenadas (horaSalida = NULL y en bicicletero)
- */
+//bicicletas almacenadas
 export async function getBicicletasAlmacendasController(req, res) {
   try {
     const bicicletas = await getBicicletasAlmacenadas();
@@ -112,10 +97,7 @@ export async function getBicicletasAlmacendasController(req, res) {
   }
 }
 
-/**
- * GET /api/custodia/bicicletas/retiradas
- * Obtiene todas las bicicletas retiradas (horaSalida != NULL)
- */
+//bicicletas retiradas
 export async function getBicicletasRetiradasController(req, res) {
   try {
     const bicicletas = await getBicicletasRetiradas();
