@@ -1,5 +1,5 @@
 import { createBicicletero } from "../services/bicicletero.service.js";
-import { handleSuccess, handleErrorClient } from "../handlers/responseHandlers.js";
+import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { bicicleteroValidation } from "../validations/bicicletero.validation.js";
 
 export async function handleCreateBicicletero(req, res) {
@@ -17,6 +17,6 @@ export async function handleCreateBicicletero(req, res) {
         const newBicicletero = await createBicicletero(value);
         handleSuccess(res, 201, "Bicicletero creado exitosamente", newBicicletero);
     } catch (error) {
-        handleErrorClient(res, 500, "Error interno al crear el bicicletero", error.message);
+        handleErrorServer(res, 500, "Error interno al crear el bicicletero", error.message);
     }
 }

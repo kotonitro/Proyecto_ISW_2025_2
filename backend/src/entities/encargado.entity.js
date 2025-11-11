@@ -12,7 +12,6 @@ export const Encargado = new EntitySchema({
     esAdmin: {
       type: "boolean",
       default: false,
-      nullable: false,
     },
     rut: {
       type: "varchar",
@@ -23,6 +22,7 @@ export const Encargado = new EntitySchema({
     nombre: {
       type: "varchar",
       length: 255,
+      nullable: false,
     },
     email: {
       type: "varchar",

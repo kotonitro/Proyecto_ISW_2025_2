@@ -1,31 +1,22 @@
-import { handleSuccess, handleErrorClient } from "../handlers/responseHandlers";
-import { userRepository } from "../services/usuario.service.js";
+import { createEncargado } from "../services/encargado.service.js";
+import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
+import { encargadoValidation } from "../validations/encargado.validation.js";
 
-export async function getUsuarios(req, res) {
-  try {
-    const usuarios = await userRepository.getAll();
-    handleSuccess(res, usuarios);
-  } catch (error) {
-    handleErrorClient(res, error);
-  }
-}
+export async function handleCreateEncargado(req, res) {
+    const encargadoData = req.body;
 
-export async function updateUsuario(req, res) {
-  
-}
-
-export async function deleteUsuario(req, res) {
-  try {
-    const usuarioRut = req.usuario.sub;
-    const usuario = await userRepository.findOneBy({ rut: usuarioRut });
-    if (!usuario) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+    try {
+        const { error, value } = encargadoValidation.validate(encargadoData, {abortEarly: false});
+        if (error){
+            const errorDetails = error.details.map((detail) => ({
+                field: detail.context.key,
+                message: detail.message.replace(/['"]/g, ""),
+            }));
+            return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails,);
+        }
+        const newEncargado = await createEncargado(value);
+        handleSuccess(res, 201, "Encargado creado exitosamente", newEncargado);
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno al crear el encargado", error.message);
     }
-    await userRepository.remove(usuario);
-    return res.status(200).json({ message: "Usuario eliminado correctamente" });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error al eliminar el usuario", error: error.message });
-  }
 }

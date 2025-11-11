@@ -3,14 +3,13 @@ import { Bicicletero } from "../entities/bicicletero.entity.js";
 
 export const bicicleteroRepository = AppDataSource.getRepository(Bicicletero);
 
+export async function getBicicleteroById(idBicicletero) {
+  return await bicicleteroRepository.findOneBy({ idBicicletero });
+}
+
 export async function createBicicletero(data) {
   const newBicicletero = bicicleteroRepository.create(data);
   return await bicicleteroRepository.save(newBicicletero);
-}
-
-export async function getBicicleteroById(idBicicletero) {
-  const Bicicletero = await bicicleteroRepository.findOneBy({ idBicicletero });
-  return Bicicletero;
 }
 
 export async function deleteBicicletero(idBicicletero) {
