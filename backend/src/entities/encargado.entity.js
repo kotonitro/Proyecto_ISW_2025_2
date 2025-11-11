@@ -32,7 +32,7 @@ export const Encargado = new EntitySchema({
     },
     contrasena: {
       type: "varchar",
-      length: 16,
+      length: 255,
       nullable: false,
     },
     telefono: {

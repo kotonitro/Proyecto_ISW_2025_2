@@ -2,6 +2,11 @@ import { Encargado } from "../entities/encargado.entity.js";
 import { AppDataSource } from "./configDB.js";
 import bcrypt from "bcrypt";
 
+async function encryptPassword(password) {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+}
+
 export async function createAdmin() {
   try {
     const encargadoRepository = AppDataSource.getRepository(Encargado);
@@ -16,8 +21,8 @@ export async function createAdmin() {
           nombre: "Admin",
           esAdmin: true,
           rut: "12345678-9",
-          correo: "admin@example.com",
-          contrasena: await bcrypt.hash("admin", 10),
+          email: "admin@example.com",
+          contrasena: await encryptPassword("123456"),
           telefono: "12312312",
         }),
       ),
