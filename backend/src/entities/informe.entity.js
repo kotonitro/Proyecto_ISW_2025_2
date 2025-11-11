@@ -1,6 +1,4 @@
 import { EntitySchema } from "typeorm";
-import { Encargado } from "./encargado.entity.js";
-import { RegistroAlmacen } from "./registroAlmacen.entity.js";
 
 export const Informe = new EntitySchema({
   name: "Informe",
@@ -34,14 +32,14 @@ export const Informe = new EntitySchema({
   },
   relations: {
     encargados: {
-      target: () => Encargado,
+      target: "Encargado",
       type: "many-to-one",
       joinColumn: {
         name: "idEncargado",
       },
     },
-    registroalmacen: {
-      target: () => RegistroAlmacen,
+    registrosAlmacen: {
+      target: "RegistroAlmacen",
       type: "many-to-one",
       joinColumn: {
         name: "idRegistroAlmacen",

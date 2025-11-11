@@ -1,9 +1,6 @@
 import { EntitySchema } from "typeorm";
-import { Bicicletero } from "./bicicletero.entity.js";
-import { Bicicleta } from "./bicicleta.entity.js";
-import { Encargado } from "./encargado.entity.js";
 
-export const registroAlmacen = new EntitySchema({
+export const RegistroAlmacen = new EntitySchema({
   name: "RegistroAlmacen",
   tableName: "registroalmacen",
   columns: {
@@ -36,24 +33,29 @@ export const registroAlmacen = new EntitySchema({
   relations: {
     bicicletero: {
       type: "many-to-one",
-      target: () => Bicicletero,
+      target: "Bicicletero",
       joinColumn: {
         name: "idBicicletero",
       },
     },
     bicicleta: {
       type: "many-to-one",
-      target: () => Bicicleta,
+      target: "Bicicleta",
       joinColumn: {
         name: "idBicicleta",
       },
     },
     encargado: {
       type: "many-to-one",
-      target: () => Encargado,
+      target: "Encargado",
       joinColumn: {
         name: "idEncargado",
       },
+    },
+  informes: {
+      type: "one-to-many",
+      target: "Informe",
+      inverseSide: "registrosAlmacen"
     },
   },
 });

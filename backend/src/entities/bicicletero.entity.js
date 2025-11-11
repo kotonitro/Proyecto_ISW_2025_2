@@ -20,4 +20,11 @@ export const Bicicletero = new EntitySchema({
       nullable: false,
     },
   },
+  relations: {
+    registrosAlmacen: {
+      type: "one-to-many",
+      target: "RegistroAlmacen", 
+      inverseSide: "bicicletero", 
+    }
+  }
 });

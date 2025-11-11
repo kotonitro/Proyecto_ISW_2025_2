@@ -40,9 +40,17 @@ export const Encargado = new EntitySchema({
       unique: true,
       nullable: false,
     },
-    esAdmin: {
-      type: "boolean",
-      default: false,
-    },
   },
+  relations: {
+    registrosAlmacen: {
+      type: "one-to-many",
+      target: "RegistroAlmacen", 
+      inverseSide: "encargado", 
+    },
+    informes: {
+          type: "one-to-many",
+          target: "Informe",
+          inverseSide: "encargados"
+    },
+  }
 });

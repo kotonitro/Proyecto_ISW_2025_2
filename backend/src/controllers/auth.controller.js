@@ -1,4 +1,4 @@
-import { loginEncargado } from "../validations/auth.service.js";
+import { loginEncargado } from "../services/auth.service.js";
 import { handleSuccess, handleErrorClient} from "../handlers/responseHandlers.js";
 
 export async function login(req, res) {

@@ -30,4 +30,11 @@ export const Usuario = new EntitySchema({
       unique: true,
     },
   },
+  relations: {
+    bicicletas: {
+      type: "one-to-many",
+      target: "Bicicleta", 
+      inverseSide: "usuario", 
+    },
+  },
 });

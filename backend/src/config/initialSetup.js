@@ -1,18 +1,18 @@
-import Encargado from "../entities/encargado.entity.js";
+import { Encargado } from "../entities/encargado.entity.js";
 import { AppDataSource } from "./configDB.js";
 import bcrypt from "bcrypt";
 
 export async function createAdmin() {
   try {
-    const userRepository = AppDataSource.getRepository(Encargado);
-    const count = await userRepository.count();
+    const encargadoRepository = AppDataSource.getRepository(Encargado);
+    const count = await encargadoRepository.count();
     if (count > 0) return;
 
     const now = new Date();
 
     await Promise.all([
-      userRepository.save(
-        userRepository.create({
+      encargadoRepository.save(
+        encargadoRepository.create({
           nombre: "Admin",
           esAdmin: true,
           rut: "12345678-9",
