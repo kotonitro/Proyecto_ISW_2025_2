@@ -23,7 +23,7 @@ export async function createAdmin() {
           rut: "12345678-9",
           email: "admin@example.com",
           contrasena: await encryptPassword("123456"),
-          telefono: "12312312",
+          telefono: "12345678",
         }),
       ),
     ]);
