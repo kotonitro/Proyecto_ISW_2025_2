@@ -45,7 +45,7 @@ export const encargadoValidation = Joi.object({
       "any.required": "El nombre es obligatorio",
     }),
 
-  correo: Joi.string()
+  email: Joi.string()
     .email({ tlds: { allow: false } })
 
     .required()
