@@ -31,20 +31,20 @@ export const Informe = new EntitySchema({
       type: "date",
       nullable: false,
     },
-    relations: {
-      encargados: {
-        target: () => Encargado,
-        type: "many-to-one",
-        joinColumn: {
-          name: "idEncargado",
-        },
+  },
+  relations: {
+    encargados: {
+      target: () => Encargado,
+      type: "many-to-one",
+      joinColumn: {
+        name: "idEncargado",
       },
-      registroalmacen: {
-        target: () => RegistroAlmacen,
-        type: "many-to-one",
-        joinColumn: {
-          name: "idRegistroAlmacen",
-        },
+    },
+    registroalmacen: {
+      target: () => RegistroAlmacen,
+      type: "many-to-one",
+      joinColumn: {
+        name: "idRegistroAlmacen",
       },
     },
   },
