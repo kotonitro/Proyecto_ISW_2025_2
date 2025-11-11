@@ -18,7 +18,7 @@ body {
   color: #333;
 }
 
-/* ===== LOGIN PAGE ===== */
+/* login */
 .login-container {
   display: flex;
   justify-content: center;
@@ -138,7 +138,7 @@ body {
   text-decoration: underline;
 }
 
-/* ===== APP LAYOUT ===== */
+/* app */
 .app {
   display: flex;
   flex-direction: column;
@@ -209,7 +209,7 @@ main {
   margin: 0 auto;
 }
 
-/* ===== TABS ===== */
+/* tabs */
 .tabs {
   display: flex;
   gap: 8px;
@@ -246,7 +246,7 @@ main {
   font-size: 16px;
 }
 
-/* ===== CUSTODIA PAGE ===== */
+/* custodia */
 .custodia-page {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -266,7 +266,7 @@ main {
   font-size: 18px;
 }
 
-/* ===== FORM STYLES ===== */
+/* formas estilos */
 .form-group {
   margin-bottom: 16px;
 }
@@ -297,7 +297,7 @@ input:focus {
   box-shadow: 0 0 4px rgba(0, 82, 163, 0.2);
 }
 
-/* ===== BUTTONS ===== */
+/* boton */
 button {
   background-color: var(--ubb-blue);
   color: white;
@@ -324,7 +324,7 @@ button[type="submit"] {
   margin-top: 8px;
 }
 
-/* ===== LIST STYLES ===== */
+/* lista de estilos */
 .registros-list {
   max-height: 600px;
   overflow-y: auto;
@@ -372,7 +372,7 @@ button[type="submit"] {
   margin-bottom: 12px;
 }
 
-/* ===== HISTORIAL ===== */
+/* historial */
 .historial-container {
   background: white;
   border-radius: 8px;
@@ -462,7 +462,7 @@ button[type="submit"] {
   font-weight: 500;
 }
 
-/* ===== RESPONSIVE ===== */
+/* responsive */
 @media (max-width: 768px) {
   .custodia-page {
     grid-template-columns: 1fr;

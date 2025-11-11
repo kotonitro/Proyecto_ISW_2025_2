@@ -16,11 +16,9 @@ import {
 
 const router = Router();
 
-/**
- * POST /api/custodia/entrada
- * Registra la entrada de una bicicleta
- * Body: { rutUsuario, nombreUsuario, emailUsuario, telefonoUsuario, idBicicleta, idBicicletero }
- */
+
+ // Registra la entrada de una bicicleta
+
 router.post(
   "/entrada",
   authMiddleware,
@@ -28,11 +26,7 @@ router.post(
   createEntrada
 );
 
-/**
- * POST /api/custodia/salida
- * Registra la salida de una bicicleta
- * Body: { idRegistroAlmacen }
- */
+//Registra la salida de una bicicleta 
 router.post(
   "/salida",
   authMiddleware,
@@ -40,29 +34,24 @@ router.post(
   createSalida
 );
 
-/**
- * GET /api/custodia/registros
- * Obtiene todos los registros (con filtros opcionales)
- * Query: ?idEncargado=1&estado=entrada&rutUsuario=12345678&estadoBicicleta=ALMACENADA
- */
+
+  //Obtiene todos los registros (con filtros opcionales)
+ 
 router.get("/registros", authMiddleware, getRegistros);
 
-/**
- * GET /api/custodia/registros/:id
- * Obtiene un registro específico
- */
+
+ //Obtiene un registro específico
+ 
 router.get("/registros/:id", authMiddleware, getRegistroDetalle);
 
-/**
- * GET /api/custodia/bicicletas/almacenadas
- * Obtiene todas las bicicletas almacenadas (horaSalida = NULL)
- */
+
+ // Obtiene todas las bicicletas almacenadas (horaSalida = NULL)
+ 
 router.get("/bicicletas/almacenadas", authMiddleware, getBicicletasAlmacendasController);
 
-/**
- * GET /api/custodia/bicicletas/retiradas
- * Obtiene todas las bicicletas retiradas (horaSalida != NULL)
- */
+
+ //Obtiene todas las bicicletas retiradas (horaSalida != NULL)
+ 
 router.get("/bicicletas/retiradas", authMiddleware, getBicicletasRetiradasController);
 
 export default router;
