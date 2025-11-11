@@ -1,6 +1,5 @@
 import { AppDataSource } from "../config/configDB.js";
 import { Usuario } from "../entities/usuario.entity.js";
-//import bcrypt from "bcrypt";
 
 export const userRepository = AppDataSource.getRepository(Usuario);
 
