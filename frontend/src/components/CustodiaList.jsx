@@ -29,29 +29,36 @@ export default function CustodiaList() {
       await postSalida(idRegistro);
       // recargar lista
       await load();
-      alert("Salida registrada");
+      alert("Salida registrada correctamente");
     } catch (e) {
       alert("Error: " + (e.message || e));
     }
   }
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   return (
     <div>
-      <h2>Bicicletas almacenadas</h2>
-      {registros.length === 0 && <div>No hay bicicletas almacenadas.</div>}
-      <ul>
-        {registros.map((r) => (
-          <li key={r.idRegistroAlmacen} style={{marginBottom:8}}>
-            <strong>ID Registro:</strong> {r.idRegistroAlmacen} — <strong>Bicicleta:</strong> {r.bicicleta?.idBicicleta || r.idBicicleta} — <strong>Usuario:</strong> {r.nombreUsuario} ({r.rutUsuario})
-            <div>
-              <button onClick={() => handleSalida(r.idRegistroAlmacen)} style={{marginTop:6}}>Registrar salida</button>
+      <h2>Bicicletas Almacenadas</h2>
+      
+      {loading && <div className="loading">Cargando...</div>}
+      {error && <div className="error">{error}</div>}
+      
+      {!loading && registros.length === 0 && (
+        <div className="loading">No hay bicicletas almacenadas en este momento.</div>
+      )}
+      
+      {!loading && registros.length > 0 && (
+        <div className="registros-list">
+          {registros.map((r) => (
+            <div key={r.idRegistroAlmacen} className="registro-item">
+              <strong>Bicicleta ID:</strong> {r.bicicleta?.idBicicleta || r.idBicicleta}<br />
+              <strong>Usuario:</strong> {r.nombreUsuario} ({r.rutUsuario})<br />
+              <strong>Registro:</strong> #{r.idRegistroAlmacen}<br />
+              <strong>Entrada:</strong> {new Date(r.horaEntrada).toLocaleString()}<br />
+              <button onClick={() => handleSalida(r.idRegistroAlmacen)}>Registrar Salida</button>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

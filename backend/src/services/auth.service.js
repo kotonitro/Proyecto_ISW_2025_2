@@ -8,7 +8,7 @@ export async function loginEncargado(email, contrasena) {
     throw new Error("Credenciales incorrectas");
   }
 
-  const isMatch = bcrypt.compare(contrasena, encargado.contrasena);
+  const isMatch = await bcrypt.compare(contrasena, encargado.contrasena);
   if (!isMatch) {
     throw new Error("Credenciales incorrectas");
   }
@@ -16,6 +16,9 @@ export async function loginEncargado(email, contrasena) {
   const payload = { sub: encargado.idEncargado, email: encargado.email };
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-  delete encargado.contrasena;
-  return { contrasena, token };
+  return { 
+    token, 
+    nombre: encargado.nombre,
+    email: encargado.email
+  };
 }

@@ -1,37 +1,98 @@
-# Frontend - Proyecto ISW
+# Frontend - Proyecto ISW - Gestión de Custodia
 
-Front-end minimal para gestionar la custodia (entradas y salidas de bicicletas).
+Frontend profesional para que los encargados de bicicleteros gestionen la custodia de bicicletas en la Universidad del Bío-Bío.
 
-Qué incluye:
-- Página para registrar entrada de bicicleta (formulario).
-- Listado de bicicletas almacenadas con botón para registrar salida.
-- Cliente API que llama los endpoints del backend en `http://localhost:3000/api` por defecto.
+## Características
 
-Cómo ejecutar (Windows PowerShell):
+### Login de Encargado
+- Interfaz limpia y profesional con logo UBB
+- Autenticación RUT + Clave
+- Guarda sesión con JWT en localStorage
+- Muestra nombre del encargado en el header
 
-1) Ir a la carpeta `frontend`:
+### Panel de Custodia
+- **Registrar Entrada**: Formulario para registrar entrada de bicicleta (usuario, bicicleta, bicicletero)
+- **Bicicletas Almacenadas**: Listado en tiempo real de bicicletas en custodia con botón para registrar salida
+- **Historial de Registros**: Tabla completa con todas las entradas/salidas
+- **Filtros**: Por estado (entrada/salida)
+- **Cerrar Sesión**: Botón para terminar la sesión
+
+## Cómo ejecutar (Windows PowerShell)
+
+1. Ir a la carpeta `frontend`:
 
 ```powershell
 cd c:\Users\OMEN\Desktop\Proyecto_ISW_2025_2\frontend
 ```
 
-2) Instalar dependencias:
+2. Instalar dependencias:
 
 ```powershell
 npm install
 ```
 
-3) Ejecutar en modo desarrollo:
+3. Arrancar en modo desarrollo:
 
 ```powershell
 npm run dev
 ```
 
-Notas:
-- El frontend espera que el backend esté corriendo en `http://localhost:3000`. Si tu backend usa otro puerto, puedes definir la variable de entorno `VITE_API_URL` antes de arrancar (por ejemplo: `$env:VITE_API_URL = 'http://localhost:4000/api'` en PowerShell).
-- Los endpoints del backend requieren autenticación (JWT). Esta implementacion mínima asume que el token está en `localStorage.token`. Ajusta según tu flujo de auth.
+4. Abrir en navegador: `http://localhost:5173`
 
-Siguientes mejoras:
-- Integración con el sistema de login.
-- Paginación y filtros en el listado.
-- Mejor manejo de errores y diseño.
+## Configuración
+
+### URL del Backend
+Por defecto apunta a `http://localhost:3000/api`. Para cambiar:
+
+```powershell
+$env:VITE_API_URL = 'http://localhost:4000/api'
+npm run dev
+```
+
+## Estructura de Archivos
+
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── CustodiaForm.jsx      # Formulario de entrada
+│   │   ├── CustodiaList.jsx      # Listado de bicicletas almacenadas
+│   │   └── HistorialRegistros.jsx # Tabla con historial
+│   ├── pages/
+│   │   ├── Login.jsx             # Página de login
+│   │   └── CustodiaPage.jsx      # Página principal
+│   ├── api/
+│   │   └── custodiaApi.js        # Cliente fetch para endpoints
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── styles.css
+├── index.html
+└── package.json
+```
+
+## Requisitos Funcionales
+
+- ✅ Login con RUT y Clave
+- ✅ Registrar entrada de bicicleta
+- ✅ Registrar salida de bicicleta
+- ✅ Listar bicicletas almacenadas
+- ✅ Ver historial de entradas/salidas
+- ✅ Filtrar registros por estado
+- ✅ Cerrar sesión
+- ✅ Diseño responsivo
+
+## Notas
+
+- El horario de custodia es **7:30 AM - 2:00 PM** (validado en backend)
+- El backend rechazará operaciones fuera del horario permitido
+- Los datos de bicicleteros, bicicletas y usuarios deben existir en la BD
+- El token JWT se guarda en localStorage y se envía en todas las peticiones
+
+## Mejoras Futuras
+
+- Exportar historial a PDF/Excel
+- Notificaciones en tiempo real
+- Gráficas de estadísticas
+- Búsqueda avanzada en historial
+- Integración con QR para bicicletas
+

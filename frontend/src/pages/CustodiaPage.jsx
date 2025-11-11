@@ -1,26 +1,49 @@
 import React, { useState } from "react";
 import CustodiaList from "../components/CustodiaList";
 import CustodiaForm from "../components/CustodiaForm";
+import HistorialRegistros from "../components/HistorialRegistros";
 
 export default function CustodiaPage() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeTab, setActiveTab] = useState("custodia");
 
   function onSuccess() {
-    // trigger reload in list by re-mounting
     setRefreshKey(k => k + 1);
   }
 
   return (
-    <div>
-      <h2>Custodia</h2>
-      <div style={{display:'flex',gap:24}}>
-        <div style={{flex:1}}>
-          <CustodiaForm onSuccess={onSuccess} />
-        </div>
-        <div style={{flex:1}} key={refreshKey}>
-          <CustodiaList />
-        </div>
+    <div className="custodia-container">
+      <div className="tabs">
+        <button 
+          className={`tab-btn ${activeTab === "custodia" ? "active" : ""}`}
+          onClick={() => setActiveTab("custodia")}
+        >
+          Registrar Custodia
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === "historial" ? "active" : ""}`}
+          onClick={() => setActiveTab("historial")}
+        >
+          Historial
+        </button>
       </div>
+
+      {activeTab === "custodia" && (
+        <div className="custodia-page">
+          <div className="custodia-section">
+            <CustodiaForm onSuccess={onSuccess} />
+          </div>
+          <div className="custodia-section" key={refreshKey}>
+            <CustodiaList />
+          </div>
+        </div>
+      )}
+
+      {activeTab === "historial" && (
+        <div className="custodia-page">
+          <HistorialRegistros />
+        </div>
+      )}
     </div>
   );
 }

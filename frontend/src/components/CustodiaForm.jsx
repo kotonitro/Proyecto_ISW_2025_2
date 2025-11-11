@@ -24,7 +24,7 @@ export default function CustodiaForm({ onSuccess }) {
     try {
       // Validación mínima
       if (!form.rutUsuario || !form.idBicicleta || !form.idBicicletero) {
-        setError("RUT, ID Bicicleta y ID Bicicletero son obligatorios");
+        setError("RUT, ID Bicicleta e ID Bicicletero son obligatorios");
         setLoading(false);
         return;
       }
@@ -46,36 +46,41 @@ export default function CustodiaForm({ onSuccess }) {
   }
 
   return (
-    <form onSubmit={submit} style={{maxWidth:600}}>
-      <h2>Registrar entrada</h2>
-      {error && <div style={{color:"red"}}>{error}</div>}
-      <div>
-        <label>RUT</label>
-        <input name="rutUsuario" value={form.rutUsuario} onChange={change} />
+    <form onSubmit={submit}>
+      <h2>Registrar Entrada</h2>
+      {error && <div className="error">{error}</div>}
+      
+      <div className="form-group">
+        <label htmlFor="rut">RUT del Usuario</label>
+        <input id="rut" name="rutUsuario" value={form.rutUsuario} onChange={change} placeholder="Ej: 12345678-K" />
       </div>
-      <div>
-        <label>Nombre</label>
-        <input name="nombreUsuario" value={form.nombreUsuario} onChange={change} />
+      
+      <div className="form-group">
+        <label htmlFor="nombre">Nombre</label>
+        <input id="nombre" name="nombreUsuario" value={form.nombreUsuario} onChange={change} placeholder="Nombre completo" />
       </div>
-      <div>
-        <label>Email</label>
-        <input name="emailUsuario" value={form.emailUsuario} onChange={change} />
+      
+      <div className="form-group">
+        <label htmlFor="email">Email</label>
+        <input id="email" name="emailUsuario" value={form.emailUsuario} onChange={change} type="email" placeholder="correo@ejemplo.com" />
       </div>
-      <div>
-        <label>Teléfono</label>
-        <input name="telefonoUsuario" value={form.telefonoUsuario} onChange={change} />
+      
+      <div className="form-group">
+        <label htmlFor="telefono">Teléfono</label>
+        <input id="telefono" name="telefonoUsuario" value={form.telefonoUsuario} onChange={change} placeholder="+56 9 1234 5678" />
       </div>
-      <div>
-        <label>ID Bicicleta</label>
-        <input name="idBicicleta" value={form.idBicicleta} onChange={change} />
+      
+      <div className="form-group">
+        <label htmlFor="bicicleta">ID Bicicleta</label>
+        <input id="bicicleta" name="idBicicleta" value={form.idBicicleta} onChange={change} type="number" placeholder="1" />
       </div>
-      <div>
-        <label>ID Bicicletero</label>
-        <input name="idBicicletero" value={form.idBicicletero} onChange={change} />
+      
+      <div className="form-group">
+        <label htmlFor="bicicletero">ID Bicicletero</label>
+        <input id="bicicletero" name="idBicicletero" value={form.idBicicletero} onChange={change} type="number" placeholder="1" />
       </div>
-      <div style={{marginTop:8}}>
-        <button type="submit" disabled={loading}>{loading ? "Enviando..." : "Registrar entrada"}</button>
-      </div>
+      
+      <button type="submit" disabled={loading}>{loading ? "Registrando..." : "Registrar Entrada"}</button>
     </form>
   );
 }
