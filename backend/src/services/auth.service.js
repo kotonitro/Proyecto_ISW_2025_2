@@ -1,14 +1,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { findEncargadoByEmail } from "./encargado.service.js";
+import { getEncargadoByEmail } from "./encargado.service.js";
 
 export async function loginEncargado(email, contrasena) {
-  const encargado = await findEncargadoByEmail(email);
+  const encargado = await getEncargadoByEmail(email);
   if (!encargado) {
     throw new Error("Credenciales incorrectas");
   }
 
-  const isMatch = bcrypt.compare(contrasena, encargado.contrasena);
+  const isMatch = await bcrypt.compare(contrasena, encargado.contrasena);
   if (!isMatch) {
     throw new Error("Credenciales incorrectas");
   }
@@ -17,5 +17,5 @@ export async function loginEncargado(email, contrasena) {
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
   delete encargado.contrasena;
-  return { contrasena, token };
+  return { encargado, token };
 }
