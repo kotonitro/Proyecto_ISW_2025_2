@@ -4,15 +4,17 @@ import morgan from "morgan";
 import { connectDB } from "./config/configDB.js";
 import { HOST, PORT } from "./config/configEnv.js";
 import { createAdmin } from "./config/initialSetup.js"
-import router from "./routes/home.routes.js";
+import { routerApi } from "./routes/index.routes.js";
 
 const app = express();
 app.use(morgan("dev"));
 
+app.use(express.json())
+routerApi(app);
+
 connectDB()
   .then(async () => {
 
-    //routerApi(app);
     await createAdmin();
 
     app.listen(PORT, () => {

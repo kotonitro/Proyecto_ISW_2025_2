@@ -17,5 +17,5 @@ export async function loginEncargado(email, contrasena) {
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
   delete encargado.contrasena;
-  return { contrasena, token };
+  return { encargado, token };
 }
