@@ -2,11 +2,13 @@ import { Encargado } from "../entities/encargado.entity.js";
 import { AppDataSource } from "./configDB.js";
 import bcrypt from "bcrypt";
 
+// Funcion para hashear contraseñas
 async function encryptPassword(password) {
   const saltRounds = 10;
   return await bcrypt.hash(password, saltRounds);
 }
 
+// Funcion para crear un Encargado con rol de Administrador
 export async function createAdmin() {
   try {
     const encargadoRepository = AppDataSource.getRepository(Encargado);
@@ -23,7 +25,7 @@ export async function createAdmin() {
           rut: "12345678-9",
           email: "admin@example.com",
           contrasena: await encryptPassword("123456"),
-          telefono: "12312312",
+          telefono: "12345678",
         }),
       ),
     ]);

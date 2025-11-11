@@ -1,6 +1,7 @@
 "use strict";
 import dotenv from "dotenv";
 
+// Exportar datos del .env
 
 dotenv.config();
 

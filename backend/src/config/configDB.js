@@ -2,6 +2,7 @@
 import { DataSource } from "typeorm";
 import { DATABASE, DB_USERNAME, HOST, PASSWORD } from "./configEnv.js";
 
+// Definir la conexion con la Base de Datos
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: `${HOST}`,
@@ -10,10 +11,11 @@ export const AppDataSource = new DataSource({
   password: `${PASSWORD}`,
   database: `${DATABASE}`,
   entities: ["src/entities/**/*.js"],
-  synchronize: true, 
+  synchronize: true,
   logging: false,
 });
 
+// Funcion para establecer la conexion con la Base de Datos utilizando el AppDataSource
 export async function connectDB() {
   try {
     await AppDataSource.initialize();

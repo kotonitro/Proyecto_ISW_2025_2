@@ -1,7 +1,7 @@
 import { loginEncargado } from "../services/auth.service.js";
 import { handleSuccess, handleErrorClient} from "../handlers/responseHandlers.js";
 
-export async function login(req, res) {
+export async function handleLogin(req, res) {
   try {
     const { email, contrasena } = req.body;
     
@@ -9,7 +9,7 @@ export async function login(req, res) {
       return handleErrorClient(res, 400, "Email y contraseña son requeridos");
     }
     
-    const data = await loginEncargado(correo, contrasena);
+    const data = await loginEncargado(email, contrasena);
     handleSuccess(res, 200, "Login exitoso", data);
   } catch (error) {
     handleErrorClient(res, 401, error.message);
