@@ -1,5 +1,5 @@
 import { handleSuccess, handleErrorClient } from "../handlers/responseHandlers";
-import { userRepository } from "../services/usuario.services.js";
+import { userRepository } from "../services/usuario.service.js";
 
 export async function getUsuarios(req, res) {
   try {

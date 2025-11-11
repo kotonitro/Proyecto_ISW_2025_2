@@ -1,8 +1,8 @@
 import { AppDataSource } from "../config/configDB.js";
-import { usuarios } from "../entities/usuarios.entity.js";
+import { Usuario } from "../entities/usuario.entity.js";
 //import bcrypt from "bcrypt";
 
-export const userRepository = AppDataSource.getRepository(usuarios);
+export const userRepository = AppDataSource.getRepository(Usuario);
 
 export async function createUsuario(data) {
   const newUsuario = userRepository.create(data);
@@ -11,30 +11,30 @@ export async function createUsuario(data) {
 }
 
 export async function getUsuarioByRut(rut) {
-  const usuario = await userRepository.findOneBy({ rut });
-  return usuario;
+  const Usuario = await userRepository.findOneBy({ rut });
+  return Usuario;
 }
 
 export async function getUsuarios() {
-  const usuarios = await userRepository.find();
-  return usuarios;
+  const Usuario = await userRepository.find();
+  return Usuario;
 }
 
 export async function deleteUsuario(rut) {
-  const usuario = await getUsuarioByRut(rut);
-  if (!usuario) {
+  const Usuario = await getUsuarioByRut(rut);
+  if (!Usuario) {
     throw new Error("Usuario no encontrado");
   }
-  await userRepository.remove(usuario);
+  await userRepository.remove(Usuario);
   return true;
 }
 
 export async function updateUsuario(rut, data) {
-  const usuario = await getUsuarioByRut(rut);
-  if (!usuario) {
+  const Usuario = await getUsuarioByRut(rut);
+  if (!Usuario) {
     throw new Error("Usuario no encontrado");
   }
-  userRepository.merge(usuario, data);
-  const resultado = await userRepository.save(usuario);
+  userRepository.merge(Usuario, data);
+  const resultado = await userRepository.save(Usuario);
   return resultado;
 }
