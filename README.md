@@ -31,31 +31,32 @@ Este proyecto está dividido en un `frontend` y un `backend`, utilizando las sig
 
 ## 🏗️ Estructura del Proyecto
 
-El repositorio está organizado de la siguiente manera:
----
+Aquí está la estructura basada en tu imagen, pero formateada correctamente como un árbol:
+
+```
 Proyecto_ISW_2025_2/
 ├── .gitignore           # Archivos y carpetas ignorados por Git
 ├── README.md            # Este archivo
 │
 ├── backend/
-│   ├── src/             # Archivos fuentes del backend
-│   │   ├── config/      # Archivos para configurar la conexion de backend y script inicial
-│   │   ├── controllers/ # 
-│   │   ├── entities/    # Archivos de los modelos en la base de datos(Entidades y relaciones)
-│   │   ├── handlers/    # 
-│   │   ├── middleware/  #
-│   │   ├── routes/      # Archivos para la funcionalidad de los endpoints
-│   │   ├── services/    # 
-│   │   ├── utils/       #
-│   │   ├── validations/ #
-│   │   ├── index.js     #
-│   ├── package.json     #
+│   ├── package.json
+│   └── src/             # Archivos fuentes del backend y script inicial
+│       ├── config/      # Archivos para configurar la conexion de backend
+│       ├── controllers/
+│       ├── entities/    # Archivos de los modelos en la base de datos (Entidades y relaciones)
+│       ├── handlers/
+│       ├── middleware/
+│       ├── routes/      # Archivos para la funcionalidad de los endpoints
+│       ├── services/
+│       ├── utils/
+│       ├── validations/
+│       └── index.js
+│
 └── frontend/
-    ├── src/             #
-    ├── index.html       #
-    ├── package.json     # 
-
----
+    ├── package.json
+    └── src/
+        └── index.html
+```
 
 ## Instalación y Ejecución
 
@@ -101,10 +102,11 @@ npm run build
 # Inicializar el servidor Frontend
 ```
 
-## Contribuidores 
--> Juan Arévalo @iTzFireFoxX
--> José Hormazabal @Jose-hf
--> Matias Muñoz @kotonitro
--> Christian Retabien @kithian
--> Matias Vilchometro @matias-vilchesb
+## Contribuidores
+
+* Juan Arévalo - [@iTzFireFoxX](https://github.com/iTzFireFoxX)
+* José Hormazabal - [@Jose-hf](https://github.com/Jose-hf)
+* Matias Muñoz - [@kotonitro](https://github.com/kotonitro)
+* Christian Retabien - [@kithian](https://github.com/kithian)
+* Matias Vilchometro - [@matias-vilchesb](https://github.com/matias-vilchesb)
 
