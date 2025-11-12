@@ -11,7 +11,7 @@ import {
 //registra la entrada de una bicicleta
 export async function createEntrada(req, res) {
   try {
-    const { rutUsuario, nombreUsuario, emailUsuario, telefonoUsuario, idBicicleta, idBicicletero } = req.body;
+    const { rutUsuario, nombreUsuario, emailUsuario, telefonoUsuario, idBicicleta, idBicicletero, fechaEntrada, fechaSalida } = req.body;
     const idEncargado = req.user.idEncargado || req.user.sub;
 
     const registro = await registerEntrada(
@@ -22,6 +22,8 @@ export async function createEntrada(req, res) {
         telefonoUsuario,
         idBicicleta,
         idBicicletero,
+        fechaEntrada,
+        fechaSalida,
       },
       idEncargado
     );
@@ -35,10 +37,10 @@ export async function createEntrada(req, res) {
 //registra la salida de una bicicleta
 export async function createSalida(req, res) {
   try {
-    const { idRegistroAlmacen } = req.body;
+    const { idRegistroAlmacen, fechaSalida } = req.body;
     const idEncargado = req.user.idEncargado || req.user.sub;
 
-    const registro = await registerSalida(idRegistroAlmacen, idEncargado);
+    const registro = await registerSalida(idRegistroAlmacen, idEncargado, fechaSalida);
 
     return handleSuccess(res, 201, "Salida registrada correctamente", registro);
   } catch (error) {
