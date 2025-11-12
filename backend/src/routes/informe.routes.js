@@ -6,7 +6,7 @@ import {
   //deleteInforme,
   //downloadInformePdf,
 } from "../controllers/informe.controller.js";
-import authMiddleware from "../middleware/auth.middleware.js";
+import { authMiddleware}  from "../middleware/auth.middleware.js";
 
 const router = Router();
 router.use(authMiddleware);

@@ -9,7 +9,7 @@ import {
   handleErrorClient,
   handleErrorServer,
 } from "../handlers/responseHandlers.js";
-import { informeValidation } from "../validators/informe.validator.js";
+import { informeValidation } from "../validations/informe.validation.js";
 
 export async function handleCreateInforme(req, res) {
   const informeData = req.body;

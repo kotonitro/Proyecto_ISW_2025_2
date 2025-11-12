@@ -15,8 +15,6 @@ export function routerApi(app) {
   router.use("/custodia", custodiaRoutes);
   router.use("/bicicleteros", bicicleteroRoutes);
   router.use("/encargados", encargadoRoutes);
-
   router.use("/informes", informeRoutes);
-
   router.use("/usuarios", usuarioRoutes);
 }
