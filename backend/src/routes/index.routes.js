@@ -3,7 +3,9 @@ import authRoutes from "./auth.routes.js";
 import custodiaRoutes from "./custodia.routes.js";
 import bicicleteroRoutes from "./bicicletero.routes.js";
 import encargadoRoutes from "./encargado.routes.js";
+
 import informeRoutes from "./informe.routes.js";
+import usuarioRoutes from "./usuario.routes.js";
 
 export function routerApi(app) {
   const router = Router();
@@ -13,5 +15,8 @@ export function routerApi(app) {
   router.use("/custodia", custodiaRoutes);
   router.use("/bicicleteros", bicicleteroRoutes);
   router.use("/encargados", encargadoRoutes);
+
   router.use("/informes", informeRoutes);
+
+  router.use("/usuarios", usuarioRoutes);
 }
