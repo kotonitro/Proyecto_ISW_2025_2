@@ -1,6 +1,6 @@
 "use strict";
 import Joi from "joi";
-import { TIPOS_INCIDENTE } from "../utils/tiposIncidete.js";
+import { TIPOS_INCIDENTE } from "../utils/tiposIncidente.js";
 
 export const informeValidation = Joi.object({
   TipoIncidente: Joi.string()

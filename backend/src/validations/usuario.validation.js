@@ -41,9 +41,8 @@ export const createUsuario = Joi.object({
       "string.pattern.base": "El nombre sólo puede contener letras y espacios",
       "any.required": "El nombre es obligatorio",
     }),
-  correo: Joi.string()
+  email: Joi.string()
     .email({ tlds: { allow: false } })
-
     .required()
     .messages({
       "string.email": "El correo debe ser un email válido",

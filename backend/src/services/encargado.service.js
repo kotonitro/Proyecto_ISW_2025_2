@@ -8,6 +8,11 @@ export async function getEncargadoByEmail(email) {
   return await encargadoRepository.findOneBy({ email });
 }
 
+export async function getEncargados() {
+  const Encargado = await encargadoRepository.find();
+  return Encargado;
+}
+
 export async function createEncargado(data) {
   const hashedPassword = await bcrypt.hash(data.contrasena, 10);
 

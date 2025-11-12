@@ -53,7 +53,7 @@ export default function CustodiaList() {
               <strong>Bicicleta ID:</strong> {r.bicicleta?.idBicicleta || r.idBicicleta}<br />
               <strong>Usuario:</strong> {r.nombreUsuario} ({r.rutUsuario})<br />
               <strong>Registro:</strong> #{r.idRegistroAlmacen}<br />
-              <strong>Entrada:</strong> {new Date(r.horaEntrada).toLocaleString()}<br />
+              <strong>Entrada:</strong> {new Date(r.fechaEntrada).toLocaleString()}<br />
               <button onClick={() => handleSalida(r.idRegistroAlmacen)}>Registrar Salida</button>
             </div>
           ))}

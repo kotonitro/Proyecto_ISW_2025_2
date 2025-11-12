@@ -11,7 +11,7 @@ export const Usuario = new EntitySchema({
     },
     rut: {
       type: "varchar",
-      length: 8,
+      length: 10,
       unique: true,
       nullable: false,
     },
@@ -33,8 +33,8 @@ export const Usuario = new EntitySchema({
   relations: {
     bicicletas: {
       type: "one-to-many",
-      target: "Bicicleta", 
-      inverseSide: "usuario", 
+      target: "Bicicleta",
+      inverseSide: "usuario",
     },
   },
 });

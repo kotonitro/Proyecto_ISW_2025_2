@@ -7,6 +7,11 @@ export async function getBicicleteroById(idBicicletero) {
   return await bicicleteroRepository.findOneBy({ idBicicletero });
 }
 
+export async function getBicicleteros() {
+  const Bicicletero = await bicicleteroRepository.find();
+  return Bicicletero;
+}
+
 export async function createBicicletero(data) {
   const newBicicletero = bicicleteroRepository.create(data);
   return await bicicleteroRepository.save(newBicicletero);
