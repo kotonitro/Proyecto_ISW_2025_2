@@ -14,27 +14,30 @@ export const Notificacion = new EntitySchema({
       length: 255,
       nullable: false,
     },
-    bicicleteroId: {
-      type: "varchar", // O "int" si el ID es un número
-      nullable: false,
-      name: "bicicletero_id", // Nombre opcional en la BD
-    },
     leida: {
       type: "boolean",
       default: false,
       nullable: false,
     },
-
     fechaCreacion: {
       type: "timestamp",
       createDate: true,
       name: "fecha_creacion",
     },
-
     fechaActualizacion: {
       type: "timestamp",
       updateDate: true,
       name: "fecha_actualizacion",
+    },
+  },
+  relations: {
+    bicicletero: {
+      type: "many-to-one",
+      target: "Bicicletero",
+      joinColumn: {
+        name: "bicicletero_id",
+      },
+      nullable: false,
     },
   },
 });
