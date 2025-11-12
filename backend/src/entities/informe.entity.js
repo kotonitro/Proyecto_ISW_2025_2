@@ -15,17 +15,17 @@ export const Informe = new EntitySchema({
     idRegistroAlmacen: {
       type: "int",
     },
-    TipoIncidente: {
+    tipoIncidente: {
       type: "varchar",
       length: 255,
       nullable: false,
     },
-    Descripcion: {
+    descripcion: {
       type: "varchar",
       length: 255,
       nullable: false,
     },
-    FechaInforme: {
+    fechaInforme: {
       type: "date",
       nullable: false,
     },

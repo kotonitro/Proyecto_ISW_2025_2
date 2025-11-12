@@ -41,4 +41,23 @@ export async function handleCreateInforme(req, res) {
   }
 }
 
+export async function handleDeleteInforme(req, res) {
+  const idInforme = req.body.idInforme;
+  try {
+    const Informe = await getInformeById(idInforme);
+    if (!Informe) {
+      return req.status(404).json({ message: "Informe no encontrado" });
+    }
+    await deleteInforme(idInforme);
+    handleSuccess(res, 201, "Informe eliminado exitosamente");
+  } catch (error) {
+    handleErrorServer(
+      res,
+      500,
+      "Error interno al eliminar el informe",
+      error.message,
+    );
+  }
+}
+
 export async function downloadInformePdf(req, res) {}

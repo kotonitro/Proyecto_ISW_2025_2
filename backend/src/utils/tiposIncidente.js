@@ -1,7 +1,7 @@
 export const TIPOS_INCIDENTE = [
-  "daño fisico",
-  "robo",
-  "perdida",
-  "falla sistema",
-  "otro",
+  "DAÑO FISICO",
+  "ROBO",
+  "PERDIDA",
+  "FALLA SISTEMA",
+  "OTRO",
 ];
