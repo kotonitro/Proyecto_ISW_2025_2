@@ -40,12 +40,12 @@ export const RegistroAlmacen = new EntitySchema({
       type: "int",
       nullable: false,
     },
-    horaEntrada: {
+    fechaEntrada: {
       type: "datetime",
       nullable: false,
       default: () => "CURRENT_TIMESTAMP",
     },
-    horaSalida: {
+    fechaSalida: {
       type: "datetime",
       nullable: true,
     },

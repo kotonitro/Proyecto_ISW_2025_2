@@ -45,12 +45,12 @@ router.get("/registros", authMiddleware, getRegistros);
 router.get("/registros/:id", authMiddleware, getRegistroDetalle);
 
 
- // Obtiene todas las bicicletas almacenadas (horaSalida = NULL)
+ // Obtiene todas las bicicletas almacenadas (fechaSalida = NULL)
  
 router.get("/bicicletas/almacenadas", authMiddleware, getBicicletasAlmacendasController);
 
 
- //Obtiene todas las bicicletas retiradas (horaSalida != NULL)
+ //Obtiene todas las bicicletas retiradas (fechaSalida != NULL)
  
 router.get("/bicicletas/retiradas", authMiddleware, getBicicletasRetiradasController);
 

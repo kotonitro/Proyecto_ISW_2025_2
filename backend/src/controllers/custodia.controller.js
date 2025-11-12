@@ -49,13 +49,12 @@ export async function createSalida(req, res) {
 //obtiene todos los registros 
 export async function getRegistros(req, res) {
   try {
-    const { idEncargado, estado, rutUsuario, estadoBicicleta } = req.query;
+  const { idEncargado, rutUsuario, estadoBicicleta } = req.query;
 
-    const filtros = {};
-    if (idEncargado) filtros.idEncargado = parseInt(idEncargado);
-    if (estado) filtros.estado = estado;
-    if (rutUsuario) filtros.rutUsuario = rutUsuario;
-    if (estadoBicicleta) filtros.estadoBicicleta = estadoBicicleta;
+  const filtros = {};
+  if (idEncargado) filtros.idEncargado = parseInt(idEncargado);
+  if (rutUsuario) filtros.rutUsuario = rutUsuario;
+  if (estadoBicicleta) filtros.estadoBicicleta = estadoBicicleta;
 
     const registros = await getAllRegistros(filtros);
 
