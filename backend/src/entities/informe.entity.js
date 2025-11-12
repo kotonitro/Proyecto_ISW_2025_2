@@ -14,6 +14,7 @@ export const Informe = new EntitySchema({
     },
     idRegistroAlmacen: {
       type: "int",
+      nullable: true,
     },
     tipoIncidente: {
       type: "varchar",
