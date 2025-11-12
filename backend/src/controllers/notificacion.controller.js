@@ -3,11 +3,13 @@ import {
   getNotificaciones,
   marcarLeida,
 } from "../services/notificacion.service.js";
-import { crearNotificacion as schemaCrear } from "../validations/notificacion.validation.js";
+import { crearNotificacion } from "../validations/notificacion.validation.js";
 
 export async function handleCreateNotificacion(req, res) {
   try {
-    const { error } = schemaCrear.validate(req.body, { abortEarly: false });
+    const { error } = crearNotificacion.validate(req.body, {
+      abortEarly: false,
+    });
     if (error) {
       return res.status(400).json({
         message: "Error de validación",
