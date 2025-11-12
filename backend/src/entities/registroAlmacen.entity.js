@@ -41,12 +41,12 @@ export const RegistroAlmacen = new EntitySchema({
       nullable: false,
     },
     fechaEntrada: {
-      type: "datetime",
+      type: "timestamp",
       nullable: false,
       default: () => "CURRENT_TIMESTAMP",
     },
     fechaSalida: {
-      type: "datetime",
+      type: "timestamp",
       nullable: true,
     },
   },
