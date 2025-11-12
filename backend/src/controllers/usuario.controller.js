@@ -4,18 +4,18 @@ import {
   handleErrorServer,
 } from "../handlers/responseHandlers.js";
 import {
-  createUsuario as createUsuarioService,
-  getUsuarioByRut as getUsuarioByRutService,
-  getUsuarios as getUsuariosService,
-  deleteUsuario as deleteUsuarioService,
-  updateUsuario as updateUsuarioService,
+  createUsuario,
+  getUsuarioByRut,
+  getUsuarios,
+  deleteUsuario,
+  updateUsuario,
 } from "../services/usuario.service.js";
 import { createUsuario as createUsuarioValidation } from "../validations/usuario.validation.js";
 
 // Esta funcion nos permite obtener todos los usuarios.
-export async function getUsuarios(req, res) {
+export async function handleGetUsuarios(req, res) {
   try {
-    const usuarios = await getUsuariosService();
+    const usuarios = await getUsuarios();
     return handleSuccess(
       res,
       200,
@@ -32,10 +32,10 @@ export async function getUsuarios(req, res) {
   }
 }
 
-export async function getUsuarioByRut(req, res) {
+export async function handleGetUsuarioByRut(req, res) {
   try {
     const rut = req.params.rut;
-    const usuario = await getUsuarioByRutService(rut);
+    const usuario = await getUsuarioByRut(rut);
     if (!usuario) {
       return handleErrorClient(
         res,
@@ -55,7 +55,7 @@ export async function getUsuarioByRut(req, res) {
 }
 
 // Esta funcion nos permite crear un nuevo usuario.
-export async function createUsuario(req, res) {
+export async function handleCreateUsuario(req, res) {
   try {
     const usuarioData = req.body;
 
@@ -76,7 +76,7 @@ export async function createUsuario(req, res) {
     }
 
     // Verificar si ya existe un usuario con ese RUT
-    const existing = await getUsuarioByRutService(value.rut);
+    const existing = await getUsuarioByRut(value.rut);
     if (existing) {
       return handleErrorClient(
         res,
@@ -85,7 +85,7 @@ export async function createUsuario(req, res) {
       );
     }
 
-    const newUsuario = await createUsuarioService(value);
+    const newUsuario = await createUsuario(value);
     return handleSuccess(res, 201, "Usuario creado exitosamente", newUsuario);
   } catch (error) {
     return handleErrorServer(
@@ -98,7 +98,7 @@ export async function createUsuario(req, res) {
 }
 
 // Esta funcion nos permite actualizar un usuario por RUT.
-export async function updateUsuario(req, res) {
+export async function handleUpdateUsuario(req, res) {
   try {
     const rutParam = req.params?.rut;
     const rutBody = req.body?.rut;
@@ -118,12 +118,12 @@ export async function updateUsuario(req, res) {
     const { rut: _, ...updateData } = req.body;
 
     // Verificar existencia
-    const usuario = await getUsuarioByRutService(rut);
+    const usuario = await getUsuarioByRut(rut);
     if (!usuario) {
       return handleErrorClient(res, 404, "Usuario no encontrado");
     }
 
-    const updated = await updateUsuarioService(rut, updateData);
+    const updated = await updateUsuario(rut, updateData);
     return handleSuccess(
       res,
       200,
@@ -145,7 +145,7 @@ export async function updateUsuario(req, res) {
 }
 
 // Esta funcion elimina el usuario por RUT
-export async function deleteUsuario(req, res) {
+export async function handleDeleteUsuario(req, res) {
   try {
     // Priorizar RUT en params, luego en body, luego en token (compatibilidad)
     const rutParam = req.params?.rut;
@@ -163,7 +163,7 @@ export async function deleteUsuario(req, res) {
     }
 
     // Usar servicio para eliminar
-    await deleteUsuarioService(rut);
+    await deleteUsuario(rut);
     return handleSuccess(res, 200, "Usuario eliminado correctamente", null);
   } catch (error) {
     if (error.message && error.message.includes("no encontrado")) {
