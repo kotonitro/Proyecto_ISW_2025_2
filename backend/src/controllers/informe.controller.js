@@ -2,6 +2,7 @@ import {
   createInforme,
   getInformeById,
   deleteInforme,
+  getInformes,
   updateInforme,
 } from "../services/informe.service.js";
 import {
@@ -61,7 +62,7 @@ export async function handleDeleteInforme(req, res) {
 }
 export async function handleGetInformes(req, res) {
   try {
-    const Informes = await getInfromes();
+    const Informes = await getInformes();
     return handleSuccess(
       res,
       200,

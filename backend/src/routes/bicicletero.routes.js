@@ -9,6 +9,6 @@ router.get("/", handleGetBicicleteros);
 router.use(authMiddleware);
 
 router.post("/", handleCreateBicicletero);
-router.delete("/", handleDeleteBicicletero);
+//router.delete("/", handleDeleteBicicletero);
 
 export default router;
