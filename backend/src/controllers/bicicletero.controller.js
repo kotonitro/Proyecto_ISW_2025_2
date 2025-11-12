@@ -1,6 +1,15 @@
-import { getBicicleteroById, createBicicletero, deleteBicicletero } from "../services/bicicletero.service.js";
+import { getBicicleteroById, getBicicleteros, createBicicletero, deleteBicicletero } from "../services/bicicletero.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { bicicleteroValidation } from "../validations/bicicletero.validation.js";
+
+export async function handleGetBicicleteros(req, res){
+    try {
+        const Bicicleteros = await getBicicleteros();
+        return handleSuccess(res, 200, "Bicicleteros obtenidos correctamente", Bicicleteros);
+    } catch (error) {
+        return handleErrorServer(res, 500, "Error interno al obtener los bicicleteros", error.message);
+    }
+}
 
 export async function handleCreateBicicletero(req, res) {
     const bicicleteroData = req.body;
