@@ -17,13 +17,11 @@ router.post("/", createUsuario);
 // Obtener todos (solo encargados)
 router.get("/", getUsuarios);
 
-router.get("/:rut", getUsuarioByRut);
-
 // Obtener usuario por RUT(Solo encargados)
 router.get("/:rut", getUsuarioByRut);
 
 // Actualizar usuario por RUT(Solo encargados)
-router.put("/:rut", updateUsuario);
+router.patch("/:rut", updateUsuario);
 
 // Eliminar usuario por RUT(Solo encargados)
 router.delete("/:rut", deleteUsuario);
