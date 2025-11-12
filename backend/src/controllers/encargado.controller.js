@@ -1,6 +1,15 @@
-import { createEncargado } from "../services/encargado.service.js";
+import { getEncargados, createEncargado } from "../services/encargado.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { encargadoValidation } from "../validations/encargado.validation.js";
+
+export async function handleGetEncargados(req, res){
+    try {
+        const Encargados = await getEncargados();
+        return handleSuccess(res, 200, "Encargados obtenidos correctamente", Encargados);
+    } catch (error) {
+        return handleErrorServer(res, 500, "Error interno al obtener los encargados", error.message);
+    }
+}
 
 export async function handleCreateEncargado(req, res) {
     const encargadoData = req.body;
