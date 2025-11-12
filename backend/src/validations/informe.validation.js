@@ -3,6 +3,15 @@ import Joi from "joi";
 import { TIPOS_INCIDENTE } from "../utils/tiposIncidente.js";
 
 export const informeValidation = Joi.object({
+  idEncargado: Joi.number().integer().required().messages({
+    "number.base": "El idEncargado debe ser un número entero",
+    "any.required": "El idEncargado es obligatorio",
+  }),
+
+  idRegistroAlmacen: Joi.number().integer().messages({
+    "number.base": "El idRegistroAlmacen debe ser un número entero",
+  }),
+
   TipoIncidente: Joi.string()
     .trim()
     .uppercase()
