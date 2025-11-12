@@ -10,11 +10,9 @@ export function generateInformePdf(informe) {
     });
     doc.on("error", reject);
     //Contenido del PDF
-    doc
-      .fontSize(16)
-      .text(`Informe de Gestión - ID: ${informe.idInforme}`, {
-        align: "center",
-      });
+    doc.fontSize(16).text(`Informe de Gestión - ID: ${informe.idInforme}`, {
+      align: "center",
+    });
     doc.moveDown();
     doc
       .fontSize(12)

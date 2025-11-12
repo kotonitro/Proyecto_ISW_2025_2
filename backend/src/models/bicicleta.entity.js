@@ -11,6 +11,7 @@ export const Bicicleta = new EntitySchema({
     },
     idUsuario: {
       type: "int",
+      nullable: false,
     },
     marca: {
       type: "varchar",

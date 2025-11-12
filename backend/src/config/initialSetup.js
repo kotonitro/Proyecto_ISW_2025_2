@@ -1,4 +1,4 @@
-import { Encargado } from "../entities/encargado.entity.js";
+import { Encargado } from "../models/encargado.entity.js";
 import { AppDataSource } from "./configDB.js";
 import bcrypt from "bcrypt";
 

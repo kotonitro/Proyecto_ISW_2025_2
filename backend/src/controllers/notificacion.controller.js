@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/configDB.js";
-import { Notificacion } from "../entities/notificacion.entity.js";
+import { Notificacion } from "../models/notificacion.entity.js";
 import {
   handleSuccess,
   handleErrorServer,

@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/configDB.js";
-import { Encargado } from "../entities/encargado.entity.js";
+import { Encargado } from "../models/encargado.entity.js";
 import bcrypt from "bcrypt";
 
 export const encargadoRepository = AppDataSource.getRepository(Encargado);
@@ -21,7 +21,7 @@ export async function createEncargado(data) {
     rut: data.rut,
     nombre: data.nombre,
     contrasena: hashedPassword,
-    telefono: data.telefono
+    telefono: data.telefono,
   });
 
   return await encargadoRepository.save(newEncargado);
