@@ -59,5 +59,23 @@ export async function handleDeleteInforme(req, res) {
     );
   }
 }
+export async function handleGetInformes(req, res) {
+  try {
+    const Informes = await getInfromes();
+    return handleSuccess(
+      res,
+      200,
+      "Informes obtenidos correctamente",
+      Informes,
+    );
+  } catch (error) {
+    return handleErrorServer(
+      res,
+      500,
+      "Error interno al obtener los informes",
+      error.message,
+    );
+  }
+}
 
 export async function downloadInformePdf(req, res) {}

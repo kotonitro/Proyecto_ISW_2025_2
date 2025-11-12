@@ -11,6 +11,10 @@ export async function createInforme(data) {
 export async function getInformeById(idInforme) {
   return await informeRepository.findOneBy({ idInforme });
 }
+export async function getInformes() {
+  const Informe = await informeRepository.find();
+  return Informe;
+}
 
 export async function deleteInforme(idInforme) {
   const Informe = await getInformeById(idInforme);
