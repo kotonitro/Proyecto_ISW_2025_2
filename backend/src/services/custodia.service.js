@@ -97,7 +97,6 @@ export async function registerEntrada(data, idEncargado) {
     nombreUsuario: data.nombreUsuario,
     emailUsuario: data.emailUsuario,
     telefonoUsuario: data.telefonoUsuario,
-    estado: "entrada",
     horaEntrada: new Date(),
   });
 
@@ -133,7 +132,7 @@ export async function registerSalida(idRegistroAlmacen, idEncargado) {
 
   // Actualizar el registro con la hora de salida
   registro.horaSalida = new Date();
-  registro.estado = "salida";
+
 
   const registroActualizado = await registroAlmacenRepository.save(registro);
   
@@ -194,9 +193,12 @@ export async function getAllRegistros(filtros = {}) {
   }
 
   if (filtros.estado) {
-    query = query.andWhere("registro.estado = :estado", { 
-      estado: filtros.estado 
-    });
+    // estado filtrado por horaSalida
+    if (filtros.estado === "entrada") {
+      query = query.andWhere("registro.horaSalida IS NULL");
+    } else if (filtros.estado === "salida") {
+      query = query.andWhere("registro.horaSalida IS NOT NULL");
+    }
   }
 
   if (filtros.rutUsuario) {

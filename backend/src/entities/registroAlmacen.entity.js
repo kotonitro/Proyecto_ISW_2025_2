@@ -49,11 +49,6 @@ export const RegistroAlmacen = new EntitySchema({
       type: "datetime",
       nullable: true,
     },
-    estado: {
-      type: "enum",
-      enum: ["entrada", "salida"],
-      nullable: false,
-    },
   },
   relations: {
     bicicletero: {
