@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import logoUBB from "../images/logoUBB.png";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -29,7 +30,7 @@ export default function Login({ onLoginSuccess }) {
       // Guardar token en localStorage
       const token = data.data?.token || data.token;
       localStorage.setItem("token", token);
-      
+
       // Guardar nombre del encargado si está disponible
       const nombre = data.data?.nombre || data.nombre || "Encargado";
       localStorage.setItem("encargadoNombre", nombre);
@@ -46,11 +47,7 @@ export default function Login({ onLoginSuccess }) {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <img
-            src="https://www.ubiobio.cl/web2023/images/logo-ubb.png"
-            alt="Logo UBB"
-            className="login-logo"
-          />
+          <img src={logoUBB} alt="Logo UBB" className="login-logo" />
           <h2>Universidad del Bío-Bío</h2>
           <p>Gestión de Custodia de Bicicletas</p>
           <p className="login-subtitle">Acceso para Encargados</p>
