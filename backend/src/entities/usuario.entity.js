@@ -11,7 +11,7 @@ export const Usuario = new EntitySchema({
     },
     rut: {
       type: "varchar",
-      length: 8,
+      length: 10,
       unique: true,
       nullable: false,
     },

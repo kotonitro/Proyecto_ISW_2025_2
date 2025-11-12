@@ -5,6 +5,7 @@ import {
   createUsuario,
   updateUsuario,
   deleteUsuario,
+  getUsuarioByRut,
 } from "../controllers/usuario.controller.js";
 
 const router = Router();
@@ -14,6 +15,8 @@ router.post("/", authMiddleware, createUsuario);
 
 // Obtener todos (solo encargados)
 router.get("/", getUsuarios, authMiddleware);
+
+router.get("/:rut", authMiddleware, getUsuarioByRut);
 
 // Actualizar usuario por RUT(Solo encargados)
 router.put("/:rut", authMiddleware, updateUsuario);
