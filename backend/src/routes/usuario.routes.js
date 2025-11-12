@@ -1,29 +1,29 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import {
-  getUsuarios,
-  createUsuario,
-  updateUsuario,
-  deleteUsuario,
-  getUsuarioByRut,
+  handleGetUsuarios,
+  handleCreateUsuario,
+  handleUpdateUsuario,
+  handleDeleteUsuario,
+  handleGetUsuarioByRut,
 } from "../controllers/usuario.controller.js";
 
 const router = Router();
 router.use(authMiddleware);
 
 // Crear usuario(solo encargados)
-router.post("/", createUsuario);
+router.post("/", handleCreateUsuario);
 
 // Obtener todos (solo encargados)
-router.get("/", getUsuarios);
+router.get("/", handleGetUsuarios);
 
 // Obtener usuario por RUT(Solo encargados)
-router.get("/:rut", getUsuarioByRut);
+router.get("/:rut", handleGetUsuarioByRut);
 
 // Actualizar usuario por RUT(Solo encargados)
-router.patch("/:rut", updateUsuario);
+router.patch("/:rut", handleUpdateUsuario);
 
 // Eliminar usuario por RUT(Solo encargados)
-router.delete("/:rut", deleteUsuario);
+router.delete("/:rut", handleDeleteUsuario);
 
 export default router;
