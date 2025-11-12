@@ -94,7 +94,7 @@ export async function registerEntrada(data, idEncargado) {
     nombreUsuario: data.nombreUsuario,
     emailUsuario: data.emailUsuario,
     telefonoUsuario: data.telefonoUsuario,
-    fechaEntrada: new Date(),
+    fechaEntrada: data.fechaEntrada ? new Date(data.fechaEntrada) : new Date(),
   });
 
   const registroGuardado = await registroAlmacenRepository.save(nuevoRegistro);
@@ -106,7 +106,7 @@ export async function registerEntrada(data, idEncargado) {
 }
 
 //registra la salida de una bicicleta
-export async function registerSalida(idRegistroAlmacen, idEncargado) {
+export async function registerSalida(idRegistroAlmacen, idEncargado, fechaSalida) {
   // Validar horario
   if (!isWithinAllowedHours()) {
     throw new Error("El registro de salida solo es permitido entre 7:30 AM y 2:00 PM");
@@ -127,9 +127,8 @@ export async function registerSalida(idRegistroAlmacen, idEncargado) {
     throw new Error(`El registro ${idRegistroAlmacen} ya tiene una salida registrada`);
   }
 
-  // Actualizar el registro con la fecha de salida
-  registro.fechaSalida = new Date();
-
+  // Actualizar el registro con la fecha de salida (usar la proporcionada o la actual)
+  registro.fechaSalida = fechaSalida ? new Date(fechaSalida) : new Date();
 
   const registroActualizado = await registroAlmacenRepository.save(registro);
   

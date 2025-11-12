@@ -71,6 +71,22 @@ export const registroEntradaValidation = Joi.object({
       "number.positive": "ID de bicicletero debe ser positivo",
       "any.required": "ID de bicicletero es obligatorio"
     }),
+
+  fechaEntrada: Joi.date()
+    .iso()
+    .optional()
+    .messages({
+      "date.base": "Fecha de entrada debe ser una fecha válida",
+      "date.format": "Fecha de entrada debe estar en formato (YYYY-MM-DDTHH:mm:ss.sssZ)"
+    }),
+
+  fechaSalida: Joi.date()
+    .iso()
+    .optional()
+    .messages({
+      "date.base": "Fecha de salida debe ser una fecha válida",
+      "date.format": "Fecha de salida debe estar en formato (YYYY-MM-DDTHH:mm:ss.sssZ)"
+    }),
 });
 
 export const registroSalidaValidation = Joi.object({
@@ -83,5 +99,13 @@ export const registroSalidaValidation = Joi.object({
       "number.integer": "ID del registro debe ser un número entero",
       "number.positive": "ID del registro debe ser positivo",
       "any.required": "ID del registro es obligatorio"
+    }),
+
+  fechaSalida: Joi.date()
+    .iso()
+    .optional()
+    .messages({
+      "date.base": "Fecha de salida debe ser una fecha válida",
+      "date.format": "Fecha de salida debe estar en formato ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)"
     }),
 });
