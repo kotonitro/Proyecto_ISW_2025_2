@@ -21,20 +21,17 @@ export function isWithinAllowedHours() {
 
 /**
  * Determina el estado de una bicicleta basado en el registro
- * almacenada: está en un bicicletero Y horaSalida es NULL
- * retirada: horaSalida no es NULL
+ * almacenada: está en un bicicletero Y fechaSalida es NULL
+ * retirada: fechaSalida no es NULL
  */
 export function determineEstadoBicicleta(registro) {
   if (!registro) return null;
-  
-  if (registro.horaSalida === null && registro.bicicletero) {
+  if (registro.fechaSalida === null && registro.bicicletero) {
     return "ALMACENADA";
   }
-  
-  if (registro.horaSalida !== null) {
+  if (registro.fechaSalida !== null) {
     return "RETIRADA";
   }
-  
   return "DESCONOCIDO";
 }
 
@@ -82,7 +79,7 @@ export async function registerEntrada(data, idEncargado) {
   // Validar que no haya una entrada pendiente de salida para esta bicicleta
   const registroActivo = await registroAlmacenRepository.findOneBy({
     idBicicleta: data.idBicicleta,
-    horaSalida: null,
+    fechaSalida: null,
   });
   if (registroActivo) {
     throw new Error(`La bicicleta ${data.idBicicleta} ya tiene un registro activo sin salida`);
@@ -97,7 +94,7 @@ export async function registerEntrada(data, idEncargado) {
     nombreUsuario: data.nombreUsuario,
     emailUsuario: data.emailUsuario,
     telefonoUsuario: data.telefonoUsuario,
-    horaEntrada: new Date(),
+    fechaEntrada: new Date(),
   });
 
   const registroGuardado = await registroAlmacenRepository.save(nuevoRegistro);
@@ -126,12 +123,12 @@ export async function registerSalida(idRegistroAlmacen, idEncargado) {
     throw new Error(`Registro con ID ${idRegistroAlmacen} no existe`);
   }
 
-  if (registro.horaSalida !== null) {
+  if (registro.fechaSalida !== null) {
     throw new Error(`El registro ${idRegistroAlmacen} ya tiene una salida registrada`);
   }
 
-  // Actualizar el registro con la hora de salida
-  registro.horaSalida = new Date();
+  // Actualizar el registro con la fecha de salida
+  registro.fechaSalida = new Date();
 
 
   const registroActualizado = await registroAlmacenRepository.save(registro);
@@ -149,14 +146,14 @@ export async function getBicicletasAlmacenadas() {
     .leftJoinAndSelect("registro.bicicleta", "bicicleta")
     .leftJoinAndSelect("registro.bicicletero", "bicicletero")
     .leftJoinAndSelect("registro.encargado", "encargado")
-    .where("registro.horaSalida IS NULL")
-    .andWhere("registro.bicicletero IS NOT NULL")
-    .orderBy("registro.horaEntrada", "DESC")
+  .where("registro.fechaSalida IS NULL")
+  .andWhere("registro.bicicletero IS NOT NULL")
+  .orderBy("registro.fechaEntrada", "DESC")
     .getMany()
     .then(registros => 
       registros.map(r => ({
         ...r,
-        estadoBicicleta: "ALMACENADA",
+  estadoBicicleta: "ALMACENADA",
       }))
     );
 }
@@ -168,13 +165,13 @@ export async function getBicicletasRetiradas() {
     .leftJoinAndSelect("registro.bicicleta", "bicicleta")
     .leftJoinAndSelect("registro.bicicletero", "bicicletero")
     .leftJoinAndSelect("registro.encargado", "encargado")
-    .where("registro.horaSalida IS NOT NULL")
-    .orderBy("registro.horaSalida", "DESC")
+  .where("registro.fechaSalida IS NOT NULL")
+  .orderBy("registro.fechaSalida", "DESC")
     .getMany()
     .then(registros => 
       registros.map(r => ({
         ...r,
-        estadoBicicleta: "RETIRADA",
+  estadoBicicleta: "RETIRADA",
       }))
     );
 }
@@ -192,14 +189,7 @@ export async function getAllRegistros(filtros = {}) {
     });
   }
 
-  if (filtros.estado) {
-    // estado filtrado por horaSalida
-    if (filtros.estado === "entrada") {
-      query = query.andWhere("registro.horaSalida IS NULL");
-    } else if (filtros.estado === "salida") {
-      query = query.andWhere("registro.horaSalida IS NOT NULL");
-    }
-  }
+  // Eliminar filtro por estado (ya no existe en entidad)
 
   if (filtros.rutUsuario) {
     query = query.andWhere("registro.rutUsuario = :rutUsuario", { 
@@ -209,13 +199,13 @@ export async function getAllRegistros(filtros = {}) {
 
   if (filtros.estadoBicicleta) {
     if (filtros.estadoBicicleta === "ALMACENADA") {
-      query = query.andWhere("registro.horaSalida IS NULL");
+      query = query.andWhere("registro.fechaSalida IS NULL");
     } else if (filtros.estadoBicicleta === "RETIRADA") {
-      query = query.andWhere("registro.horaSalida IS NOT NULL");
+      query = query.andWhere("registro.fechaSalida IS NOT NULL");
     }
   }
 
-  const registros = await query.orderBy("registro.horaEntrada", "DESC").getMany();
+  const registros = await query.orderBy("registro.fechaEntrada", "DESC").getMany();
   
   // Agregar el estado calculado a cada registro
   return registros.map(r => ({

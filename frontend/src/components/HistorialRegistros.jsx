@@ -63,8 +63,8 @@ export default function HistorialRegistros() {
                 <th>Bicicleta</th>
                 <th>Bicicletero</th>
                 <th>Estado</th>
-                <th>Hora Entrada</th>
-                <th>Hora Salida</th>
+                <th>Fecha Entrada</th>
+                <th>Fecha Salida</th>
               </tr>
             </thead>
             <tbody>
@@ -75,9 +75,9 @@ export default function HistorialRegistros() {
                   <td>{r.rutUsuario}</td>
                   <td>{r.bicicleta?.idBicicleta || r.idBicicleta || "-"}</td>
                   <td>{r.bicicletero?.idBicicletero || r.idBicicletero || "-"}</td>
-                  <td className={`estado-${r.estado}`}>{r.estado?.toUpperCase()}</td>
-                  <td>{new Date(r.horaEntrada).toLocaleString()}</td>
-                  <td>{r.horaSalida ? new Date(r.horaSalida).toLocaleString() : "-"}</td>
+                  <td className={`estado-${r.estadoBicicleta}`}>{r.estadoBicicleta?.toUpperCase()}</td>
+                  <td>{new Date(r.fechaEntrada).toLocaleString()}</td>
+                  <td>{r.fechaSalida ? new Date(r.fechaSalida).toLocaleString() : "-"}</td>
                 </tr>
               ))}
             </tbody>
