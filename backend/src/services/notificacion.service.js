@@ -1,6 +1,6 @@
 import { AppDataSource } from "../config/configDB.js";
-import { Notificacion } from "../entities/notificacion.entity.js";
-import { Bicicletero } from "../entities/bicicletero.entity.js";
+import { Notificacion } from "../models/notificacion.entity.js";
+import { Bicicletero } from "../models/bicicletero.entity.js";
 
 // Crear notificación
 export async function createNotificacion(notificacionData) {

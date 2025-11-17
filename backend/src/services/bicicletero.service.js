@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/configDB.js";
-import { Bicicletero } from "../entities/bicicletero.entity.js";
+import { Bicicletero } from "../models/bicicletero.entity.js";
 
 export const bicicleteroRepository = AppDataSource.getRepository(Bicicletero);
 

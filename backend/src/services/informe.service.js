@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/configDB.js";
-import { Informe } from "../entities/informe.entity.js";
+import { Informe } from "../models/informe.entity.js";
 
 export const informeRepository = AppDataSource.getRepository(Informe);
 
