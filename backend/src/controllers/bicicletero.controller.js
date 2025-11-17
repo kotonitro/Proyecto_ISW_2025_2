@@ -31,16 +31,20 @@ export async function handleCreateBicicletero(req, res) {
 }
 
 export async function handleDeleteBicicletero(req, res) {
-    const idBicicletero = req.idBicicletero;
+    const { id } = req.params;
+    const idNum = parseInt(id, 10)
+    
+    if (isNaN(idNum)) {
+        return handleErrorClient(res, 400, "El ID del bicicletero debe ser un numero.");
+    }
 
     try {
-        const Bicicletero = await getBicicleteroById(idBicicletero);
-        if (!Bicicletero) {
-            return res.status(404).json({ message: "Bicicletero no encontrado" });
-        }
-        await deleteBicicletero(idBicicletero)
-        handleSuccess(res, 201, "Bicicletero eliminado exitosamente");
+        await deleteBicicletero(idNum);
+        handleSuccess(res, 200, "Bicicletero eliminado exitosamente");
     } catch (error) {
+        if (error.message.includes("Bicicletero no encontrado")) {
+            return handleErrorClient(res, 404, error.message);
+        }
         handleErrorServer(res, 500, "Error interno al eliminar el bicicletero", error.message);
     }
 }
