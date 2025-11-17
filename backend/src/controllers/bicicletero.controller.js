@@ -31,7 +31,7 @@ export async function handleCreateBicicletero(req, res) {
 }
 
 export async function handleDeleteBicicletero(req, res) {
-    const idBicicletero = req.body.idBicicletero;
+    const idBicicletero = req.idBicicletero;
 
     try {
         const Bicicletero = await getBicicleteroById(idBicicletero);

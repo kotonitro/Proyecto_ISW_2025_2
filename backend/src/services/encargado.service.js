@@ -26,3 +26,22 @@ export async function createEncargado(data) {
 
   return await encargadoRepository.save(newEncargado);
 }
+
+export async function deleteEncargado(email) {
+  const Encargado = await getEncargadoByEmail(email);
+  if (!Encargado) {
+    throw new Error("Encargado no encontrado");
+  }
+  await encargadoRepository.remove(Encargado);
+  return true;
+}
+
+export async function updateEncargado(email, data) {
+  const Encargado = await getEncargadoByEmail(email);
+  if (!Encargado) {
+    throw new Error("Encargado no encontrado");
+  }
+  bicicleteroRepository.merge(Encargado, data);
+  const resultado = await encargadoRepository.save(Encargado);
+  return resultado;
+}
