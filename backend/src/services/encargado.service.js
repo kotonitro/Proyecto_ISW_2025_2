@@ -8,6 +8,10 @@ export async function getEncargadoByEmail(email) {
   return await encargadoRepository.findOneBy({ email });
 }
 
+export async function getEncargadoById(idEncargado) {
+  return await encargadoRepository.findOneBy({ idEncargado });
+}
+
 export async function getEncargados() {
   const Encargado = await encargadoRepository.find();
   return Encargado;
@@ -27,8 +31,8 @@ export async function createEncargado(data) {
   return await encargadoRepository.save(newEncargado);
 }
 
-export async function deleteEncargado(email) {
-  const Encargado = await getEncargadoByEmail(email);
+export async function deleteEncargado(idEncargado) {
+  const Encargado = await getEncargadoById(idEncargado);
   if (!Encargado) {
     throw new Error("Encargado no encontrado");
   }
@@ -36,8 +40,8 @@ export async function deleteEncargado(email) {
   return true;
 }
 
-export async function updateEncargado(email, data) {
-  const Encargado = await getEncargadoByEmail(email);
+export async function updateEncargado(idEncargado, data) {
+  const Encargado = await getEncargadoByEmail(idEncargado);
   if (!Encargado) {
     throw new Error("Encargado no encontrado");
   }

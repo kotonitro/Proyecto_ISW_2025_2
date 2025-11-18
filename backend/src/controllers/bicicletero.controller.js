@@ -32,14 +32,14 @@ export async function handleCreateBicicletero(req, res) {
 
 export async function handleDeleteBicicletero(req, res) {
     const { id } = req.params;
-    const idNum = parseInt(id, 10)
+    const idBicicletero = parseInt(id, 10)
     
-    if (isNaN(idNum)) {
+    if (isNaN(idBicicletero)) {
         return handleErrorClient(res, 400, "El ID del bicicletero debe ser un numero.");
     }
 
     try {
-        await deleteBicicletero(idNum);
+        await deleteBicicletero(idBicicletero);
         handleSuccess(res, 200, "Bicicletero eliminado exitosamente");
     } catch (error) {
         if (error.message.includes("Bicicletero no encontrado")) {
