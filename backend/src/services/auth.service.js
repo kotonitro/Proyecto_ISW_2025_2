@@ -13,7 +13,12 @@ export async function loginEncargado(email, contrasena) {
     throw new Error("Credenciales incorrectas");
   }
 
-  const payload = { sub: encargado.idEncargado, email: encargado.email };
+  const payload = { 
+    id: encargado.idEncargado, 
+    email: encargado.email,
+    esAdmin: encargado.esAdmin,
+    nombre: encargado.nombre
+  };
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
   delete encargado.contrasena;

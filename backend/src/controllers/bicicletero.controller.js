@@ -33,18 +33,22 @@ export async function handleCreateBicicletero(req, res) {
 export async function handleDeleteBicicletero(req, res) {
     const { id } = req.params;
     const idBicicletero = parseInt(id, 10)
+    const Bicicletero = getBicicleteroById(idBicicletero)
     
     if (isNaN(idBicicletero)) {
         return handleErrorClient(res, 400, "El ID del bicicletero debe ser un numero.");
     }
 
     try {
+
+        if (!Bicicletero){
+            return handleErrorClient(res, 404, "Encargado no encontrado.");
+        }
+
         await deleteBicicletero(idBicicletero);
         handleSuccess(res, 200, "Bicicletero eliminado exitosamente");
+
     } catch (error) {
-        if (error.message.includes("Bicicletero no encontrado")) {
-            return handleErrorClient(res, 404, error.message);
-        }
         handleErrorServer(res, 500, "Error interno al eliminar el bicicletero", error.message);
     }
 }

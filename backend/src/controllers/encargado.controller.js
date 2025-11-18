@@ -1,4 +1,4 @@
-import { getEncargados, createEncargado, deleteEncargado } from "../services/encargado.service.js";
+import { getEncargados, createEncargado, deleteEncargado, getEncargadoById } from "../services/encargado.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { encargadoValidation } from "../validations/encargado.validation.js";
 
@@ -33,18 +33,31 @@ export async function handleCreateEncargado(req, res) {
 export async function handleDeleteEncargado(req, res) {
     const { id } = req.params;
     const idEncargado = parseInt(id, 10)
-    
+    const idAdminLogueado = req.encargado.id
+    const Encargado = await getEncargadoById(idEncargado);
+
     if (isNaN(idEncargado)) {
         return handleErrorClient(res, 400, "El ID del encargado debe ser un numero.");
     }
 
     try {
+
+        if (idEncargado == idAdminLogueado){
+            return handleErrorClient(res, 403, "No puedes eliminarte a ti mismo.");
+        }
+
+        if (Encargado.esAdmin === true) {
+            return handleErrorClient(res, 403, "No puedes eliminar a otro administrador.");
+        }
+
+        if (!Encargado){
+            return handleErrorClient(res, 404, "Encargado no encontrado.");
+        }
+
         await deleteEncargado(idEncargado);
         handleSuccess(res, 200, "Encargado eliminado exitosamente");
+
     } catch (error) {
-        if (error.message.includes("Encargado no encontrado")) {
-            return handleErrorClient(res, 404, error.message);
-        }
         handleErrorServer(res, 500, "Error interno al eliminar el encargado", error.message);
     }
 }
