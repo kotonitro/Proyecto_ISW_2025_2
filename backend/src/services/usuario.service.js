@@ -5,12 +5,16 @@ export const userRepository = AppDataSource.getRepository(Usuario);
 
 export async function createUsuario(data) {
   const newUsuario = userRepository.create(data);
-
   return await userRepository.save(newUsuario);
 }
 
 export async function getUsuarioByRut(rut) {
   const Usuario = await userRepository.findOneBy({ rut });
+  return Usuario;
+}
+
+export async function getUsuarioById(idUsuario) {
+  const Usuario = await userRepository.findOneBy({ idUsuario });
   return Usuario;
 }
 
