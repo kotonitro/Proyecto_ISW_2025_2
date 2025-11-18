@@ -13,8 +13,7 @@ export async function getEncargadoById(idEncargado) {
 }
 
 export async function getEncargados() {
-  const Encargado = await encargadoRepository.find();
-  return Encargado;
+  return await encargadoRepository.find();
 }
 
 export async function createEncargado(data) {
@@ -33,18 +32,12 @@ export async function createEncargado(data) {
 
 export async function deleteEncargado(idEncargado) {
   const Encargado = await getEncargadoById(idEncargado);
-  if (!Encargado) {
-    throw new Error("Encargado no encontrado");
-  }
   await encargadoRepository.remove(Encargado);
   return true;
 }
 
 export async function updateEncargado(idEncargado, data) {
-  const Encargado = await getEncargadoByEmail(idEncargado);
-  if (!Encargado) {
-    throw new Error("Encargado no encontrado");
-  }
+  const Encargado = await getEncargadoById(idEncargado);
   bicicleteroRepository.merge(Encargado, data);
   const resultado = await encargadoRepository.save(Encargado);
   return resultado;
