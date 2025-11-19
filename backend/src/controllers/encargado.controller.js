@@ -26,16 +26,28 @@ export async function handleCreateEncargado(req, res) {
             return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails,);
         }
 
-        if (await getEncargadoByEmail(value.email)) {
-            return handleErrorClient(res, 409, "Ya existe un encargado con ese email.");
+        const conflictos = [];
+        const [encargadoEmail, encargadoRut, encargadoTelefono] = await Promise.all([
+            getEncargadoByEmail(value.email),
+            getEncargadoByRut(value.rut),
+            getEncargadoByTelefono(value.telefono)
+        ]);
+
+
+        if (encargadoEmail) {
+            conflictos.push({ field: "email", message: "Ya existe un encargado con ese email." });
         }
 
-        if (await getEncargadoByRut(value.rut)) {
-            return handleErrorClient(res, 409, "Ya existe un encargado con ese rut.");
+        if (encargadoRut) {
+            conflictos.push({ field: "rut", message: "Ya existe un encargado con ese rut." });
         }
     
-        if (await getEncargadoByTelefono(value.telefono)) {
-            return handleErrorClient(res, 409, "Ya existe un encargado con ese teléfono.");
+        if (encargadoTelefono) {
+            conflictos.push({ field: "telefono", message: "Ya existe un encargado con ese teléfono." });
+        }
+
+        if (conflictos.length > 0) {
+            return handleErrorClient(res, 409, "Error de conflicto en los datos.", conflictos);
         }
 
         const newEncargado = await createEncargado(value);

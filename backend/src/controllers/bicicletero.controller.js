@@ -28,8 +28,15 @@ export async function handleCreateBicicletero(req, res) {
             return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails);
         }
 
-        if (await getBicicleteroByUbicacion(value.ubicacion)) {
-            return handleErrorClient(res, 409, "Ya existe un bicicletero con esa ubicación.");
+        const conflictos = [];
+        const [bicicleteroUbicacion] = await Promise.all([getBicicleteroByUbicacion(value.ubicacion)]);
+
+        if (bicicleteroUbicacion) {
+            conflictos.push({field: "ubicacion", message: "Ya existe un bicicletero con esa ubicación." });
+        }
+
+        if (conflictos.length > 0) {
+            return handleErrorClient(res, 409, "Error de conflicto en los datos.", conflictos);
         }
 
         const newBicicletero = await createBicicletero(value);
