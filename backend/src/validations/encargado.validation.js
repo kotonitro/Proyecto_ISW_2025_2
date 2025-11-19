@@ -50,7 +50,7 @@ export const encargadoValidation = Joi.object({
 
     .required()
     .messages({
-      "string.email": "El correo debe ser un email válido",
+      "string.email": "El email debe ser uno válido",
 
       "any.required": "El correo es obligatorio",
     }),
