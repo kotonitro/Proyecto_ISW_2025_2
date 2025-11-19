@@ -11,6 +11,29 @@ export async function handleGetBicicleteros(req, res){
     }
 }
 
+export async function handleGetBicicletero(req, res) {
+    const { id } = req.params;
+    const idBicicletero = parseInt(id, 10)
+
+    if (isNaN(idBicicletero)) {
+        return handleErrorClient(res, 400, "El ID del bicicletero debe ser un número.");
+    }
+
+    try {
+
+        const Bicicletero = await getBicicleteroById(idBicicletero);
+        
+        if (!Bicicletero) {
+            return handleErrorClient(res, 404, "Bicicletero no encontrado.");
+        }
+
+        handleSuccess(res, 200, "Bicicletero obtenido correctamente.", Bicicletero);
+
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno al obtener el bicicletero.", error.message);
+    }
+}
+
 export async function handleCreateBicicletero(req, res) {
     const bicicleteroData = req.body;
 
@@ -49,13 +72,14 @@ export async function handleCreateBicicletero(req, res) {
 export async function handleDeleteBicicletero(req, res) {
     const { id } = req.params;
     const idBicicletero = parseInt(id, 10)
-    const Bicicletero = getBicicleteroById(idBicicletero)
-    
+
     if (isNaN(idBicicletero)) {
         return handleErrorClient(res, 400, "El ID del bicicletero debe ser un número.");
     }
 
     try {
+
+        const Bicicletero = await getBicicleteroById(idBicicletero);
 
         if (!Bicicletero){
             return handleErrorClient(res, 404, "Bicicletero no encontrado.");

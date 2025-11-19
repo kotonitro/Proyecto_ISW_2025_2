@@ -11,6 +11,29 @@ export async function handleGetEncargados(req, res){
     }
 }
 
+export async function handleGetEncargado(req, res) {
+    const { id } = req.params;
+    const idEncargado = parseInt(id, 10)
+
+    if (isNaN(idEncargado)) {
+        return handleErrorClient(res, 400, "El ID del encargado debe ser un número.");
+    }
+
+    try {
+
+        const Encargado = await getEncargadoById(idEncargado);
+        
+        if (!Encargado) {
+            return handleErrorClient(res, 404, "Encargado no encontrado.");
+        }
+
+        handleSuccess(res, 200, "Encargado obtenido correctamente.", Encargado);
+
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno al obtener el encargado.", error.message);
+    }
+}
+
 export async function handleCreateEncargado(req, res) {
     const encargadoData = req.body;
 
@@ -61,7 +84,6 @@ export async function handleDeleteEncargado(req, res) {
     const { id } = req.params;
     const idEncargado = parseInt(id, 10)
     const idAdminLogueado = req.encargado.id
-    const Encargado = await getEncargadoById(idEncargado);
 
     if (isNaN(idEncargado)) {
         return handleErrorClient(res, 400, "El ID del encargado debe ser un numero.");
@@ -73,12 +95,14 @@ export async function handleDeleteEncargado(req, res) {
             return handleErrorClient(res, 403, "No puedes eliminarte a ti mismo.");
         }
 
-        if (Encargado.esAdmin === true) {
-            return handleErrorClient(res, 403, "No puedes eliminar a otro administrador.");
-        }
+        const Encargado = await getEncargadoById(idEncargado);
 
         if (!Encargado){
             return handleErrorClient(res, 404, "Encargado no encontrado.");
+        }
+
+        if (Encargado.esAdmin === true) {
+            return handleErrorClient(res, 403, "No puedes eliminar a otro administrador.");
         }
 
         await deleteEncargado(idEncargado);
