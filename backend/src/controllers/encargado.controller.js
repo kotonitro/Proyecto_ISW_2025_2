@@ -1,13 +1,13 @@
-import { getEncargados, createEncargado, deleteEncargado, getEncargadoById } from "../services/encargado.service.js";
+import { getEncargados, createEncargado, deleteEncargado, getEncargadoById, getEncargadoByEmail, getEncargadoByRut, getEncargadoByTelefono } from "../services/encargado.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { encargadoValidation } from "../validations/encargado.validation.js";
 
 export async function handleGetEncargados(req, res){
     try {
         const Encargados = await getEncargados();
-        return handleSuccess(res, 200, "Encargados obtenidos correctamente", Encargados);
+        return handleSuccess(res, 200, "Encargados obtenidos correctamente.", Encargados);
     } catch (error) {
-        return handleErrorServer(res, 500, "Error interno al obtener los encargados", error.message);
+        return handleErrorServer(res, 500, "Error interno al obtener los encargados.", error.message);
     }
 }
 
@@ -17,16 +17,31 @@ export async function handleCreateEncargado(req, res) {
     try {
         const { error, value } = encargadoValidation.validate(encargadoData, {abortEarly: false});
         if (error){
+
             const errorDetails = error.details.map((detail) => ({
                 field: detail.context.key,
                 message: detail.message.replace(/['"]/g, ""),
             }));
+            
             return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails,);
         }
+
+        if (await getEncargadoByEmail(value.email)) {
+            return handleErrorClient(res, 409, "Ya existe un encargado con ese email.");
+        }
+
+        if (await getEncargadoByRut(value.rut)) {
+            return handleErrorClient(res, 409, "Ya existe un encargado con ese rut.");
+        }
+    
+        if (await getEncargadoByTelefono(value.telefono)) {
+            return handleErrorClient(res, 409, "Ya existe un encargado con ese teléfono.");
+        }
+
         const newEncargado = await createEncargado(value);
-        handleSuccess(res, 201, "Encargado creado exitosamente", newEncargado);
+        handleSuccess(res, 201, "Encargado creado correctamente.", newEncargado);
     } catch (error) {
-        handleErrorServer(res, 500, "Error interno al crear el encargado", error.message);
+        handleErrorServer(res, 500, "Error interno al crear el encargado.", error.message);
     }
 }
 
@@ -55,9 +70,9 @@ export async function handleDeleteEncargado(req, res) {
         }
 
         await deleteEncargado(idEncargado);
-        handleSuccess(res, 200, "Encargado eliminado exitosamente");
+        handleSuccess(res, 200, "Encargado eliminado correctamente.");
 
     } catch (error) {
-        handleErrorServer(res, 500, "Error interno al eliminar el encargado", error.message);
+        handleErrorServer(res, 500, "Error interno al eliminar el encargado.", error.message);
     }
 }

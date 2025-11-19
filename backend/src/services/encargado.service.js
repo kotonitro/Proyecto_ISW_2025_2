@@ -4,12 +4,20 @@ import bcrypt from "bcrypt";
 
 export const encargadoRepository = AppDataSource.getRepository(Encargado);
 
+export async function getEncargadoById(idEncargado) {
+  return await encargadoRepository.findOneBy({ idEncargado });
+}
+
 export async function getEncargadoByEmail(email) {
   return await encargadoRepository.findOneBy({ email });
 }
 
-export async function getEncargadoById(idEncargado) {
-  return await encargadoRepository.findOneBy({ idEncargado });
+export async function getEncargadoByRut(rut) {
+  return await encargadoRepository.findOneBy({ rut });
+}
+
+export async function getEncargadoByTelefono(telefono) {
+  return await encargadoRepository.findOneBy({ telefono });
 }
 
 export async function getEncargados() {

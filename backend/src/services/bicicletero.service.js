@@ -7,6 +7,10 @@ export async function getBicicleteroById(idBicicletero) {
   return await bicicleteroRepository.findOneBy({ idBicicletero });
 }
 
+export async function getBicicleteroByUbicacion(ubicacion) {
+  return await bicicleteroRepository.findOneBy({ ubicacion });
+}
+
 export async function getBicicleteros() {
   return await bicicleteroRepository.find();;
 }
