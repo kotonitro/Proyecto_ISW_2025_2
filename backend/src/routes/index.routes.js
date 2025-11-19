@@ -6,6 +6,7 @@ import encargadoRoutes from "./encargado.routes.js";
 import notificacionRoutes from "./notificacion.routes.js";
 import informeRoutes from "./informe.routes.js";
 import usuarioRoutes from "./usuario.routes.js";
+import bicicletaRoutes from "./bicicleta.routes.js";
 
 export function routerApi(app) {
   const router = Router();
@@ -13,6 +14,7 @@ export function routerApi(app) {
 
   router.use("/auth", authRoutes);
   router.use("/custodia", custodiaRoutes);
+  router.use("/bicicletas", bicicletaRoutes);
   router.use("/bicicleteros", bicicleteroRoutes);
   router.use("/encargados", encargadoRoutes);
   router.use("/notificaciones", notificacionRoutes);
