@@ -50,9 +50,9 @@ export const encargadoValidation = Joi.object({
 
     .required()
     .messages({
-      "string.email": "El correo debe ser un email válido",
+      "string.email": "El email debe tener un formato válido",
 
-      "any.required": "El correo es obligatorio",
+      "any.required": "El email es obligatorio",
     }),
 
   contrasena: Joi.string()
@@ -72,8 +72,14 @@ export const encargadoValidation = Joi.object({
     .pattern(/^\d{8}$/)
     .required()
     .messages({
-      "string.pattern.base":
-        "El teléfono debe contener sólo números y obligatoriamente 8 dígitos",
+      "string.pattern.base": "El teléfono debe contener sólo números y obligatoriamente 8 dígitos",
       "any.required": "El teléfono es obligatorio",
     }),
 });
+
+export const encargadoUpdateValidation = encargadoValidation.fork(
+  ["rut", "nombre", "email", "contrasena", "telefono"],
+  (schema) => schema.optional()
+).min(1).required().messages({
+  "object.min": "Debe haber al menos un campo para actualizar.",
+  "any.required": "La petición no puede estar vacia."});

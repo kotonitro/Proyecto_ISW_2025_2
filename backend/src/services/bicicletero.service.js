@@ -7,9 +7,12 @@ export async function getBicicleteroById(idBicicletero) {
   return await bicicleteroRepository.findOneBy({ idBicicletero });
 }
 
+export async function getBicicleteroByUbicacion(ubicacion) {
+  return await bicicleteroRepository.findOneBy({ ubicacion });
+}
+
 export async function getBicicleteros() {
-  const Bicicletero = await bicicleteroRepository.find();
-  return Bicicletero;
+  return await bicicleteroRepository.find();;
 }
 
 export async function createBicicletero(data) {
@@ -19,18 +22,12 @@ export async function createBicicletero(data) {
 
 export async function deleteBicicletero(idBicicletero) {
   const Bicicletero = await getBicicleteroById(idBicicletero);
-  if (!Bicicletero) {
-    throw new Error("Bicicletero no encontrado");
-  }
   await bicicleteroRepository.remove(Bicicletero);
   return true;
 }
 
 export async function updateBicicletero(idBicicletero, data) {
   const Bicicletero = await getBicicleteroById(idBicicletero);
-  if (!Bicicletero) {
-    throw new Error("Bicicletero no encontrado");
-  }
   bicicleteroRepository.merge(Bicicletero, data);
   const resultado = await bicicleteroRepository.save(Bicicletero);
   return resultado;
