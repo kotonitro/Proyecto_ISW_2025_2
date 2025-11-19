@@ -1,6 +1,6 @@
-import { getEncargados, createEncargado, deleteEncargado, getEncargadoById, getEncargadoByEmail, getEncargadoByRut, getEncargadoByTelefono } from "../services/encargado.service.js";
+import { getEncargados, createEncargado, deleteEncargado, getEncargadoById, getEncargadoByEmail, getEncargadoByRut, getEncargadoByTelefono, updateEncargado } from "../services/encargado.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
-import { encargadoValidation } from "../validations/encargado.validation.js";
+import { encargadoValidation, encargadoUpdateValidation } from "../validations/encargado.validation.js";
 
 export async function handleGetEncargados(req, res){
     try {
@@ -110,5 +110,88 @@ export async function handleDeleteEncargado(req, res) {
 
     } catch (error) {
         handleErrorServer(res, 500, "Error interno al eliminar el encargado.", error.message);
+    }
+}
+
+export async function handleUpdateEncargado(req, res){
+    const { id } = req.params;
+    const idEncargado = parseInt(id, 10);
+    const encargadoData = req.body;
+
+    if (isNaN(idEncargado)) {
+        return handleErrorClient(res, 400, "El ID del encargado debe ser un número.");
+    }
+
+    try {
+
+        const { error, value } = encargadoUpdateValidation.validate(encargadoData, {abortEarly: false});
+
+        if (error) {
+            
+            const errorDetails = error.details.map((detail) => ({
+                field: detail.context.key,
+                message: detail.message.replace(/['"]/g, ""),
+            }));
+            
+            return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails);
+        }
+
+        const Encargado = await getEncargadoById(idEncargado);
+
+        if (!Encargado) {
+            return handleErrorClient(res, 404, "Encargado no encontrado.");
+        }
+
+        const conflictos = [];
+        const promises = [];
+
+        if (value.email) {
+            promises.push(getEncargadoByEmail(value.email).then(resultado => ({
+                campo: "email",
+                resultado
+            })));
+        }
+
+        if (value.rut) {
+            promises.push(getEncargadoByRut(value.rut).then(resultado => ({
+                campo: "rut",
+                resultado
+            })));
+        }
+
+        if (value.telefono) {
+            promises.push(getEncargadoByTelefono(value.telefono).then(resultado => ({
+                campo: "telefono",
+                resultado
+            })));
+        }
+
+        const comprobaciones = await Promise.all(promises);
+
+        comprobaciones.forEach(({ campo, resultado }) => {
+            if (resultado && resultado.idEncargado !== idEncargado) {
+                if (campo == "email"){
+                    conflictos.push({field: campo, message: "Ya existe un encargado con ese email."})
+                }
+
+                if (campo == "rut"){
+                    conflictos.push({field: campo, message: "Ya existe un encargado con ese rut."})
+                }
+
+                if (campo == "telefono"){
+                    conflictos.push({field: campo, message: "Ya existe un encargado con ese teléfono."})
+                }
+            }
+        })
+
+        if (conflictos.length > 0) {
+           return handleErrorClient(res, 409, "Error de conflicto en los datos.", conflictos);
+        }
+        
+        const updatedEncargado = await updateEncargado(idEncargado, value);
+        handleSuccess(res, 200, "Encargado actualizado correctamente.", updatedEncargado);
+
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno al actualizar el encargado.", error.message);
     }
 }
