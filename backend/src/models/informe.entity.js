@@ -11,6 +11,7 @@ export const Informe = new EntitySchema({
     },
     idEncargado: {
       type: "int",
+      nullable: true,
     },
     idRegistroAlmacen: {
       type: "int",

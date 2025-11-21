@@ -18,18 +18,12 @@ export async function getInformes() {
 
 export async function deleteInforme(idInforme) {
   const Informe = await getInformeById(idInforme);
-  if (!Informe) {
-    throw new Error("Informe no encontrado");
-  }
   await informeRepository.remove(Informe);
   return true;
 }
 
 export async function updateInforme(idInforme, data) {
   const Informe = await getInformeById(idInforme);
-  if (!Informe) {
-    throw new Error("Informe no encontrado");
-  }
   informeRepository.merge(Informe, data);
   const resultado = await informeRepository.save(Informe);
   return resultado;

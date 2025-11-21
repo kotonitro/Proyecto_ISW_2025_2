@@ -34,3 +34,21 @@ export const informeValidation = Joi.object({
     "any.required": "La fecha de informe es obligatoria",
   }),
 });
+
+export const informeUpdateValidation = informeValidation
+  .fork(
+    [
+      "idEncargado",
+      "idRegistroAlmacen",
+      "tipoIncidente",
+      "descripcion",
+      "fechaInforme",
+    ],
+    (schema) => schema.optional(),
+  )
+  .min(1)
+  .required()
+  .messages({
+    "object.min": "Debe haber al menos un campo para actualizar.",
+    "any.required": "La petición no puede estar vacia.",
+  });
