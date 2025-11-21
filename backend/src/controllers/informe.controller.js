@@ -48,7 +48,7 @@ export async function handleCreateInforme(req, res) {
 }
 
 export async function handleDeleteInforme(req, res) {
-  const idInforme = req.body.idInforme;
+  const idInforme = req.idInforme;
   try {
     const Informe = await getInformeById(idInforme);
     if (!Informe) {
@@ -84,7 +84,7 @@ export async function handleGetInformes(req, res) {
   }
 }
 
-export async function updateInforme(req, res) {
+export async function handleUpdateInforme(req, res) {
   const { id } = req.params;
   const idInforme = parseInt(id, 10);
   const informeData = req.body;
