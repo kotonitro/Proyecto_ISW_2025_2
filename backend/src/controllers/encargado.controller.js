@@ -46,7 +46,7 @@ export async function handleCreateEncargado(req, res) {
                 message: detail.message.replace(/['"]/g, ""),
             }));
             
-            return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails,);
+            return handleErrorClient(res, 400, "Error de validación en los datos.", errorDetails,);
         }
 
         const conflictos = [];
@@ -86,7 +86,7 @@ export async function handleDeleteEncargado(req, res) {
     const idAdminLogueado = req.encargado.id
 
     if (isNaN(idEncargado)) {
-        return handleErrorClient(res, 400, "El ID del encargado debe ser un numero.");
+        return handleErrorClient(res, 400, "El ID del encargado debe ser un número.");
     }
 
     try {
@@ -140,6 +140,10 @@ export async function handleUpdateEncargado(req, res){
 
         if (!Encargado) {
             return handleErrorClient(res, 404, "Encargado no encontrado.");
+        }
+
+        if (Encargado.esAdmin === true) {
+            return handleErrorClient(res, 403, "No puedes modificar a otro administrador.");
         }
 
         const conflictos = [];
