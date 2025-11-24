@@ -79,7 +79,8 @@ export const encargadoValidation = Joi.object({
 
 export const encargadoUpdateValidation = encargadoValidation.fork(
   ["rut", "nombre", "email", "contrasena", "telefono"],
-  (schema) => schema.optional()
-).min(1).required().messages({
+  (schema) => schema.optional()).append({
+    activo: Joi.boolean().optional()
+  }).min(1).required().messages({
   "object.min": "Debe haber al menos un campo para actualizar.",
   "any.required": "La petición no puede estar vacia."});

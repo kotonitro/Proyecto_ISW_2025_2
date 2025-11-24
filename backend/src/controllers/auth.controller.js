@@ -8,7 +8,6 @@ export async function handleLogin(req, res) {
     if (!email || !contrasena) {
       return handleErrorClient(res, 400, "Email y contraseña son requeridos");
     }
-    
     const data = await loginEncargado(email, contrasena);
     handleSuccess(res, 200, "Login exitoso", data);
   } catch (error) {

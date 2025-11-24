@@ -13,6 +13,11 @@ export const Encargado = new EntitySchema({
       type: "boolean",
       default: false,
     },
+
+    activo: {
+      type: "boolean",
+      default: true,
+    },
     rut: {
       type: "varchar",
       length: 10,
