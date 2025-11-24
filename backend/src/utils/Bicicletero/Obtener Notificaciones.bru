@@ -1,0 +1,19 @@
+meta {
+  name: Obtener Notificaciones
+  type: http
+  seq: 16
+}
+
+get {
+  url: http://localhost:3000/api/notificaciones
+  body: text
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3NjI5NzUzMDIsImV4cCI6MTc2Mjk3ODkwMn0.mlQsC3xrN_asi7SszzMXzRieKrintsHOb7FfXCu1Jwo
+}
+
+settings {
+  encodeUrl: true
+}

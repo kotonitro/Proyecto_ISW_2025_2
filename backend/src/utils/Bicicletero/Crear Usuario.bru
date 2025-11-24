@@ -1,0 +1,28 @@
+meta {
+  name: Crear Usuario
+  type: http
+  seq: 18
+}
+
+post {
+  url: http://localhost:3000/api/usuarios/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3NjI5NzY4MzAsImV4cCI6MTc2Mjk4MDQzMH0.qNcyiNojmPp3ZJdhCUQ0KI3dkJEO7e6bXIsngJ19Tnw
+}
+
+body:json {
+  {
+      "nombre": "Pepee",
+      "rut": "21393576-3",
+      "email": "el2@pepe.com",
+      "telefono": "11111121"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

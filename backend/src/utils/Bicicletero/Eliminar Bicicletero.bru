@@ -1,0 +1,19 @@
+meta {
+  name: Eliminar Bicicletero
+  type: http
+  seq: 6
+}
+
+delete {
+  url: http://localhost:3000/api/bicicleteros/40
+  body: text
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJlc0FkbWluIjp0cnVlLCJub21icmUiOiJBZG1pbiIsImlhdCI6MTc2MzUxODUzNSwiZXhwIjoxNzYzNTIyMTM1fQ.EPg3N-SH81sG-1Pl4UESOyDY3eCSGusGnKcypUXye_w
+}
+
+settings {
+  encodeUrl: true
+}
