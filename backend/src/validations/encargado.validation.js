@@ -75,7 +75,7 @@ export const encargadoValidation = Joi.object({
       "string.pattern.base": "El teléfono debe contener sólo números y obligatoriamente 8 dígitos",
       "any.required": "El teléfono es obligatorio",
     }),
-});
+}).required().messages({"any.required": "La petición no puede estar vacia."});;
 
 export const encargadoUpdateValidation = encargadoValidation.fork(
   ["rut", "nombre", "email", "contrasena", "telefono"],

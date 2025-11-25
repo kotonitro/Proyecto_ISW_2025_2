@@ -1,11 +1,11 @@
 meta {
-  name: Obtener Bicicleteros
+  name: (POST) Crear Encargado
   type: http
-  seq: 2
+  seq: 9
 }
 
-get {
-  url: http://localhost:3000/api/bicicleteros/
+post {
+  url: http://localhost:3000/api/encargados
   body: json
   auth: bearer
 }
@@ -16,7 +16,11 @@ auth:bearer {
 
 body:json {
   {
-      "rut": "21218016-5"
+      "nombre": "Ete Sech",
+      "rut": "21393576-3",
+      "email": "ete@sech.cl",
+      "contrasena": "123456A.",
+      "telefono": "12345571"
   }
 }
 

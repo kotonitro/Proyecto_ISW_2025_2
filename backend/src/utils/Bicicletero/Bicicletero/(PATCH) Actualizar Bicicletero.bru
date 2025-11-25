@@ -1,11 +1,11 @@
 meta {
-  name: Crear Bicicletero
+  name: (PATCH) Actualizar Bicicletero
   type: http
-  seq: 4
+  seq: 5
 }
 
-post {
-  url: http://localhost:3000/api/bicicleteros
+patch {
+  url: http://localhost:3000/api/bicicleteros/37
   body: json
   auth: bearer
 }
@@ -16,8 +16,8 @@ auth:bearer {
 
 body:json {
   {
-      "ubicacion": "asokdas",
-      "capacidad": 10
+      "ubicacion": "asdsdad",
+      "capacidad": 11
   }
 }
 

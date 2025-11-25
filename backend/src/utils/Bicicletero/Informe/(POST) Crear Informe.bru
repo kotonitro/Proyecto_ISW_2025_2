@@ -1,11 +1,11 @@
 meta {
-  name: Actualizar Informe
+  name: (POST) Crear Informe
   type: http
-  seq: 14
+  seq: 13
 }
 
-patch {
-  url: http://localhost:3000/api/informes/35
+post {
+  url: http://localhost:3000/api/informes
   body: json
   auth: bearer
 }
@@ -19,7 +19,7 @@ body:json {
       "idEncargado": 16,
       "idRegistroAlmacen": null,
       "tipoIncidente": "daño fisico",
-      "descripcion": "holaaaa",
+      "descripcion": "GHolaaaaasdasdsadasdasdasdasdasfgfgddasdasdsad",
       "fechaInforme": "2025-10-02"
   }
 }
