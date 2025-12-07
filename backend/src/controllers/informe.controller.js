@@ -1,4 +1,5 @@
 import {createInforme,getInformeById,deleteInforme,getInformes,updateInforme} from "../services/informe.service.js";
+import { generateInformePdf } from "../services/pdf.service.js";
 import {handleSuccess,handleErrorClient,handleErrorServer} from "../handlers/responseHandlers.js";
 import {informeValidation,informeUpdateValidation} from "../validations/informe.validation.js";
 
@@ -80,7 +81,27 @@ export async function handleUpdateInforme(req, res) {
   } catch (error) {
     handleErrorServer(res,500,"Error al actualizar el informe",error.message);
   }
-
-  //export async function downloadInformePdf(req, res){
-  //
+}
+ export async function handleDownloadInformePdf(req, res){
+   const { id } = req.params;
+     const idInforme = parseInt(id, 10);
+     if (isNaN(idInforme)) {
+       return handleErrorClient(res, 400, "El ID del informe debe ser un número.");
+     }
+     try {
+       const Informe = await getInformeById(idInforme);
+       if (!Informe) {
+         return handleErrorClient(res, 404, "Informe no encontrado para generar PDF.");
+       }
+       const pdfBuffer = await generateInformePdf(Informe);
+   
+       //headers para descarga
+       res.setHeader("Content-Type", "application/pdf");
+       res.setHeader("Content-Disposition", `attachment; filename=informe_${idInforme}.pdf`);
+       res.setHeader("Content-Length", pdfBuffer.length);
+   
+       res.send(pdfBuffer);
+     } catch (error) {
+       handleErrorServer(res, 500, "Error interno al generar el PDF", error.message);
+     }
 }
