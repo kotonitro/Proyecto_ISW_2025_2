@@ -2,9 +2,11 @@ import {createInforme,getInformeById,deleteInforme,getInformes,updateInforme} fr
 import { generateInformePdf } from "../services/pdf.service.js";
 import {handleSuccess,handleErrorClient,handleErrorServer} from "../handlers/responseHandlers.js";
 import {informeValidation,informeUpdateValidation} from "../validations/informe.validation.js";
+import {createDocumentos} from "../services/documento.service.js"
 
 export async function handleCreateInforme(req, res) {
   const informeData = req.body;
+  const archivos = req.files; 
   try {
     const { error, value } = informeValidation.validate(informeData, {
       abortEarly: false,
@@ -19,6 +21,11 @@ export async function handleCreateInforme(req, res) {
     }
 
     const newInforme = await createInforme(value);
+    
+    if (archivos && archivos.length > 0) {
+          await createDocumentos(archivos, newInforme);
+        }
+    
     handleSuccess(res, 201, "Informe creado exitosamente", newInforme);
   } catch (error) {
     handleErrorServer(res,500,"Error interno al crear el informe",error.message);
