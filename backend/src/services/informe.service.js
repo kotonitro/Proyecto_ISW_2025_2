@@ -9,7 +9,8 @@ export async function createInforme(data) {
 }
 
 export async function getInformeById(idInforme) {
-  return await informeRepository.findOneBy({ idInforme });
+  return await informeRepository.findOne({where: { idInforme: idInforme },
+      relations: ["encargados"]});
 }
 export async function getInformes() {
   const Informe = await informeRepository.find();

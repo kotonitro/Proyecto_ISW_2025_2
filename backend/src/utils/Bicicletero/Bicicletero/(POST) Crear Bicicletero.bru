@@ -1,0 +1,26 @@
+meta {
+  name: (POST) Crear Bicicletero
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/api/bicicleteros
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJlc0FkbWluIjp0cnVlLCJub21icmUiOiJBZG1pbiIsImlhdCI6MTc2MzUzOTUwNCwiZXhwIjoxNzYzNTQzMTA0fQ.67dF_KSMseB6HNDxrYT4OWSrTKYh4JhAaeeFWw5Gi1s
+}
+
+body:json {
+  {
+      "ubicacion": "asokdas",
+      "capacidad": 10
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,19 @@
+meta {
+  name: (DELETE) Eliminar Encargado
+  type: http
+  seq: 11
+}
+
+delete {
+  url: http://localhost:3000/api/encargados/24
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJlc0FkbWluIjp0cnVlLCJub21icmUiOiJBZG1pbiIsImlhdCI6MTc2MzU0Mjg4OCwiZXhwIjoxNzYzNTQ2NDg4fQ.tQjIGGkbGkHz_VDR8exhm5jwWvUyPTCcdOS-CzMvWtw
+}
+
+settings {
+  encodeUrl: true
+}

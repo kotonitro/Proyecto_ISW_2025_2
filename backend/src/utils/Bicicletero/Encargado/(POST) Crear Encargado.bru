@@ -1,0 +1,29 @@
+meta {
+  name: (POST) Crear Encargado
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://localhost:3000/api/encargados
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJlc0FkbWluIjp0cnVlLCJhY3Rpdm8iOnRydWUsIm5vbWJyZSI6IkFkbWluIiwiaWF0IjoxNzY0MDA0OTkxLCJleHAiOjE3NjQwMDg1OTF9.NsQ1Mm_-aZNTsZxADT00MRjoNBO11IofPSk68D8dU58
+}
+
+body:json {
+  {
+      "nombre": "Ete Sech",
+      "rut": "21393576-3",
+      "email": "ete@sech.cl",
+      "contrasena": "123456A.",
+      "telefono": "12345571"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

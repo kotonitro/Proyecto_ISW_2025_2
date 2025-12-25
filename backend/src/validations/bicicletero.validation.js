@@ -5,9 +5,11 @@ export const bicicleteroValidation = Joi.object({
   
   ubicacion: Joi.string()
     .trim()
+    .max(255)
     .required()
     .messages({
       "string.empty": "La ubicación es obligatoria.",
+      "string.max": "La ubicación debe tener como máximo 255 caracteres",
       "string.base": "La ubicación debe ser una cadena de texto.",
       "any.required": "La ubicación es obligatoria."
     }),

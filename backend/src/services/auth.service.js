@@ -5,12 +5,16 @@ import { getEncargadoByEmail } from "./encargado.service.js";
 export async function loginEncargado(email, contrasena) {
   const encargado = await getEncargadoByEmail(email);
   if (!encargado) {
-    throw new Error("Credenciales incorrectas");
+    throw new Error("Credenciales incorrectas.");
   }
 
   const isMatch = await bcrypt.compare(contrasena, encargado.contrasena);
   if (!isMatch) {
-    throw new Error("Credenciales incorrectas");
+    throw new Error("Credenciales incorrectas.");
+  }
+
+  if (!encargado.activo) {
+    throw new Error("Encargado inactivo.")
   }
 
   const payload = { 

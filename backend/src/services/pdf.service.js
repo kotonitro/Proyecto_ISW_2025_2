@@ -1,6 +1,6 @@
 import PDFDocument from "pdfkit";
 
-export function generateInformePdf(informe) {
+export function generateInformePdf(Informe) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ size: "A4", margin: 50 });
     const buffers = [];
@@ -9,28 +9,38 @@ export function generateInformePdf(informe) {
       resolve(Buffer.concat(buffers));
     });
     doc.on("error", reject);
-    //Contenido del PDF
-    doc
-      .fontSize(16)
-      .text(`Informe de Gestión - ID: ${informe.idInforme}`, {
-        align: "center",
-      });
+
+    // Título
+    doc.fontSize(18).text(`Informe de Gestión - ID: ${Informe.idInforme}`, {
+      align: "center",
+    });
     doc.moveDown();
-    doc
-      .fontSize(12)
-      .text(
-        `Fecha de Creación: ${informe.fechaCreacion ? informe.fechaCreacion.toDateString() : "N/A"}`,
-      );
-    doc.text(
-      `Encargado: ${informe.encargado ? informe.encargado.nombre : "No asignado"}`,
-    );
+
+    // Datos generales
+    doc.fontSize(12);
+    
+    // Fecha 
+    const fechaTexto = Informe.fechaInforme 
+      ? new Date(Informe.fechaInforme).toLocaleDateString() 
+      : "N/A";
+    doc.text(`Fecha del Informe: ${fechaTexto}`);
+
+    // Tipo de Incidente
+    doc.text(`Tipo de Incidente: ${Informe.tipoIncidente}`);
+
+    // Encargado 
+    const nombreEncargado = Informe.encargados ? Informe.encargados.nombre : "No asignado";
+    doc.text(`Encargado: ${nombreEncargado}`);
+    
     doc.moveDown();
-    doc.fontSize(14).text("Detalles del Informe:", { underline: true });
-    doc
-      .fontSize(10)
-      .text(informe.detalle || "No hay detalles proporcionados.", {
-        align: "justify",
-      });
+    
+    // Descripción 
+    doc.fontSize(14).text("Descripción del Incidente:", { underline: true });
+    doc.moveDown(0.5);
+    
+    doc.fontSize(11).text(Informe.descripcion || "Sin descripción.", {
+      align: "justify",
+    });
     doc.end();
   });
 }
