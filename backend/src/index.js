@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import morgan from "morgan";
 import { routerApi } from "./routes/index.routes.js";
 import { connectDB } from "./config/configDB.js";
@@ -11,7 +12,10 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+
 const app = express(); // Crear la aplicacion de Express
+app.use(cors());
 app.use(morgan("dev")); // Usar morgan para ver logs en consola
 app.use(express.json()) // Middleware de Express para entender los JSON de las peticiones
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

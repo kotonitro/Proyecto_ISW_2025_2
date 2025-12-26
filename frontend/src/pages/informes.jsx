@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Informes = () => {
+  const hoy = new Date().toISOString().split('T')[0];
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     descripcion: '',
     tipoIncidente: '',
-    fechaInforme: '',
-    idEncargado: encargado.idEncargado 
+    fechaInforme: hoy,
+    idEncargado: 1 
   });
+  
   
   const [archivos, setArchivos] = useState([]);
 
@@ -49,7 +51,6 @@ const Informes = () => {
       
       data.append('descripcion', formData.descripcion);
       data.append('tipoIncidente', formData.tipoIncidente);
-      data.append('fechaInforme', formData.fechaInforme);
       data.append('idEncargado', formData.idEncargado);
 
       archivos.forEach((archivo) => {
@@ -124,9 +125,8 @@ const Informes = () => {
                 type="date" 
                 name="fechaInforme" 
                 value={formData.fechaInforme} 
-                onChange={handleInputChange} 
-                required 
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                disabled 
+                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc',backgroundColor: '#e9ecef' }}
               />
             </div>
           </div>

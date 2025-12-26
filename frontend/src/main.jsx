@@ -8,6 +8,7 @@ import Root from "./pages/Root";
 import ProtectedRoute, { ErrorBoundary } from "./components/ProtectedRoute";
 import "./index.css";
 import Register from "./pages/Register";
+import Informes from "./pages/Informes";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "informes", element: <Informes /> },
       {
         path: "dashboard",
         element: (
