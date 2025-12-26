@@ -54,12 +54,15 @@ export default function CustodiaList() {
   return (
     <>
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex items-center">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-xl font-bold text-blue-900 flex items-center gap-2">
             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
             Registro diario
+            <span className="ml-3 inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase">
+              ALMACENADAS
+            </span>
           </h2>
         </div>
 
@@ -96,7 +99,7 @@ export default function CustodiaList() {
                         </th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-blue-800">Usuario</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-blue-800">Bicicletero</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-blue-800">Hora Entrada</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-blue-800">Fecha Entrada</th>
                   
                 </tr>
               </thead>
@@ -116,7 +119,7 @@ export default function CustodiaList() {
                       {LISTA_BICICLETEROS.find(b => b.id === r.idBicicletero)?.nombre || `ID: ${r.idBicicletero}`}
                     </td>
                     <td className="px-6 py-4 text-xs text-gray-500 italic">
-                      {new Date(r.fechaEntrada).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {r.fechaEntrada ? new Date(r.fechaEntrada).toLocaleString('es-CL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '-'}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button

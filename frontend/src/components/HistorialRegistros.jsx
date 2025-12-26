@@ -80,16 +80,17 @@ export default function HistorialRegistros() {
               <th className="px-6 py-4 text-left text-[10px] font-bold text-blue-700 uppercase tracking-wider">ID Bicicleta</th>
               <th className="px-6 py-4 text-left text-[10px] font-bold text-blue-700 uppercase tracking-wider">Usuario</th>
               <th className="px-6 py-4 text-left text-[10px] font-bold text-blue-700 uppercase tracking-wider">Ubicación</th>
-              <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Hora Salida</th>
+              <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Fecha Entrada</th>
+              <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Fecha Salida</th>
               <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Estado</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-blue-50/50">
             {loading ? (
-              <tr><td colSpan="5" className="px-6 py-20 text-center"><div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></td></tr>
+              <tr><td colSpan="6" className="px-6 py-20 text-center"><div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></td></tr>
             ) : registros.length === 0 ? (
               <tr>
-                <td colSpan="5" className="px-6 py-20 text-center">
+                <td colSpan="6" className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center opacity-40">
                     <svg className="w-12 h-12 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     <p className="text-sm font-medium text-gray-500">No se encontraron registros</p>
@@ -117,7 +118,10 @@ export default function HistorialRegistros() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center text-xs text-gray-600 font-mono">
-                    {r.fechaSalida ? new Date(r.fechaSalida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
+                    {r.fechaEntrada ? new Date(r.fechaEntrada).toLocaleString('es-CL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '-'}
+                  </td>
+                  <td className="px-6 py-4 text-center text-xs text-gray-600 font-mono">
+                    {r.fechaSalida ? new Date(r.fechaSalida).toLocaleString('es-CL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '-'}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 uppercase border border-blue-100">
