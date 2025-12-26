@@ -2,6 +2,17 @@
 import Joi from "joi";
 
 export const bicicleteroValidation = Joi.object({
+
+  nombre: Joi.string()
+    .trim()
+    .max(100)
+    .required()
+    .messages({
+      "string.empty": "El nombre es obligatorio.",
+      "string.max": "El nombre debe tener como máximo 100 caracteres",
+      "string.base": "EL nombre debe ser una cadena de texto.",
+      "any.required": "El nombre es obligatorio."
+    }),
   
   ubicacion: Joi.string()
     .trim()
@@ -27,7 +38,7 @@ export const bicicleteroValidation = Joi.object({
 }).required().messages({"any.required": "La petición no puede estar vacia."});
 
 export const bicicleteroUpdateValidation = bicicleteroValidation.fork(
-  ["ubicacion", "capacidad"],
+  ["nombre", "ubicacion", "capacidad"],
   (schema) => schema.optional()
 ).min(1).required().messages({
   "object.min": "Debe haber al menos un campo para actualizar.",

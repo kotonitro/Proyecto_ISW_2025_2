@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PageTitle from "../components/PageTitle";
+import ActionToolbar from "../components/ActionToolbar";
+import EditButton from "../components/EditButton";
+import DeleteButton from "../components/DeleteButton";
 import { 
   getEncargados,
   getEncargado,
@@ -25,7 +28,7 @@ export default function AdminEncargados() {
     contrasena: "",
   });
 
-  // --- CARGAR DATOS ---
+  // Cargar encargados
   const fetchEncargados = async () => {
     setLoading(true);
     try {
@@ -43,24 +46,24 @@ export default function AdminEncargados() {
     fetchEncargados();
   }, []);
 
-  // 2. LÓGICA DE FILTRADO (Buscamos por RUT)
+  // Filtrar por rut
   const encargadosFiltrados = encargados.filter((enc) => {
-    // Convertimos a minúsculas para que no importe si escriben con mayúscula o minúscula
     return enc.rut.toLowerCase().includes(busqueda.toLowerCase());
   });
 
-  // --- MANEJADORES ---
+  // Abrir al crear
   const handleOpenCreate = () => {
     setForm({ nombre: "", email: "", rut: "", telefono: "", contrasena: "" });
     setShowPassword(false);
     setIsEditing(false);
     setShowModal(true);
   };
-
+  
+  // Abrir al editar
   const handleOpenEdit = (enc) => {
     setForm({
-      nombre: enc.nombre,
-      email: enc.email,
+      nombre: enc.nombre || "",
+      email: enc.email || "",
       rut: enc.rut || "",
       telefono: enc.telefono || "",
       contrasena: "",
@@ -71,6 +74,7 @@ export default function AdminEncargados() {
     setShowModal(true);
   };
 
+  // Confirmar
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -86,110 +90,80 @@ export default function AdminEncargados() {
       setShowModal(false);
       fetchEncargados();
     } catch (err) {
-      // 1. Obtenemos la respuesta del error
       const errorData = err.response?.data;
-      
-      // 2. Mensaje principal (ej: "Error de validación")
       let errorMessage = errorData?.message || "Ocurrió un error al guardar";
-
-      // 3. Si el backend envió detalles específicos (errorDetails), los agregamos
       if (errorData?.errorDetails && Array.isArray(errorData.errorDetails)) {
-        // Mapeamos cada error para listarlo con un guion
         const detalles = errorData.errorDetails
-          .map((detail) => `• ${detail.message}`) // Muestra el mensaje específico de cada campo
+          .map((detail) => `• ${detail.message}`)
           .join("\n");
-        
         errorMessage += `\n\nDetalles:\n${detalles}`;
       }
-
-      // 4. Mostramos todo junto
       alert(errorMessage);
     }
   };
 
+  // Borrar
   const handleDelete = async (idEncargado) => {
-    if (!window.confirm("¿Estás seguro de eliminar este encargado?")) return;
+    if (!window.confirm("¿Estás seguro de que quieres eliminar este encargado?")) return;
     try {
       await deleteEncargado(idEncargado);
+      alert("Encargado eliminado correctamente")
       fetchEncargados();
     } catch (err) {
       const msg = err.response?.data?.message || "No se pudo eliminar";
-      alert("Error: " + msg);
+      alert(msg);
     }
   };
 
+  // Pagina visual
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-10">
+    <div className="p-6 max-w-7xl mx-auto space-y-8">
       
       {/*Header (Título)*/}
-      <PageTitle
-              title="Administración de Encargados" 
-      />
+      <PageTitle title="Administración de Encargados" />
 
       {/*Barra de búsqueda y botón crear */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        
-        {/* Barra de búsqueda (Izquierda)*/}
-        <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <input
-            type="text"
-            placeholder="Buscar por RUT..."
-            className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition duration-150 ease-in-out"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-        </div>
-
-        {/* Botón crear (Derecha)*/}
-        <button
-          onClick={handleOpenCreate}
-          className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-semibold shadow-md transition-all flex items-center gap-2 whitespace-nowrap"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-          </svg>
-          Nuevo Encargado
-        </button>
-
-      </div>
+      <ActionToolbar
+        busqueda={busqueda}
+        setBusqueda={setBusqueda}
+        placeholder="Buscar por Rut..."
+        buttonText="Nuevo Encargado"
+        onClick={handleOpenCreate}
+        buttonColor={"bg-blue-700 hover:bg-blue-800"}
+      />
 
       {/* Tabla de encargados */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-10 text-center text-gray-500">Cargando datos...</div>
+          <div className="p-10 text-center text-gray-500">Cargando encargados...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-gray-600">
-              <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-bold tracking-wider">
+              <thead className="bg-gray-100 text-black text-xs font-bold tracking-wider">
                 <tr>
-                  <th className="px-6 py-4">Nombre</th>
-                  <th className="px-6 py-4">Correo Electrónico</th>
-                  <th className="px-6 py-4">Rut</th>
-                  <th className="px-6 py-4">Teléfono</th>
-                  <th className="px-6 py-4 text-center">Rol</th>
-                  <th className="px-6 py-4 text-right">Acciones</th>
+                  <th className="px-6 py-4">RUT</th>
+                  <th className="px-6 py-4">NOMBRE</th>
+                  <th className="px-6 py-4">CORREO ELECTRÓNICO</th>
+                  <th className="px-6 py-4">TELÉFONO</th>
+                  <th className="px-6 py-4 text-center">ROL</th>
+                  <th className="px-6 py-4 text-right">ACCIONES</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-200">
                 {/*Datos*/}
                 {encargadosFiltrados.map((enc) => (
-                  <tr key={enc.id || enc._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-gray-700">{enc.nombre}</td>
-                    <td className="px-6 py-4 font-mono text-gray-700">{enc.email}</td>
-                    <td className="px-6 py-4 font-mono text-gray-700">{enc.rut}</td>
-                    <td className="px-6 py-4 font-mono text-gray-700">9 {enc.telefono}</td>
+                  <tr key={enc.idEncargado} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-mono text-black whitespace-nowrap">{enc.rut}</td>
+                    <td className="px-6 py-4 font-mono text-gray-600">{enc.nombre}</td>
+                    <td className="px-6 py-4 font-mono text-gray-600">{enc.email}</td>
+                    <td className="px-6 py-4 font-mono text-gray-600 whitespace-nowrap">+569 {enc.telefono}</td>
                     <td className="px-6 py-4 text-center">
                       {enc.esAdmin ? (
-                        <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">
+                        <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
                           Admin
                         </span>
                       ) : (
-                        <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+                        <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
                           Encargado
                         </span>
                       )}
@@ -198,7 +172,7 @@ export default function AdminEncargados() {
                     <td className="px-6 py-4 text-right">
                       {enc.esAdmin ? (
                         // Si es admin mostrar protegido (no se puede modificar)
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-gray-50 text-gray-400 text-xs font-medium border border-gray-100 select-none">
+                        <span className="inline-flex items-center gap-1 px-3 py-2 rounded-md bg-gray-200 text-gray-600 text-xs font-medium border border-gray-100 select-none">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                           </svg>
@@ -207,29 +181,19 @@ export default function AdminEncargados() {
                       ) : (
                         // Si no es admin mostrar editar y eliminar
                         <div className="flex justify-end gap-2">
-                          <button 
-                            onClick={() => handleOpenEdit(enc)}
-                            className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
-                          >
-                            Editar
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(enc.idEncargado)}
-                            className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-red-700 shadow-sm transition-colors"
-                          >
-                            Eliminar
-                          </button>
+                          <EditButton onClick={() => handleOpenEdit(enc)} />
+                          <DeleteButton onClick={() => handleDelete(enc.idEncargado)} />
                         </div>
                       )}
                     </td>
                   </tr>
                 ))}
                 
-                {/* Si no hay resultados */}
+                {/* Si no hay datos */}
                 {encargadosFiltrados.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
-                      {busqueda ? "No se encontraron encargados con ese RUT." : "No hay encargados registrados."}
+                    <td colSpan="6" className="px-6 py-6 text-center text-gray-400">
+                      {busqueda ? "No se encontraron encargados con ese Rut." : "No hay encargados registrados."}
                     </td>
                   </tr>
                 )}
@@ -250,23 +214,27 @@ export default function AdminEncargados() {
               <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 font-bold">✕</button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/*Nombre*/}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                <input type="text" required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input type="text" required placeholder="Ej: Juan Perez" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
               </div>
+              {/*Rut*/}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">RUT</label>
-                <input type="text" required placeholder="12.345.678-9" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rut</label>
+                <input type="text" required placeholder="Ej: 12345678-9" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} />
               </div>
+              {/*Teléfono*/}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                <input type="text" required placeholder="+569..." className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
+                <input type="text" required placeholder="Ej: 12345678" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
               </div>
+              {/*Email*/}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Correo Institucional</label>
-                <input type="email" required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                <input type="email" required placeholder="Ej: encargado@dominio.com" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
-              {/* CAMPO CONTRASEÑA CON TOGGLE */}
+              {/*Contraseña*/}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Contraseña {isEditing && <span className="text-gray-400 font-normal">(Opcional)</span>}
@@ -286,13 +254,13 @@ export default function AdminEncargados() {
                     title={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
                   >
                     {showPassword ? (
-                      // Icono Ojo Tachado (Ocultar)
+                      // Icono ojo tachado (Ocultar)
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a9.043 9.043 0 012.817-.654c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
                       </svg>
                     ) : (
-                      // Icono Ojo (Ver)
+                      // Icono Ojo Normal (Ver)
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />

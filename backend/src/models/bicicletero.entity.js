@@ -24,6 +24,11 @@ export const Bicicletero = new EntitySchema({
       type: "int",
       nullable: false,
     },
+    imagen:{
+      type: "varchar",
+      lenght: 255,
+      nullable: true,
+    }
   },
   relations: {
     registrosAlmacen: {
