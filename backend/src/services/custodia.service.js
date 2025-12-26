@@ -87,7 +87,7 @@ export async function registerEntrada(data, idEncargado) {
     fechaSalida: null,
   });
   if (registroActivo) {
-    throw new Error(`La bicicleta ${data.idBicicleta} ya tiene un registro activo sin salida`);
+    throw new Error(`Bicicleta ya almacenada.`);
   }
 
   // Crear el registro
