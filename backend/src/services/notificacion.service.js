@@ -55,8 +55,8 @@ export async function createNotificacion(notificacionData) {
 
     const listaEmails = encargadosActivos.map((e) => e.email).filter(Boolean);
     if (listaEmails.length > 0) {
-      const baseUrl = process.env.URL_FRONTEND || "http://localhost:3000/api";
-      const link = `${baseUrl}/notificaciones/${resultado.notificacionId}/aceptar`;
+      const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const link = `${baseUrl}/aceptar/${resultado.notificacionId}`;
 
       await enviarAlertaCorreo(listaEmails, link, bicicleteroId, mensaje);
       console.log("Correo enviado");
@@ -122,12 +122,12 @@ export async function getEstadoNotificacion(id) {
 
   const notificacion = await notificacionRepo.findOne({
     where: { notificacionId: id },
-    select: ["estado"],
+    select: ["estado", "fechaActualizacion"],
   });
 
   if (!notificacion) throw new Error("No existe");
 
-  return { estado: notificacion.estado };
+  return { estado: notificacion.estado, timestamp: notificacion.fechaActualizacion };
 }
 
 export async function finalizarNotificacion(idNotificacion, idEncargado) {

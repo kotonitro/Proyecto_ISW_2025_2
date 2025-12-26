@@ -33,7 +33,11 @@ export default function VerificarEstado() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate(`/verificar-estado/${solicitudId}`);
+    if (solicitudId === id) {
+      handleCheckEstado(solicitudId);
+    } else {
+      navigate(`/verificar-estado/${solicitudId}`);
+    }
   };
 
   return (

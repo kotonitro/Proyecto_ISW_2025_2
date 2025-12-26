@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import logoUBB from "../images/logoTextoUBB.webp";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
@@ -11,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,7 +42,9 @@ export default function Login() {
       const rolUsuario = infoEncargado.esAdmin ? "admin" : "encargado";
       localStorage.setItem("rol", rolUsuario);
 
-      navigate("/");
+      // Redirigir a la página previa o al inicio
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     } catch (e) {
       setError(e.message);
     } finally {
