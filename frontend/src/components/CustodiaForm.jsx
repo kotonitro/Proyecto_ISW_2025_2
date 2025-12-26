@@ -14,6 +14,7 @@ export default function CustodiaForm({ onSuccess }) {
   const [rutDV, setRutDV] = useState("");
   const [userData, setUserData] = useState(null);
   const [idBicicletero, setIdBicicletero] = useState("");
+  const [idBicicletaSeleccionada, setIdBicicletaSeleccionada] = useState(""); // Nueva
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -40,18 +41,23 @@ export default function CustodiaForm({ onSuccess }) {
 
       if (res.data && res.data.data) {
         const user = res.data.data;
-        // EXTRAER EL ID DE BICI: Buscamos en el array de bicicletas que devuelve el backend
-        const idBiciPrincipal = user.bicicletas && user.bicicletas.length > 0 
-          ? user.bicicletas[0].idBicicleta 
-          : "N/A";
-          
+
+        // Guardar toda la información del usuario con sus bicicletas
         setUserData({
           ...user,
-          idBicicletaPrincipal: idBiciPrincipal // Guardamos esto para el submit
+          bicicletas: user.bicicletas || []
         });
+
+        // Si tiene solo una bicicleta, seleccionarla automáticamente
+        if (user.bicicletas && user.bicicletas.length === 1) {
+          setIdBicicletaSeleccionada(user.bicicletas[0].idBicicleta.toString());
+        } else {
+          setIdBicicletaSeleccionada(""); // Resetear si tiene múltiples
+        }
       }
     } catch (e) {
       setUserData(null);
+      setIdBicicletaSeleccionada("");
       setError("Usuario no encontrado.");
     }
   };
@@ -68,41 +74,38 @@ export default function CustodiaForm({ onSuccess }) {
   };
 
   // En CustodiaForm.jsx, modifica la función submit:
-async function submit(e) {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
+  async function submit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  try {
-    const idBici = userData.idBicicletaPrincipal; 
+    try {
+      // El payload debe contener estos campos exactos para que el service no lance error
+      const payload = {
+        rutUsuario: `${rutBase}-${rutDV}`,
+        idBicicleta: parseInt(idBicicletaSeleccionada, 10),
+        idBicicletero: parseInt(idBicicletero, 10),
+        // Datos del usuario recuperados en la búsqueda previa
+        nombreUsuario: userData.nombre,
+        emailUsuario: userData.email,
+        telefonoUsuario: parseInt(userData.telefono, 10),
+      };
 
-    // El payload debe contener estos campos exactos para que el service no lance error
-    const payload = {
-      rutUsuario: `${rutBase}-${rutDV}`,
-      idBicicleta: parseInt(idBici, 10),
-      idBicicletero: parseInt(idBicicletero, 10),
-      // Datos del usuario recuperados en la búsqueda previa
-      nombreUsuario: userData.nombre,
-      emailUsuario: userData.email,
-      telefonoUsuario: parseInt(userData.telefono, 10),
-    };
+      console.log("Enviando a custodia:", payload);
 
-    console.log("Enviando a custodia:", payload);
+      await postEntrada(payload);
 
-    await postEntrada(payload);
-    
-    // Limpieza tras éxito
-    setRutBase(""); setRutDV(""); setUserData(null); setIdBicicletero("");
-    if (onSuccess) onSuccess();
-    alert("¡Bicicleta ingresada con éxito!");
+      // Limpieza tras éxito
+      setRutBase(""); setRutDV(""); setUserData(null); setIdBicicletero(""); setIdBicicletaSeleccionada("");
+      if (onSuccess) onSuccess();
 
-  } catch (e) {
-    // Aquí se mostrará el mensaje del service (ej: "Bicicleta ya tiene un registro activo")
-    setError(e.message || "Error de validación en el servidor.");
-  } finally {
-    setLoading(false);
+    } catch (e) {
+      // Aquí se mostrará el mensaje del service (ej: "Bicicleta ya tiene un registro activo")
+      setError(e.message || "Error de validación en el servidor.");
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   return (
     <form onSubmit={submit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -132,14 +135,32 @@ async function submit(e) {
         </div>
 
         {userData && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex flex-col gap-1">
-              <p className="text-xs font-bold text-blue-600 uppercase">Datos del Usuario</p>
-              <p className="text-sm text-gray-800"><strong>Nombre:</strong> {userData.nombre}</p>
-              <p className="text-sm text-gray-800">
-                <strong>Bicicleta ID:</strong> {userData.idBicicletaPrincipal}
-              </p>
+          <div className="space-y-3">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex flex-col gap-1">
+                <p className="text-xs font-bold text-blue-600 uppercase">Datos del Usuario</p>
+                <p className="text-sm text-gray-800"><strong>Nombre:</strong> {userData.nombre}</p>
+                <p className="text-sm text-gray-800"><strong>Total de bicicletas:</strong> {userData.bicicletas?.length || 0}</p>
+              </div>
             </div>
+
+            {userData.bicicletas && userData.bicicletas.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Bicicleta</label>
+                <select
+                  value={idBicicletaSeleccionada}
+                  onChange={(e) => setIdBicicletaSeleccionada(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">-- Seleccione una bicicleta --</option>
+                  {userData.bicicletas.map((bici) => (
+                    <option key={bici.idBicicleta} value={bici.idBicicleta}>
+                      {bici.idBicicleta}, {bici.modelo}, {bici.marca}, {bici.color}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         )}
 
@@ -166,7 +187,7 @@ async function submit(e) {
 
       <button
         type="submit"
-        disabled={loading || !userData || !idBicicletero || userData?.idBicicletaPrincipal === "N/A"}
+        disabled={loading || !userData || !idBicicletero || !idBicicletaSeleccionada}
         className="mt-6 w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-md"
       >
         {loading ? "Registrando..." : "Confirmar Entrada"}

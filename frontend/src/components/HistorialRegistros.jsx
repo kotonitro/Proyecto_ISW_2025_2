@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { fetchRegistros } from "../api/custodiaApi";
+import { fetchHistorial } from "../api/custodiaApi";
 
-const NOMBRES_BICICLETEROS = {
-  1: "Av. Principal",
-  2: "Plaza Central",
-  3: "Parque Norte",
-  4: "Calle Secundaria"
-};
+const LISTA_BICICLETEROS = [
+  { id: 1, nombre: "Bicicletero 1 - Av. Principal" },
+  { id: 2, nombre: "Bicicletero 2 - Plaza Central" },
+  { id: 3, nombre: "Bicicletero 3 - Parque Norte" },
+  { id: 4, nombre: "Bicicletero 4 - Calle Secundaria" },
+];
 
 export default function HistorialRegistros() {
   const [registros, setRegistros] = useState([]);
@@ -20,13 +20,12 @@ export default function HistorialRegistros() {
     setError(null);
     try {
       const filters = {};
-      if (estado) filters.estado = estado;
       if (idBici) filters.idBicicleta = idBici;
-      
-      const data = await fetchRegistros(filters);
+
+      const data = await fetchHistorial(filters);
       setRegistros(data);
     } catch (e) {
-      setError("Error al cargar los registros");
+      setError("Error al cargar el historial");
     } finally {
       setLoading(false);
     }
@@ -38,13 +37,13 @@ export default function HistorialRegistros() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    load(filtroEstado, searchId);
+    load("", searchId); // Removed filtroEstado from here
   };
 
   return (
     <div className="animate-in fade-in duration-500">
       {/* SECCIÓN DE FILTROS ESTILIZADA */}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
         <div className="relative">
           <label className="text-[10px] font-bold text-gray-400 uppercase ml-1 mb-1 block">Buscar por ID</label>
           <form onSubmit={handleSearch} className="flex gap-2">
@@ -61,25 +60,14 @@ export default function HistorialRegistros() {
           </form>
         </div>
 
-        <div>
-          <label className="text-[10px] font-bold text-gray-400 uppercase ml-1 mb-1 block">Filtrar Estado</label>
-          <select
-            value={filtroEstado}
-            onChange={(e) => { setFiltroEstado(e.target.value); load(e.target.value, searchId); }}
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm cursor-pointer"
-          >
-            <option value="">Todos los registros</option>
-            <option value="entrada">En Custodia</option>
-            <option value="salida">Retiradas</option>
-          </select>
-        </div>
+
 
         <div className="flex items-end justify-end">
-          <button 
-            onClick={() => {setSearchId(""); setFiltroEstado(""); load("", "");}}
+          <button
+            onClick={() => { setSearchId(""); setFiltroEstado(""); load("", ""); }}
             className="text-xs text-gray-400 hover:text-blue-600 font-medium transition-colors"
           >
-            Limpiar Filtros
+            Limpiar Filtro
           </button>
         </div>
       </div>
@@ -91,16 +79,17 @@ export default function HistorialRegistros() {
             <tr className="bg-gray-50/50 border-b border-gray-100">
               <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">ID Bicicleta</th>
               <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Usuario</th>
-              <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Ubicación Actual</th>
+              <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Ubicación</th>
+              <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Hora Salida</th>
               <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Estado</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {loading ? (
-              <tr><td colSpan="4" className="px-6 py-20 text-center"><div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></td></tr>
+              <tr><td colSpan="5" className="px-6 py-20 text-center"><div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></td></tr>
             ) : registros.length === 0 ? (
               <tr>
-                <td colSpan="4" className="px-6 py-20 text-center">
+                <td colSpan="5" className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center opacity-40">
                     <svg className="w-12 h-12 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     <p className="text-sm font-medium">No se encontraron registros históricos</p>
@@ -123,21 +112,17 @@ export default function HistorialRegistros() {
                   <td className="px-6 py-4">
                     <div className="flex items-center text-xs text-gray-500">
                       <svg className="w-3 h-3 mr-1.5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                      {NOMBRES_BICICLETEROS[r.idBicicletero] || "Ubicación desconocida"}
+                      {LISTA_BICICLETEROS.find(b => b.id === r.idBicicletero)?.nombre || "Ubicación desconocida"}
                     </div>
                   </td>
+                  <td className="px-6 py-4 text-center text-xs text-gray-600 font-mono">
+                    {r.fechaSalida ? new Date(r.fechaSalida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
+                  </td>
                   <td className="px-6 py-4 text-center">
-                    {r.estadoBicicleta === "entrada" ? (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">
-                        <span className="w-1 h-1 bg-green-500 rounded-full mr-1.5"></span>
-                        En Custodia
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500 uppercase">
-                        <span className="w-1 h-1 bg-gray-400 rounded-full mr-1.5"></span>
-                        Retirada
-                      </span>
-                    )}
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 uppercase">
+                      <span className="w-1 h-1 bg-blue-500 rounded-full mr-1.5"></span>
+                      Retirada
+                    </span>
                   </td>
                 </tr>
               ))
