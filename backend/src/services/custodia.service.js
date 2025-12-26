@@ -5,9 +5,6 @@ export const usuarioRepository = AppDataSource.getRepository("Usuario");
 export const bicicletaRepository = AppDataSource.getRepository("Bicicleta");
 export const historialCustodiaRepository = AppDataSource.getRepository("HistorialCustodia");
 
-
-//Valida si la hora actual está dentro del horario permitido 
-
 export function isWithinAllowedHours() {
   const now = new Date();
   const hours = now.getHours();
@@ -17,18 +14,13 @@ export function isWithinAllowedHours() {
   const startTime = 7 * 60 + 30; // 7:30 AM
   const endTime = 20 * 60; // 8:00 PM
 
-  // Sólo permitir entre startTime y endTime y de lunes a viernes
-  const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+  
+  const day = now.getDay(); 
   const isWeekday = day >= 1 && day <= 5;
   return isWeekday && currentTime >= startTime && currentTime < endTime;
 }
 
 
-/**
- * Determina el estado de una bicicleta basado en el registro
- * almacenada: está en un bicicletero Y fechaSalida es NULL
- * retirada: fechaSalida no es NULL
- */
 export function determineEstadoBicicleta(registro) {
   if (!registro) return null;
   if (registro.fechaSalida === null && registro.bicicletero) {
@@ -139,7 +131,7 @@ export async function registerSalida(idRegistroAlmacen, idEncargado, fechaSalida
     emailUsuario: registro.emailUsuario,
     telefonoUsuario: registro.telefonoUsuario,
     fechaEntrada: registro.fechaEntrada,
-    fechaSalida: new Date(), // Marcar fecha de salida actual
+    fechaSalida: new Date(), 
   });
 
   await historialCustodiaRepository.save(historialEntry);
@@ -161,7 +153,6 @@ export async function getBicicletasAlmacenadas() {
     .leftJoinAndSelect("registro.bicicletero", "bicicletero")
     .leftJoinAndSelect("registro.encargado", "encargado")
     .where("registro.fechaSalida IS NULL")
-    // Removido filtro bicicletero IS NOT NULL para mostrar registros huérfanos
     .orderBy("registro.fechaEntrada", "DESC")
     .getMany()
     .then(registros =>
@@ -220,7 +211,6 @@ export async function getAllRegistros(filtros = {}) {
 
   // Filtro por Estado (ALMACENADA/RETIRADA)
   if (filtros.estadoBicicleta) {
-    // Ajuste para coincidir con lo que envía el frontend ("entrada" o "salida")
     if (filtros.estadoBicicleta === "entrada" || filtros.estadoBicicleta === "ALMACENADA") {
       query = query.andWhere("registro.fechaSalida IS NULL");
     } else if (filtros.estadoBicicleta === "salida" || filtros.estadoBicicleta === "RETIRADA") {

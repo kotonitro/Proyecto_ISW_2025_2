@@ -7,17 +7,16 @@ import {
   handleGetBicicletero, 
   handleUpdateBicicletero 
 } from "../controllers/bicicletero.controller.js";
-// Asegúrate de importar la función de disponibilidad (ajusta el nombre según tu controller)
 import { getDisponibilidadBicicleteros } from "../controllers/custodia.controller.js"; 
 
 const router = Router();
 
-// RUTAS PÚBLICAS (Cualquiera las puede ver)
+// RUTAS PÚBLICAS 
 router.get("/", handleGetBicicleteros);
-router.get("/disponibilidad", getDisponibilidadBicicleteros); // <-- NUEVA RUTA
+router.get("/disponibilidad", getDisponibilidadBicicleteros); 
 router.get("/:id", handleGetBicicletero);
 
-// RUTAS PROTEGIDAS (Solo Admin)
+// RUTAS PROTEGIDAS 
 router.use(authMiddleware);
 router.use(esAdmin);
 
