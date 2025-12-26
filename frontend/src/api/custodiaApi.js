@@ -1,13 +1,4 @@
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-// api/custodiaApi.js (o similar)
-import axios from "axios";
-
-export const fetchFlujoEstadisticas = async () => {
-  // Ajusta la URL según donde hayas puesto la ruta
-  const response = await axios.get("http://localhost:3000/api/estadisticas/flujo-diario");
-  return response.data.data; 
-};
-
 
 
 function getToken() {
