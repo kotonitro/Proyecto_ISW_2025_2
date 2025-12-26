@@ -9,12 +9,10 @@ const LISTA_BICICLETEROS = [
   { id: 4, nombre: "Bicicletero 4 - Calle Secundaria" },
 ];
 
-// Función para calcular el DV (Algoritmo Módulo 11)
 function calcularDigitoVerificador(rut) {
   let suma = 0;
   let multiplicador = 2;
 
-  // Recorremos el RUT de atrás hacia adelante
   for (let i = rut.length - 1; i >= 0; i--) {
     suma += parseInt(rut.charAt(i)) * multiplicador;
     multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
@@ -33,7 +31,7 @@ export default function CustodiaForm({ onSuccess }) {
   const [rutDV, setRutDV] = useState("");
   const [userData, setUserData] = useState(null);
   const [idBicicletero, setIdBicicletero] = useState("");
-  const [idBicicletaSeleccionada, setIdBicicletaSeleccionada] = useState(""); // Nueva
+  const [idBicicletaSeleccionada, setIdBicicletaSeleccionada] = useState(""); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -61,17 +59,15 @@ export default function CustodiaForm({ onSuccess }) {
       if (res.data && res.data.data) {
         const user = res.data.data;
 
-        // Guardar toda la información del usuario con sus bicicletas
         setUserData({
           ...user,
           bicicletas: user.bicicletas || []
         });
 
-        // Si tiene solo una bicicleta, seleccionarla automáticamente
         if (user.bicicletas && user.bicicletas.length === 1) {
           setIdBicicletaSeleccionada(user.bicicletas[0].idBicicleta.toString());
         } else {
-          setIdBicicletaSeleccionada(""); // Resetear si tiene múltiples
+          setIdBicicletaSeleccionada(""); 
         }
       }
     } catch (e) {
@@ -82,22 +78,17 @@ export default function CustodiaForm({ onSuccess }) {
   };
 
   const handleBaseChange = (e) => {
-    // Limpiamos caracteres no numéricos
     const val = e.target.value.replace(/[^0-9]/g, "");
 
     if (val.length <= 8) {
-      setRutBase(val); // Actualizamos lo que se ve en el input
+      setRutBase(val); 
 
-      // --- AQUÍ ESTÁ EL CAMBIO ---
-      // Solo calculamos si el largo es EXACTAMENTE 8
       if (val.length === 8) {
         const dvCalculado = calcularDigitoVerificador(val);
         setRutDV(dvCalculado);
-        
-        // Opcional: Pasar el foco al cuadrito del DV automáticamente
+
         dvInputRef.current.focus();
       } else {
-        // Si tienes menos de 8 números (o estás borrando), limpiamos el DV
         setRutDV("");
       }
     }
@@ -108,19 +99,18 @@ export default function CustodiaForm({ onSuccess }) {
     if (val.length <= 1) setRutDV(val);
   };
 
-  // En CustodiaForm.jsx, modifica la función submit:
+  
   async function submit(e) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      // El payload debe contener estos campos exactos para que el service no lance error
+     
       const payload = {
         rutUsuario: `${rutBase}-${rutDV}`,
         idBicicleta: parseInt(idBicicletaSeleccionada, 10),
         idBicicletero: parseInt(idBicicletero, 10),
-        // Datos del usuario recuperados en la búsqueda previa
         nombreUsuario: userData.nombre,
         emailUsuario: userData.email,
         telefonoUsuario: parseInt(userData.telefono, 10),
@@ -130,12 +120,10 @@ export default function CustodiaForm({ onSuccess }) {
 
       await postEntrada(payload);
 
-      // Limpieza tras éxito
       setRutBase(""); setRutDV(""); setUserData(null); setIdBicicletero(""); setIdBicicletaSeleccionada("");
       if (onSuccess) onSuccess();
 
     } catch (e) {
-      // Aquí se mostrará el mensaje del service (ej: "Bicicleta ya tiene un registro activo")
       setError(e.message || "Error de validación en el servidor.");
     } finally {
       setLoading(false);
@@ -145,16 +133,10 @@ export default function CustodiaForm({ onSuccess }) {
   return (
   <form onSubmit={submit} className="bg-white p-5 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-blue-50/50">
     <h2 className="text-lg font-bold text-blue-900 mb-5 px-1">Registro de Entrada</h2>
-
     <div className="space-y-5">
-      {/* TARJETA DE IDENTIFICACIÓN UNIFICADA (Siempre Azul) */}
       <div className="relative overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50/80 to-white p-4 shadow-sm transition-all duration-300">
-        
-        {/* Decoración de fondo permanente pero sutil */}
         <div className="absolute top-0 right-0 w-40 h-40 bg-blue-100/40 rounded-full -mr-20 -mt-20 blur-2xl pointer-events-none"></div>
-
         <div className="relative z-10">
-          {/* Título de la Sección (Siempre Azul) */}
           <div className="flex items-center gap-2 mb-3">
             <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors duration-300 ${
               userData ? "bg-blue-600 text-white shadow-sm" : "bg-blue-100 text-blue-500"
@@ -168,7 +150,6 @@ export default function CustodiaForm({ onSuccess }) {
             </p>
           </div>
 
-          {/* INPUTS DE RUT (Más compactos y estilizados) */}
           <div className="mb-3 bg-white/60 p-3 rounded-xl border border-blue-50/50 backdrop-blur-sm">
             <label className="block text-[10px] font-bold mb-1.5 ml-0.5 uppercase tracking-wider text-blue-700/70">
               Ingrese RUT
@@ -193,14 +174,14 @@ export default function CustodiaForm({ onSuccess }) {
             </div>
           </div>
 
-          {/* DATOS DEL USUARIO (Se expande al encontrar usuario) */}
+          {/* datos del usuario */}
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
               userData ? "max-h-96 opacity-100 pt-2 mt-2 border-t border-blue-100/80" : "max-h-0 opacity-0"
           }`}>
             {userData && (
               <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                 
-                {/* Resumen de Usuario */}
+                {/* esta la info del Usuario */}
                 <div className="flex justify-between items-start bg-blue-50/50 p-2.5 rounded-lg border border-blue-100/50">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-blue-800 mb-0.5">Nombre</p>
@@ -212,7 +193,7 @@ export default function CustodiaForm({ onSuccess }) {
                     </div>
                   </div>
 
-                {/* Selector de Bicicleta (Integrado) */}
+                {/* Selector de Bicicleta */}
                 {userData.bicicletas && userData.bicicletas.length > 0 && (
                   <div>
                     <label className="block text-[10px] font-bold text-blue-800 uppercase tracking-wider mb-1.5 ml-0.5">
@@ -238,7 +219,7 @@ export default function CustodiaForm({ onSuccess }) {
         </div>
       </div>
 
-      {/* Mensaje de Error */}
+      {/*Error */}
       {error && (
         <div className="p-3 bg-red-50 border-l-4 border-red-400 text-red-700 text-xs font-medium rounded-r shadow-sm flex items-center animate-in fade-in">
           <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -246,7 +227,7 @@ export default function CustodiaForm({ onSuccess }) {
         </div>
       )}
 
-      {/* Selector de Bicicletero (Externo) */}
+      {/*Selector de Bicicletero*/}
       <div className="px-1">
         <label className="block text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">Ubicación de Custodia</label>
         <div className="relative">
@@ -255,9 +236,9 @@ export default function CustodiaForm({ onSuccess }) {
             onChange={(e) => setIdBicicletero(e.target.value)}
             className="w-full pl-4 pr-10 py-2.5 border border-blue-100 rounded-xl bg-white/80 outline-none focus:ring-2 focus:ring-blue-400/30 focus:border-blue-300 appearance-none shadow-sm transition-all hover:border-blue-300 text-sm font-medium text-blue-900 cursor-pointer"
           >
-            <option value="" className="text-gray-500">Seleccione un bicicletero...</option>
+            <option value="" className="text-grey-800">Seleccione un bicicletero...</option>
             {LISTA_BICICLETEROS.map((b) => (
-              <option key={b.id} value={b.id} className="font-medium text-blue-900">{b.nombre}</option>
+              <option key={b.id} value={b.id} className="font-medium text-blue-800">{b.nombre}</option>
             ))}
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">
@@ -267,7 +248,7 @@ export default function CustodiaForm({ onSuccess }) {
       </div>
     </div>
 
-    {/* Botón de Acción (Más pequeño y moderno) */}
+    {/* Botón de Acción*/}
     <button
       type="submit"
       disabled={loading || !userData || !idBicicletero || !idBicicletaSeleccionada}
