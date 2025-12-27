@@ -78,28 +78,55 @@ const Usuarios = () => {
     "naranja oscuro",
   ];
 
+  const formatRut = (rut) => {
+    // 1. Limpiar caracteres inválidos, dejar solo números y k/K
+
+    let value = rut.replace(/[^0-9kK]/g, "");
+
+    // 2. Si hay más de 1 carácter, poner el guion antes del último dígito
+
+    if (value.length > 1) {
+      value = value.slice(0, -1) + "-" + value.slice(-1);
+    }
+
+    return value;
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
+
     if (!rutSearch) return;
+
     setLoading(true);
+
     try {
       const res = await getUsuarioByRut(rutSearch);
+
       const user = res.data.data;
+
       setCurrentUser(user);
+
       setUserForm({
         rut: user.rut,
+
         nombre: user.nombre,
+
         email: user.email,
+
         telefono: user.telefono || "",
       });
+
       setIsCreating(false);
 
       // Fetch bicycles independently
+
       try {
         const bikeRes = await getBicicletasByUsuario(user.idUsuario);
+
         setUserBicicletas(bikeRes.data.data);
       } catch (bikeError) {
         console.error("Error al obtener bicicletas:", bikeError);
+
         setUserBicicletas([]);
       }
     } catch (error) {
@@ -110,13 +137,21 @@ const Usuarios = () => {
           )
         ) {
           setIsCreating(true);
+
           setCurrentUser(null);
+
+          // Pre-fill the formatted RUT in the new form
+
           setUserForm({
             rut: rutSearch,
+
             nombre: "",
+
             email: "",
+
             telefono: "",
           });
+
           setBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
         }
       } else {
@@ -278,7 +313,7 @@ const Usuarios = () => {
           <input
             type="text"
             value={rutSearch}
-            onChange={(e) => setRutSearch(e.target.value)}
+            onChange={(e) => setRutSearch(formatRut(e.target.value))}
             placeholder="Ej: 12345678-9"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -319,7 +354,7 @@ const Usuarios = () => {
                 name="rut"
                 value={userForm.rut}
                 onChange={(e) =>
-                  setUserForm({ ...userForm, rut: e.target.value })
+                  setUserForm({ ...userForm, rut: formatRut(e.target.value) })
                 }
                 placeholder="RUT"
                 className="w-full px-3 py-2 border rounded-lg"
