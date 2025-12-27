@@ -1,73 +1,162 @@
-import React from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
 import logoUBB from "../images/logoUBB.webp";
 
 export default function Root() {
+  const navigate = useNavigate();
   const location = useLocation();
+
   const token = localStorage.getItem("token");
-  const nombreUsuario = localStorage.getItem("nombre");
+  const rol = localStorage.getItem("rol");
+  const nombre = localStorage.getItem("nombre");
+
+  // Estado para controlar la visibilidad de la Sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Cerrar sidebar automáticamente al cambiar de ruta
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
   };
 
   return (
-    <div className="min-h-screen bg-orange-50 flex flex-col font-sans text-gray-800">
-      
-      {/* Header Azul */}
-      <header className="w-full h-16 bg-blue-700 shadow-md flex items-center justify-between px-18">
-
-        {/* Logo */}
-        <Link to="/" className="ml-18 text-white text-xl font-bold flex items-center gap-3 hover:opacity-90 transition drop-shadow-[0_4px_4px_rgba(0,0,0,0.4)]">
-        <img src={logoUBB} alt="Logo UBB" className="h-10 w-auto" />
-          Bicicleteros UBB
-        </Link>
-
-        {/* Botón Ingresar o Salir*/}
-        <div>
-          {token ? (
-            <div className="flex items-center gap-4">
-              {/*Salir*/}
-              <span className="text-white text-sm font-medium hidden sm:block">
-                ¡Hola, {nombreUsuario}!
-              </span>
+    <div className="flex flex-col h-screen bg-slate-100 font-sans text-gray-900 overflow-hidden">
+      {/* 1. HEADER SUPERIOR (SIEMPRE VISIBLE) */}
+      <header className="bg-blue-700 text-white shadow-md z-30 shrink-0 h-16">
+        <div className="w-full px-4 h-full flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* BOTÓN HAMBURGUESA (Solo si hay token) */}
+            {token && (
               <button
-                onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition shadow-md hover:shadow-lg"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 rounded-md hover:bg-blue-600 transition-colors focus:outline-none"
+                aria-label="Toggle Menu"
               >
-                Salir
+                {isSidebarOpen ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                )}
               </button>
-            </div>
-          ) : (
-            location.pathname !== "/login" && (
+            )}
+
+            <Link to="/" className="no-underline flex items-center gap-3 group">
+              <img src={logoUBB} alt="Logo UBB" className="h-10 w-auto" />
+              <span className="text-white text-lg font-bold group-hover:text-blue-100 transition-colors hidden xs:block">
+                Bicicleteros UBB
+              </span>
+            </Link>
+          </div>
+
+          <nav className="flex gap-4 items-center">
+            {/* Si NO hay token (público) */}
+            {!token && location.pathname !== "/login" && (
               <div className="flex items-center gap-4">
-                {/*Ingresar*/}
                 <span className="text-white text-sm font-medium hidden sm:block">
                   ¿Eres encargado?
                 </span>
-                <Link 
-                  to="/login" 
-                  className="bg-white text-blue-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition shadow-md hover:shadow-lg"
+                <Link
+                  to="/login"
+                  className="bg-white text-blue-700 border border-white/40 py-2 px-4 rounded-lg no-underline font-semibold hover:bg-gray-100 transition-colors text-sm"
                 >
                   Ingresar
                 </Link>
               </div>
-            )
-          )}
-        </div>
+            )}
 
+            {/* Si HAY token */}
+            {token && (
+              <>
+                <span className="text-sm font-medium text-blue-100 hidden sm:inline-block">
+                  Hola, {nombre}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-600 text-white border-none py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-red-700 transition-colors text-sm"
+                >
+                  Salir
+                </button>
+              </>
+            )}
+          </nav>
+        </div>
       </header>
 
-      {/* Contenido */}
-      <main className="flex-1 p-6">
-        <Outlet />
-      </main>
+      {/* 2. CONTENEDOR PRINCIPAL (Flex Row) */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* BACKDROP (Fondo oscuro al abrir menú) */}
+        {token && isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-20"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
-      {/* Footer */}
-      <footer className="text-center py-4 text-gray-500 text-sm">
-        © 2025 Universidad del Bío-Bío
-      </footer>
+        {/* A. SIDEBAR WRAPPER (Estilo Drawer/Cortina Global) */}
+        {token && (
+          <aside
+            className={`
+              bg-blue-900 text-white z-40 transition-transform duration-300 ease-in-out
+              absolute top-0 left-0 h-full w-64 shadow-xl
+              ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            `}
+          >
+            <div className="w-64 h-full">
+              <Sidebar role={rol} />
+            </div>
+          </aside>
+        )}
 
+        {/* B. ÁREA DE CONTENIDO */}
+        <main className="flex-1 overflow-y-auto p-6 bg-slate-100 scroll-smooth w-full">
+          {token && (
+            <div className="mb-6 pb-4 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-800 capitalize">
+                {location.pathname === "/"
+                  ? "Inicio"
+                  : location.pathname.replace("/", "").replace("-", " ")}
+              </h2>
+            </div>
+          )}
+
+          <Outlet />
+
+          <footer className="py-8 text-center text-sm text-gray-500 mt-auto">
+            © {new Date().getFullYear()} Universidad del Bío-Bío
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }
