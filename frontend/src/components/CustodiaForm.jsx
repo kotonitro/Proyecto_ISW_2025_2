@@ -1,137 +1,151 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { postEntrada } from "../api/custodiaApi";
 import axios from "axios";
 
-// Configuración fácilmente escalable para el futuro
 const LISTA_BICICLETEROS = [
   { id: 1, nombre: "Bicicletero 1 - Av. Principal" },
   { id: 2, nombre: "Bicicletero 2 - Plaza Central" },
   { id: 3, nombre: "Bicicletero 3 - Parque Norte" },
   { id: 4, nombre: "Bicicletero 4 - Calle Secundaria" },
-  // Para agregar más, solo añade: { id: 5, nombre: "Bicicletero 5 - Nombre" },
 ];
 
-// Útil para el "Auto-completado" en CustodiaForm.jsx
-export const getUsuarioYBiciPorRut = (rut) => api.get(`/usuario-datos/${rut}`);
-
 export default function CustodiaForm({ onSuccess }) {
-  const [rut, setRut] = useState("");
+  const [rutBase, setRutBase] = useState("");
+  const [rutDV, setRutDV] = useState("");
   const [userData, setUserData] = useState(null);
   const [idBicicletero, setIdBicicletero] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Función para buscar usuario y su bicicleta asociada por RUT
-  const buscarUsuarioYBici = async (rutIngresado) => {
-    if (rutIngresado.length < 8) return;
-    try {
-      // Reemplaza con tu URL real de backend
-      const res = await axios.get(`http://localhost:3000/api/usuarios/${rutIngresado}`);
-      setUserData(res.data); 
+  // Referencia para saltar al siguiente input automáticamente
+  const dvInputRef = useRef(null);
+
+  // Efecto que dispara la búsqueda automática cuando el DV está presente
+  useEffect(() => {
+    if (rutBase.length >= 7 && rutDV.length === 1) {
+      buscarUsuario();
+    } else {
+      setUserData(null);
       setError(null);
+    }
+  }, [rutBase, rutDV]);
+
+  const buscarUsuario = async () => {
+    setError(null);
+    const rutCompleto = `${rutBase}-${rutDV}`;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`http://localhost:3000/api/usuarios/${rutCompleto}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data && res.data.data) {
+        setUserData(res.data.data);
+      }
     } catch (e) {
       setUserData(null);
       setError("Usuario no encontrado.");
     }
   };
 
-  const handleRutChange = (e) => {
-    const value = e.target.value;
-    setRut(value);
-    if (value.length >= 8) {
-      buscarUsuarioYBici(value);
-    } else {
-      setUserData(null);
+  const handleBaseChange = (e) => {
+    const val = e.target.value.replace(/[^0-9]/g, "");
+    if (val.length <= 8) setRutBase(val);
+    
+    // Salto automático al DV cuando llega a 8 dígitos
+    if (val.length === 8) {
+      dvInputRef.current.focus();
     }
+  };
+
+  const handleDVChange = (e) => {
+    const val = e.target.value.toUpperCase().replace(/[^0-9K]/g, "");
+    if (val.length <= 1) setRutDV(val);
   };
 
   async function submit(e) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-
     try {
-      if (!userData) throw new Error("Debe ingresar un RUT válido.");
-      if (!idBicicletero) throw new Error("Debe seleccionar un bicicletero.");
-
+      // Intentamos sacar el ID de la bici desde los datos del usuario
+      const idBici = userData.idBicicleta || (userData.bicicletas && userData.bicicletas[0]?.idBicicleta);
+      
       await postEntrada({
-        rutUsuario: rut,
-        idBicicleta: userData.idBicicleta, // Obtenido automáticamente del backend
+        rutUsuario: `${rutBase}-${rutDV}`,
+        idBicicleta: idBici,
         idBicicletero: parseInt(idBicicletero, 10),
       });
 
-      // Limpiar el formulario tras éxito
-      setRut("");
+      setRutBase("");
+      setRutDV("");
       setUserData(null);
       setIdBicicletero("");
-      
       if (onSuccess) onSuccess();
       alert("¡Entrada registrada con éxito!");
     } catch (e) {
-      setError(e.message || "Error al procesar la entrada.");
+      setError("Error al procesar la entrada.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
-    >
-      <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-        Registro de Entrada
-      </h2>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-          {error}
-        </div>
-      )}
+    <form onSubmit={submit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h2 className="text-xl font-bold text-gray-800 mb-6">Registro de Entrada</h2>
 
       <div className="space-y-4">
-        {/* Campo RUT */}
+        {/* Sistema de Doble Input con Guion Estático */}
         <div>
-          <label htmlFor="rut" className="block text-sm font-medium text-gray-700 mb-1">
-            RUT del Usuario
-          </label>
-          <input
-            id="rut"
-            type="text"
-            value={rut}
-            onChange={handleRutChange}
-            placeholder="Ej: 12345678-K"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1">RUT del Usuario</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="12345678"
+              value={rutBase}
+              onChange={handleBaseChange}
+              className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <span className="text-xl font-bold text-gray-400">-</span>
+            <input
+              ref={dvInputRef} // Referencia para el salto automático
+              type="text"
+              placeholder="K"
+              value={rutDV}
+              onChange={handleDVChange}
+              className="w-12 px-3 py-2 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none uppercase"
+            />
+          </div>
         </div>
 
-        {/* Info del usuario (aparece dinámicamente) */}
+        {/* LOG DEL USUARIO (Aparece solo si lo encuentra) */}
         {userData && (
-          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 animate-in fade-in duration-300">
-            <p className="text-sm text-blue-800"><strong>Nombre:</strong> {userData.nombreUsuario}</p>
-            <p className="text-sm text-blue-800"><strong>Bicicleta ID:</strong> {userData.idBicicleta}</p>
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg animate-in fade-in zoom-in duration-300">
+            <div className="flex flex-col gap-1">
+              <p className="text-xs font-bold text-blue-600 uppercase">Datos del Usuario</p>
+              <p className="text-sm text-gray-800"><strong>Nombre:</strong> {userData.nombre}</p>
+              <p className="text-sm text-gray-800"><strong>Bicicleta ID:</strong> {userData.idBicicleta || userData.bicicletas?.[0]?.idBicicleta || "N/A"}</p>
+            </div>
           </div>
         )}
 
-        {/* Selección de Bicicletero Escalable */}
+        {/* ERROR (Solo aparece si falla la búsqueda final) */}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
+            {error}
+          </div>
+        )}
+
         <div>
-          <label htmlFor="bicicletero" className="block text-sm font-medium text-gray-700 mb-1">
-            Asignar Bicicletero
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Asignar Bicicletero</label>
           <select
-            id="bicicletero"
             value={idBicicletero}
             onChange={(e) => setIdBicicletero(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">-- Seleccione una ubicación --</option>
             {LISTA_BICICLETEROS.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.nombre}
-              </option>
+              <option key={b.id} value={b.id}>{b.nombre}</option>
             ))}
           </select>
         </div>
@@ -140,7 +154,7 @@ export default function CustodiaForm({ onSuccess }) {
       <button
         type="submit"
         disabled={loading || !userData || !idBicicletero}
-        className="mt-6 w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+        className="mt-6 w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-md"
       >
         {loading ? "Registrando..." : "Confirmar Entrada"}
       </button>
