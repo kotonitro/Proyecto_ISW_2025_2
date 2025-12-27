@@ -1,109 +1,100 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import Login from "./Login";
-export { default as Error404 } from "./Error404";
+import React from "react";
+// 1. AGREGAMOS 'useLocation' AQUI
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 
-/**
- * Root - Versión simplificada:
- * - Muestra solo el título del proyecto y el botón "Ingresar".
- * - El botón abre un desplegable (dropdown) con el componente <Login />
- *   en lugar de navegar a otra ruta.
- *
- * El dropdown se cierra al hacer clic fuera o después de un inicio exitoso.
- */
 export default function Root() {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation(); // 2. OBTENEMOS LA URL ACTUAL
 
-  useEffect(() => {
-    function onDocumentClick(e) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target)
-      ) {
-        setOpen(false);
-      }
-    }
+  const token = localStorage.getItem("token");
+  const rol = localStorage.getItem("rol");
 
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, []);
-
-  function handleLoginSuccess(encargadoNombre) {
-    // Puedes guardar el nombre/token si lo deseas; aquí solo cerramos el dropdown.
-    localStorage.setItem("encargadoNombre", encargadoNombre || "");
-    setOpen(false);
-  }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("rol");
+    localStorage.removeItem("nombre");
+    localStorage.removeItem("email");
+    navigate("/login");
+  };
 
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: "var(--bg-gray)" }}
     >
-      <header className="header-brand" style={{ position: "relative" }}>
+      <header className="header-brand">
         <div
           className="header-inner"
-          style={{ justifyContent: "space-between" }}
+          style={{ justifyContent: "space-between", padding: "0 20px" }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div className="avatar-circle" aria-hidden="true" />
-            <span style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>
-              Proyecto ISW
-            </span>
+            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className="avatar-circle" aria-hidden="true" />
+                <span style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>
+                Proyecto ISW
+                </span>
+            </Link>
           </div>
 
-          {/* Solo el botón Ingresar */}
-          <div style={{ position: "relative" }}>
-            <button
-              ref={buttonRef}
-              onClick={() => setOpen((s) => !s)}
-              aria-expanded={open}
-              aria-controls="login-dropdown"
-              style={{
-                background: "transparent",
-                color: "#fff",
-                border: "1px solid rgba(255,255,255,0.16)",
-                padding: "8px 14px",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
-            >
-              Ingresar
-            </button>
+          <nav style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+            
+            {token && (
+              <>
+                <Link to="/custodia" style={{ color: "#fff", textDecoration: "none" }}>Custodia</Link>
+              </>
+            )}
 
-            {/* Dropdown */}
-            {open && (
-              <div
-                id="login-dropdown"
-                ref={dropdownRef}
-                role="dialog"
-                aria-modal="false"
+            {token && rol === "admin" && (
+              <>
+                <Link to="/admin/encargados" style={{ color: "#ddd", textDecoration: "none" }}>
+                  Admin Encargados
+                </Link>
+                <Link to="/admin/bicicleteros" style={{ color: "#ddd", textDecoration: "none" }}>
+                  Admin Bicicleteros
+                </Link>
+              </>
+            )}
+
+            {/* BOTÓN DE INGRESAR / SALIR */}
+            {token ? (
+              <button
+                onClick={handleLogout}
                 style={{
-                  position: "absolute",
-                  right: 0,
-                  marginTop: 8,
-                  width: 360,
-                  maxWidth: "calc(100vw - 32px)",
-                  background: "#fff",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-                  borderRadius: 10,
-                  zIndex: 40,
-                  overflow: "hidden",
+                    background: "rgba(255, 0, 0, 0.6)",
+                    color: "#fff",
+                    border: "none",
+                    padding: "8px 14px",
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    fontWeight: 600,
                 }}
               >
-                {/* Componente de Login se renderiza aquí; se le pasa onLoginSuccess para cerrar */}
-                <Login onLoginSuccess={handleLoginSuccess} />
-              </div>
+                Salir
+              </button>
+            ) : (
+              // 3. LA CONDICIÓN MÁGICA:
+              // Solo mostramos el botón si NO estamos ya en "/login"
+              location.pathname !== "/login" && (
+                <Link
+                    to="/login"
+                    style={{
+                    background: "transparent",
+                    color: "#fff",
+                    border: "1px solid rgba(255,255,255,0.4)",
+                    padding: "8px 14px",
+                    borderRadius: 8,
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    }}
+                >
+                    Ingresar
+                </Link>
+              )
             )}
-          </div>
+          </nav>
         </div>
       </header>
 
-      {/* Mantengo Outlet para que la app pueda renderizar rutas debajo si las hubiera */}
       <main style={{ flex: 1 }}>
         <Outlet />
       </main>
