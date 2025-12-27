@@ -19,16 +19,24 @@ export default function Sidebar({ role }) {
     <aside className="w-full h-full bg-blue-900 flex flex-col text-white shadow-xl z-20">
       {/* Navigation Links */}
       <nav className="flex-1 p-4 overflow-y-auto mt-2">
-        <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider mb-3 px-2">
-          Menu Principal
-        </p>
-
-        <Link to="/bicicleta" className={linkClasses("/bicicleta")}>
-          Bicicleta
+        <Link to="/" className={linkClasses("/")}>
+          Inicio
         </Link>
+        <div className="my-4 border-t border-blue-800" />
+        <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider mb-3 px-2">
+          Gestión
+        </p>
 
         <Link to="/custodia" className={linkClasses("/custodia")}>
           Custodia
+        </Link>
+
+        <Link to="/usuarios" className={linkClasses("/usuarios")}>
+          Usuarios
+        </Link>
+
+        <Link to="/bicicletas" className={linkClasses("/bicicletas")}>
+          Bicicletas
         </Link>
 
         <Link to="/informes" className={linkClasses("/informes")}>

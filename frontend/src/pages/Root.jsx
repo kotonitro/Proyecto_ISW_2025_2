@@ -25,10 +25,10 @@ export default function Root() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-100 font-sans text-gray-900 overflow-hidden">
+    <div className="flex flex-col h-screen font-sans text-gray-900 overflow-hidden">
       {/* 1. HEADER SUPERIOR (SIEMPRE VISIBLE) */}
-      <header className="bg-blue-700 text-white shadow-md z-30 shrink-0 h-16">
-        <div className="w-full px-4 h-full flex items-center justify-between">
+      <header className="bg-blue-700 text-white shadow-md z-30 shrink-0 h-18">
+        <div className="w-full px-8 h-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* BOTÓN HAMBURGUESA (Solo si hay token) */}
             {token && (
@@ -98,12 +98,12 @@ export default function Root() {
             {/* Si HAY token */}
             {token && (
               <>
-                <span className="text-sm font-medium text-blue-100 hidden sm:inline-block">
-                  Hola, {nombre}
+                <span className="text-sm font-medium text-white hidden sm:inline-block">
+                  ¡Hola, {nombre}!
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 text-white border-none py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-red-700 transition-colors text-sm"
+                  className="bg-red-600 text-white border-none py-2 px-4 rounded-lg cursor-pointer font-semibold hover:bg-red-700 transition-colors text-sm"
                 >
                   Salir
                 </button>
@@ -138,7 +138,7 @@ export default function Root() {
           </aside>
         )}
         {/* B. ÁREA DE CONTENIDO */}
-        <main className="flex-1 overflow-y-auto p-6 bg-slate-100 scroll-smooth w-full">
+        <main className="flex-1 overflow-y-auto p-6 bg-blue-50 scroll-smooth w-full">
           {token && (
             <div className="mb-6 pb-4 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-800 capitalize">
