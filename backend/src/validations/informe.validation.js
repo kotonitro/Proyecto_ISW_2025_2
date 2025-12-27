@@ -28,12 +28,12 @@ export const informeValidation = Joi.object({
     "any.required": "La descripción es obligatoria",
   }),
 
-  fechaInforme: Joi.date().max("now").required().messages({
+  fechaInforme: Joi.date().required().messages({
     "date.base": "La fecha de informe no es válida",
     "date.max": "La fecha de informe no puede ser una fecha futura",
     "any.required": "La fecha de informe es obligatoria",
   }),
-});
+}).unknown(true);
 
 export const informeUpdateValidation = informeValidation
   .fork(

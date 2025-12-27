@@ -7,7 +7,10 @@ import Error404 from "./pages/Error404";
 import Root from "./pages/Root";
 import ProtectedRoute, { ErrorBoundary } from "./components/ProtectedRoute";
 import "./index.css";
-import Register from "./pages/Register";
+import AdminEncargados from "./pages/AdminEncargados";
+import Informes from "./pages/Informes";
+import Usuarios from "./pages/Usuarios";
+import CustodiaPage from "./pages/CustodiaPage";
 
 const router = createBrowserRouter([
   {
@@ -17,12 +20,23 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
+      { path: "usuarios", element: <Usuarios /> },
+      { path: "informes", element: <Informes /> },
       {
-        path: "dashboard",
+        path: "custodia",
         element: (
           <ProtectedRoute>
-            <Home />
+            <CustodiaPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/encargados", // Esta será la URL: http://localhost:5173/admin/encargados
+        element: (
+          <ProtectedRoute>
+            {" "}
+            {/* Bloquea el acceso si no estás logueado */}
+            <AdminEncargados />
           </ProtectedRoute>
         ),
       },

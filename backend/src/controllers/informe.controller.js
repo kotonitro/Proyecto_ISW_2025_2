@@ -3,10 +3,13 @@ import { generateInformePdf } from "../services/pdf.service.js";
 import {handleSuccess,handleErrorClient,handleErrorServer} from "../handlers/responseHandlers.js";
 import {informeValidation,informeUpdateValidation} from "../validations/informe.validation.js";
 import {createDocumentos} from "../services/documento.service.js"
+import { getInformeZip } from "../services/informe.service.js";
 
 export async function handleCreateInforme(req, res) {
   const informeData = req.body;
   const archivos = req.files; 
+  informeData.fechaInforme = new Date();
+  
   try {
     const { error, value } = informeValidation.validate(informeData, {
       abortEarly: false,
@@ -102,7 +105,6 @@ export async function handleUpdateInforme(req, res) {
        }
        const pdfBuffer = await generateInformePdf(Informe);
    
-       //headers para descarga
        res.setHeader("Content-Type", "application/pdf");
        res.setHeader("Content-Disposition", `attachment; filename=informe_${idInforme}.pdf`);
        res.setHeader("Content-Length", pdfBuffer.length);
@@ -111,4 +113,26 @@ export async function handleUpdateInforme(req, res) {
      } catch (error) {
        handleErrorServer(res, 500, "Error interno al generar el PDF", error.message);
      }
+}
+
+export async function handleDownloadInformeZip(req, res) {
+  try {
+    const { id } = req.params;
+    const { archive, idInforme } = await getInformeZip(id);
+    res.attachment(`Informe_Completo_${idInforme}.zip`);
+    res.setHeader("Content-Type", "application/zip");
+    archive.on("error", (err) => {
+      console.error("Error comprimiendo:", err);
+      res.status(500).send({ error: "Error al generar el ZIP" });
+    });
+    archive.pipe(res);
+    await archive.finalize();
+
+  } catch (error) {
+    console.error("Error en downloadZip:", error);
+    if (error.message === "Informe no encontrado") {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
 }

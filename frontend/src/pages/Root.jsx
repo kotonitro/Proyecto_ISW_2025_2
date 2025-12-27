@@ -1,116 +1,152 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import Login from "./Login";
-export { default as Error404 } from "./Error404";
+import React, { useState, useEffect } from "react";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import logoUBB from "../images/logoUBB.webp";
 
-/**
- * Root - Versión simplificada:
- * - Muestra solo el título del proyecto y el botón "Ingresar".
- * - El botón abre un desplegable (dropdown) con el componente <Login />
- *   en lugar de navegar a otra ruta.
- *
- * El dropdown se cierra al hacer clic fuera o después de un inicio exitoso.
- */
 export default function Root() {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const token = localStorage.getItem("token");
+  const rol = localStorage.getItem("rol");
+  const nombre = localStorage.getItem("nombre");
+
+  // Estado para controlar la visibilidad de la Sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Cerrar sidebar automáticamente al cambiar de ruta
   useEffect(() => {
-    function onDocumentClick(e) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target)
-      ) {
-        setOpen(false);
-      }
-    }
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, []);
-
-  function handleLoginSuccess(encargadoNombre) {
-    // Puedes guardar el nombre/token si lo deseas; aquí solo cerramos el dropdown.
-    localStorage.setItem("encargadoNombre", encargadoNombre || "");
-    setOpen(false);
-  }
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "var(--bg-gray)" }}
-    >
-      <header className="header-brand" style={{ position: "relative" }}>
-        <div
-          className="header-inner"
-          style={{ justifyContent: "space-between" }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div className="avatar-circle" aria-hidden="true" />
-            <span style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>
-              Proyecto ISW
-            </span>
+    <div className="flex flex-col h-screen font-sans text-gray-900 overflow-hidden">
+
+      <header className="bg-blue-700 text-white shadow-md z-30 shrink-0 h-18">
+        <div className="w-full px-8 h-full flex items-center justify-between">
+          <div className="flex items-center gap-3">
+
+            {token && (
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 rounded-md hover:bg-blue-600 transition-colors focus:outline-none"
+                aria-label="Toggle Menu"
+              >
+                {isSidebarOpen ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                )}
+              </button>
+            )}
+
+            <Link to="/" className="no-underline flex items-center gap-3 group">
+              <img src={logoUBB} alt="Logo UBB" className="h-10 w-auto" />
+              <span className="text-white text-xl font-bold group-hover:text-blue-100 transition-colors">
+                Bicicleteros UBB
+              </span>
+            </Link>
           </div>
 
-          {/* Solo el botón Ingresar */}
-          <div style={{ position: "relative" }}>
-            <button
-              ref={buttonRef}
-              onClick={() => setOpen((s) => !s)}
-              aria-expanded={open}
-              aria-controls="login-dropdown"
-              style={{
-                background: "transparent",
-                color: "#fff",
-                border: "1px solid rgba(255,255,255,0.16)",
-                padding: "8px 14px",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
-            >
-              Ingresar
-            </button>
+          <nav className="flex gap-4 items-center">
 
-            {/* Dropdown */}
-            {open && (
-              <div
-                id="login-dropdown"
-                ref={dropdownRef}
-                role="dialog"
-                aria-modal="false"
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  marginTop: 8,
-                  width: 360,
-                  maxWidth: "calc(100vw - 32px)",
-                  background: "#fff",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-                  borderRadius: 10,
-                  zIndex: 40,
-                  overflow: "hidden",
-                }}
-              >
-                {/* Componente de Login se renderiza aquí; se le pasa onLoginSuccess para cerrar */}
-                <Login onLoginSuccess={handleLoginSuccess} />
+            {!token && location.pathname !== "/login" && (
+              <div className="flex items-center gap-4">
+                <span className="text-white text-sm font-medium hidden sm:block">
+                  ¿Eres encargado?
+                </span>
+                <Link
+                  to="/login"
+                  className="bg-white text-blue-700 border border-white/40 py-2 px-4 rounded-lg no-underline font-semibold hover:bg-gray-100 transition-colors text-sm"
+                >
+                  Ingresar
+                </Link>
               </div>
             )}
-          </div>
+
+            {token && (
+              <>
+                <span className="text-sm font-medium text-white hidden sm:inline-block">
+                  ¡Hola, {nombre}!
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-600 text-white border-none py-2 px-4 rounded-lg cursor-pointer font-semibold hover:bg-red-700 transition-colors text-sm"
+                >
+                  Salir
+                </button>
+              </>
+            )}
+          </nav>
         </div>
       </header>
 
-      {/* Mantengo Outlet para que la app pueda renderizar rutas debajo si las hubiera */}
-      <main style={{ flex: 1 }}>
-        <Outlet />
-      </main>
+      <div className="flex flex-1 overflow-hidden relative">
+        {token && isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-20"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
-      <footer className="py-4 text-center text-sm text-gray-600">
-        © {new Date().getFullYear()} Proyecto ISW
-      </footer>
+        {token && (
+          <aside
+            className={`
+                          bg-blue-900 text-white z-40 transition-transform duration-300 ease-in-out
+                          absolute top-0 left-0 h-full w-64 shadow-xl
+                          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                        `}
+          >
+            <div className="w-64 h-full">
+              <Sidebar role={rol} />
+            </div>
+          </aside>
+        )}
+        <main className="flex-1 overflow-y-auto p-6 bg-blue-50 scroll-smooth w-full">
+          {token && (
+            <div className="mb-6 pb-4 border-b border-gray-200">
+            
+            </div>
+          )}
+
+          <Outlet />
+
+          <footer className="py-8 text-center text-sm text-gray-500 mt-auto">
+            © {new Date().getFullYear()} Universidad del Bío-Bío
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }

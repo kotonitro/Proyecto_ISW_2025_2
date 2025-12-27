@@ -3,5 +3,6 @@ export const TIPOS_INCIDENTE = [
   "ROBO",
   "PERDIDA",
   "FALLA SISTEMA",
+  "MANTENIMIENTO",
   "OTRO",
 ];
