@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import InformesList from "../components/InformesList";
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString("en-CA");
@@ -252,7 +253,6 @@ const Informes = () => {
               )}
             </div>
 
-            {/* Botón Submit */}
             <button 
               type="submit" 
               disabled={loading} 
@@ -275,7 +275,6 @@ const Informes = () => {
           </form>
         </div>
 
-        {/* --- LISTA DE INFORMES --- */}
         <InformesList 
           informes={informes} 
           onDescargar={descargarPDF} 
