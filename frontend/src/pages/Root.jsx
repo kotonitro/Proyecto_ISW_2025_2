@@ -135,8 +135,7 @@ export default function Root() {
         )}
         <main className="flex-1 overflow-y-auto p-6 bg-blue-50 scroll-smooth w-full">
           {token && (
-            <div className="mb-6 pb-4 border-b border-gray-200">
-            
+            <div className="mb-4 pb-4">
             </div>
           )}
 
