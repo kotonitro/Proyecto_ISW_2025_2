@@ -7,6 +7,7 @@ import {createDocumentos} from "../services/documento.service.js"
 export async function handleCreateInforme(req, res) {
   const informeData = req.body;
   const archivos = req.files; 
+  informeData.fechaInforme = new Date();
   try {
     const { error, value } = informeValidation.validate(informeData, {
       abortEarly: false,

@@ -8,6 +8,7 @@ import Root from "./pages/Root";
 import ProtectedRoute, { ErrorBoundary } from "./components/ProtectedRoute";
 import "./index.css";
 import AdminEncargados from './pages/AdminEncargados'; // <--- IMPORTAR
+import Informes from "./pages/Informes";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
+      { path: "informes", element: <Informes /> },
       {
         path: "admin/encargados", // Esta será la URL: http://localhost:5173/admin/encargados
         element: (

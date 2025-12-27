@@ -4,6 +4,7 @@ import bike1 from "../images/bike1.jpg";
 import bike2 from "../images/bike2.jpg";
 import bike3 from "../images/bike3.jpg";
 import bike4 from "../images/bike4.jpg";
+import Informes from "./Informes";
 
 /**
  * Home.jsx
@@ -63,7 +64,14 @@ export default function Home() {
             />
           ))}
         </div>
+        {/* --- SEPARADOR VISUAL --- */}
+                <div style={{ margin: "50px 0", borderTop: "2px dashed #ccc" }}></div>
+        <div className="section-informes">
+                    <h2 style={{textAlign: 'center', color: '#666'}}>Zona de Pruebas: Informes</h2>
+                    <Informes /> 
+                </div>
       </main>
     </div>
   );
 }
+

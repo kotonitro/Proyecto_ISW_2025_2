@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import morgan from "morgan";
 import cors from "cors";
 import { routerApi } from "./routes/index.routes.js";
@@ -11,6 +12,8 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 
 const app = express(); // Crear la aplicacion de Express
 app.use(cors()); // Usar cors para peticiones del frontend
