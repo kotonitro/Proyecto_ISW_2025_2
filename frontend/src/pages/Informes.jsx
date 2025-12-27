@@ -1,33 +1,34 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import InformesList from "../components/InformesList";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import InformesList from '../components/InformesList';
 
 const Informes = () => {
-  const hoy = new Date().toLocaleDateString("en-CA");
+  const hoy = new Date().toLocaleDateString('en-CA');
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
   const token = localStorage.getItem("token");
 
   if (!idUsuarioLogueado) {
     console.warn("No hay usuario logueado");
   }
+
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    descripcion: "",
-    tipoIncidente: "",
+    descripcion: '',
+    tipoIncidente: '',
     fechaInforme: hoy,
-    idEncargado: idUsuarioLogueado,
+    idEncargado: idUsuarioLogueado 
   });
-
+  
   const [archivos, setArchivos] = useState([]);
 
   const fetchInformes = async () => {
     try {
-      const config = token
-        ? { headers: { Authorization: `Bearer ${token}` } }
-        : {};
-      const res = await axios.get("http://localhost:3000/api/informes", config);
-      setInformes(res.data.data || res.data);
+      const token = localStorage.getItem("token");
+      const res = await axios.get('http://localhost:3000/api/informes', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setInformes(res.data.data || res.data); 
     } catch (error) {
       console.error("Error cargando informes:", error);
     }
@@ -40,7 +41,7 @@ const Informes = () => {
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -76,7 +77,7 @@ const Informes = () => {
       data.append('idEncargado', formData.idEncargado);
 
       archivos.forEach((archivo) => {
-        // Asegúrate de que esto coincida con tu backend (archivosExtras o archivos)
+
         data.append('archivosExtras', archivo);
       });
       
@@ -92,22 +93,9 @@ const Informes = () => {
       setArchivos([]); 
       fetchInformes(); 
 
-      await axios.post("http://localhost:3000/api/informes", data, config);
-
-      alert("¡Informe creado y documentos subidos!");
-
-      setFormData({
-        descripcion: "",
-        tipoIncidente: "",
-        fechaInforme: "",
-        idEncargado: idUsuarioLogueado || 1,
-      });
-      setArchivos([]); // Limpia
-
-      fetchInformes(); // Actualiza
     } catch (error) {
       console.error("Error:", error);
-      alert("Hubo un error al crear el informe.");
+      alert('Hubo un error al crear el informe.');
     } finally {
       setLoading(false);
     }
@@ -121,9 +109,9 @@ const Informes = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
-      link.setAttribute("download", `informe_${id}.pdf`);
+      link.setAttribute('download', `informe_${id}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
@@ -155,8 +143,8 @@ const Informes = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Informes</h1>
-        
+        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Panel de Informes</h1>
+
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-400">
           <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2">
              Nuevo Informe
@@ -164,7 +152,7 @@ const Informes = () => {
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+              {/* Tipo Incidente */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tipo de Incidente
@@ -184,6 +172,7 @@ const Informes = () => {
                 </select>
               </div>
 
+              {/* Fecha */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Fecha
@@ -198,6 +187,7 @@ const Informes = () => {
               </div>
             </div>
 
+            {/* Descripción */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Descripción
@@ -213,9 +203,10 @@ const Informes = () => {
               />
             </div>
 
-            <div className="border-2 border-dashed border-gray-400 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
+            {/* Zona de Archivos */}
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
               <label className="block text-sm font-bold text-gray-600 mb-3">
-                Adjuntar Documentos o Fotos, solo PDF,PNG Y JPG
+                Adjuntar Documentos o Fotos
               </label>
               
               <input 
@@ -232,7 +223,7 @@ const Informes = () => {
               </p>
                         
               {archivos.length > 0 && (
-                <div className="mt-4 bg-white border border-gray-400 rounded-lg p-4">
+                <div className="mt-4 bg-white border border-gray-200 rounded-lg p-4">
                   <p className="font-semibold text-sm text-gray-700 mb-2">Archivos listos:</p>
                   <ul className="space-y-2">
                     {archivos.map((file, index) => (
@@ -253,6 +244,7 @@ const Informes = () => {
               )}
             </div>
 
+            {/* Botón Submit */}
             <button 
               type="submit" 
               disabled={loading} 
@@ -275,6 +267,7 @@ const Informes = () => {
           </form>
         </div>
 
+        {/* --- LISTA DE INFORMES --- */}
         <InformesList 
           informes={informes} 
           onDescargar={descargarPDF} 
