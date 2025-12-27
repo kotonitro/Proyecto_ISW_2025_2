@@ -6,9 +6,11 @@ const Informes = () => {
   const hoy = new Date().toLocaleDateString('en-CA');
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
   const token = localStorage.getItem("token");
+
   if (!idUsuarioLogueado) {
-       console.warn("No hay usuario logueado");
-    }
+    console.warn("No hay usuario logueado");
+  }
+
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,7 +19,6 @@ const Informes = () => {
     fechaInforme: hoy,
     idEncargado: idUsuarioLogueado 
   });
-
   
   const [archivos, setArchivos] = useState([]);
 
@@ -25,10 +26,8 @@ const Informes = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get('http://localhost:3000/api/informes', {
-              headers: {
-                Authorization: `Bearer ${token}` 
-              }
-            });
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setInformes(res.data.data || res.data); 
     } catch (error) {
       console.error("Error cargando informes:", error);
@@ -47,26 +46,25 @@ const Informes = () => {
   };
 
   const handleFileChange = (e) => {
-      if (e.target.files) {
-        const nuevosArchivos = Array.from(e.target.files);
-        setArchivos((prevArchivos) => {
-          const totalArchivos = [...prevArchivos, ...nuevosArchivos];
-  
-          if (totalArchivos.length > 5) {
-            alert("Solo puedes subir un máximo de 5 archivos por informe.");
-            return prevArchivos;
-          }
-          return totalArchivos;
-        });
-      }
-      e.target.value = ""; 
-    };
+    if (e.target.files) {
+      const nuevosArchivos = Array.from(e.target.files);
+      setArchivos((prevArchivos) => {
+        const totalArchivos = [...prevArchivos, ...nuevosArchivos];
+        if (totalArchivos.length > 5) {
+          alert("Solo puedes subir un máximo de 5 archivos por informe.");
+          return prevArchivos;
+        }
+        return totalArchivos;
+      });
+    }
+    e.target.value = ""; 
+  };
   
   const removerArchivo = (indexToRemove) => {
-      setArchivos((prevArchivos) => 
-        prevArchivos.filter((_, index) => index !== indexToRemove)
-      );
-    };
+    setArchivos((prevArchivos) => 
+      prevArchivos.filter((_, index) => index !== indexToRemove)
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,31 +72,26 @@ const Informes = () => {
 
     try {
       const data = new FormData();
-      
       data.append('descripcion', formData.descripcion);
       data.append('tipoIncidente', formData.tipoIncidente);
       data.append('idEncargado', formData.idEncargado);
 
       archivos.forEach((archivo) => {
+        // Asegúrate de que esto coincida con tu backend (archivosExtras o archivos)
         data.append('archivosExtras', archivo);
       });
-      console.log("Enviando informe con ID Encargado:", formData.idEncargado);
       
-      
-      // peticion post
       await axios.post('http://localhost:3000/api/informes', data, {
         headers: { 
-                  'Content-Type': 'multipart/form-data',
-                  Authorization: `Bearer ${token}` 
-                }
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}` 
+        }
       });
 
       alert('¡Informe creado y documentos subidos!');
-      
-      setFormData({ descripcion: '', tipoIncidente: '', fechaInforme: '', idEncargado: 1 });
-      setArchivos([]); // Limpia 
-      
-      fetchInformes(); // Actualiza 
+      setFormData({ descripcion: '', tipoIncidente: '', fechaInforme: hoy, idEncargado: idUsuarioLogueado });
+      setArchivos([]); 
+      fetchInformes(); 
 
     } catch (error) {
       console.error("Error:", error);
@@ -113,9 +106,7 @@ const Informes = () => {
       const token = localStorage.getItem("token");
       const response = await axios.get(`http://localhost:3000/api/informes/download/${id}`, {
         responseType: 'blob',
-        headers: {
-          Authorization: `Bearer ${token}` 
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -130,151 +121,155 @@ const Informes = () => {
   };
   
   const descargarZIP = async (id) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:3000/api/informes/download-zip/${id}`, {
-          responseType: 'blob',
-          headers: {
-            Authorization: `Bearer ${token}` 
-          }
-        });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        
-        link.setAttribute('download', `Evidencias_Informe_${id}.zip`);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-        
-      } catch (error) {
-        console.error("Error descargando ZIP:", error);
-        alert("Error al descargar las evidencias (o no existen archivos adjuntos).");
-      }
-    };
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`http://localhost:3000/api/informes/download-zip/${id}`, {
+        responseType: 'blob',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Evidencias_Informe_${id}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error("Error descargando ZIP:", error);
+      alert("Error al descargar las evidencias.");
+    }
+  };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Panel de Informes</h1>
-
-      <div style={{ background: '#f9f9f9', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
-        <h2 style={{ marginTop: 0 }}> Nuevo Informe</h2>
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Informes</h1>
         
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-400">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2">
+             Nuevo Informe
+          </h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo de Incidente
+                </label>
+                <select 
+                  name="tipoIncidente" 
+                  value={formData.tipoIncidente} 
+                  onChange={handleInputChange} 
+                  required 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                >
+                  <option value="">Seleccione...</option>
+                  <option value="Daño Fisico">Daño Físico</option>
+                  <option value="Robo">Robo</option>
+                  <option value="Mantenimiento">Mantenimiento</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fecha
+                </label>
+                <input 
+                  type="date" 
+                  name="fechaInforme" 
+                  value={formData.fechaInforme} 
+                  disabled 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                />
+              </div>
+            </div>
+
             <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Tipo de Incidente:</label>
-              <select 
-                name="tipoIncidente" 
-                value={formData.tipoIncidente} 
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Descripción
+              </label>
+              <textarea 
+                name="descripcion" 
+                value={formData.descripcion} 
                 onChange={handleInputChange} 
+                rows="4"
                 required 
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-              >
-                <option value="">Seleccione...</option>
-                <option value="Daño Fisico">Daño Físico</option>
-                <option value="Robo">Robo</option>
-                <option value="Mantenimiento">Mantenimiento</option>
-                <option value="Otro">Otro</option>
-              </select>
+                placeholder="Describa detalladamente qué sucedió..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none transition-colors"
+              />
             </div>
 
-            <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Fecha:</label>
+            <div className="border-2 border-dashed border-gray-400 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
+              <label className="block text-sm font-bold text-gray-600 mb-3">
+                Adjuntar Documentos o Fotos, solo PDF,PNG Y JPG
+              </label>
+              
               <input 
-                type="date" 
-                name="fechaInforme" 
-                value={formData.fechaInforme} 
-                disabled 
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc',backgroundColor: '#e9ecef' }}
+                type="file" 
+                multiple 
+                onChange={handleFileChange}
+                accept="image/*,application/pdf" 
+                disabled={archivos.length >= 5}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
               />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Descripción:</label>
-            <textarea 
-              name="descripcion" 
-              value={formData.descripcion} 
-              onChange={handleInputChange} 
-              rows="4"
-              required 
-              placeholder="Describa detalladamente qué sucedió..."
-              style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', resize: 'none' }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '20px', padding: '15px', border: '2px dashed #aaa', borderRadius: '8px', background: '#fff' }}>
-            <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: '#555' }}>
-              Adjuntar Documentos o Fotos:
-            </label>
-            
-            <input 
-              type="file" 
-              multiple 
-              onChange={handleFileChange}
-              accept="image/*,application/pdf" 
-              style={{ marginBottom: '10px' }}
-              disabled={archivos.length >= 5}
-            />
-            <small style={{ display: 'block', color: '#666', marginBottom: '10px' }}>
-                          ({archivos.length}/5 archivos seleccionados)
-            </small>
+              
+              <p className="text-xs text-gray-500 mt-2">
+                 ({archivos.length}/5 archivos seleccionados)
+              </p>
                         
-            {archivos.length > 0 && (
-                          <div style={{ background: '#eef', padding: '10px', borderRadius: '4px' }}>
-                            <p style={{ margin: '0 0 5px 0', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                              Archivos listos:
-                            </p>
-                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
-                              {archivos.map((file, index) => (
-                                <li key={index} style={{ marginBottom: '5px' }}>
-                                  {file.name} ({(file.size / 1024).toFixed(1)} KB)
-                                  <button 
-                                    type="button" 
-                                    onClick={() => removerArchivo(index)}
-                                    style={{ 
-                                      marginLeft: '10px', 
-                                      border: 'none', 
-                                      background: 'transparent', 
-                                      color: 'red', 
-                                      cursor: 'pointer',
-                                      fontWeight: 'bold'
-                                    }}
-                                  >
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-          </div>
+              {archivos.length > 0 && (
+                <div className="mt-4 bg-white border border-gray-400 rounded-lg p-4">
+                  <p className="font-semibold text-sm text-gray-700 mb-2">Archivos listos:</p>
+                  <ul className="space-y-2">
+                    {archivos.map((file, index) => (
+                      <li key={index} className="flex items-center justify-between text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                        <span>{file.name} <span className="text-xs text-gray-400 ml-1">({(file.size / 1024).toFixed(1)} KB)</span></span>
+                        <button 
+                          type="button" 
+                          onClick={() => removerArchivo(index)}
+                          className="text-red-500 hover:text-red-700 font-bold px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                          title="Eliminar archivo"
+                        >
+                          ✕
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
-          <button 
-            type="submit" 
-            disabled={loading} 
-            style={{ 
-              width: '100%', 
-              padding: '12px', 
-              background: loading ? '#ccc' : '#28a745', 
-              color: '#fff', 
-              border: 'none', 
-              borderRadius: '5px', 
-              fontSize: '16px', 
-              cursor: loading ? 'not-allowed' : 'pointer' 
-            }}
-          >
-            {loading ? 'Subiendo datos y archivos...' : 'Guardar Informe Completo'}
-          </button>
-        </form>
-      </div>
+            {/* Botón Submit */}
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className={`w-full py-3 px-4 rounded-lg text-white font-semibold text-lg shadow-md transition-all duration-200 
+                ${loading 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-green-600 hover:bg-green-700 hover:shadow-lg active:scale-[0.99]'
+                }`}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Subiendo...
+                </span>
+              ) : 'Guardar Informe Completo'}
+            </button>
+          </form>
+        </div>
 
-      <div>
+        {/* --- LISTA DE INFORMES --- */}
         <InformesList 
-                informes={informes} 
-                onDescargar={descargarPDF} 
-                onDescargarZIP={descargarZIP}
-              />
+          informes={informes} 
+          onDescargar={descargarPDF} 
+          onDescargarZIP={descargarZIP}
+        />
       </div>
     </div>
   );

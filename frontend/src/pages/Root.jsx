@@ -26,11 +26,11 @@ export default function Root() {
 
   return (
     <div className="flex flex-col h-screen font-sans text-gray-900 overflow-hidden">
-      {/* 1. HEADER SUPERIOR (SIEMPRE VISIBLE) */}
+
       <header className="bg-blue-700 text-white shadow-md z-30 shrink-0 h-18">
         <div className="w-full px-8 h-full flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* BOTÓN HAMBURGUESA (Solo si hay token) */}
+
             {token && (
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -80,7 +80,7 @@ export default function Root() {
           </div>
 
           <nav className="flex gap-4 items-center">
-            {/* Si NO hay token (público) */}
+
             {!token && location.pathname !== "/login" && (
               <div className="flex items-center gap-4">
                 <span className="text-white text-sm font-medium hidden sm:block">
@@ -95,7 +95,6 @@ export default function Root() {
               </div>
             )}
 
-            {/* Si HAY token */}
             {token && (
               <>
                 <span className="text-sm font-medium text-white hidden sm:inline-block">
@@ -113,9 +112,7 @@ export default function Root() {
         </div>
       </header>
 
-      {/* 2. CONTENEDOR PRINCIPAL (Flex Row) */}
       <div className="flex flex-1 overflow-hidden relative">
-        {/* BACKDROP (Fondo oscuro al abrir menú) */}
         {token && isSidebarOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-20"
@@ -123,7 +120,6 @@ export default function Root() {
           />
         )}
 
-        {/* A. SIDEBAR WRAPPER (Estilo Drawer/Cortina Global) */}
         {token && (
           <aside
             className={`
@@ -137,15 +133,10 @@ export default function Root() {
             </div>
           </aside>
         )}
-        {/* B. ÁREA DE CONTENIDO */}
         <main className="flex-1 overflow-y-auto p-6 bg-blue-50 scroll-smooth w-full">
           {token && (
             <div className="mb-6 pb-4 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-800 capitalize">
-                {location.pathname === "/"
-                  ? "Inicio"
-                  : location.pathname.replace("/", "").replace("-", " ")}
-              </h2>
+            
             </div>
           )}
 
