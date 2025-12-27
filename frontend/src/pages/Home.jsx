@@ -4,7 +4,6 @@ import bike1 from "../images/bike1.jpg";
 import bike2 from "../images/bike2.jpg";
 import bike3 from "../images/bike3.jpg";
 import bike4 from "../images/bike4.jpg";
-import Informes from "./Informes";
 
 const mockData = [
   {
@@ -41,8 +40,11 @@ export default function Home() {
   return (
     <div>
       {/* Main content */}
-      <main style={{ padding: "48px 24px" }}>
-        <div className="cards-grid">
+      <main className="p-6 md:p-12 max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 border-l-4 border-blue-600 pl-4">
+          Bicicleteros Disponibles
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {mockData.map((b) => (
             <BicicleteroCard
               key={b.id}
@@ -57,4 +59,3 @@ export default function Home() {
     </div>
   );
 }
-
