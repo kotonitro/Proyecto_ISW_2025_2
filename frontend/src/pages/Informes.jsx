@@ -178,6 +178,8 @@ const Informes = () => {
                   <option value="">Seleccione...</option>
                   <option value="Daño Fisico">Daño Físico</option>
                   <option value="Robo">Robo</option>
+                  <option value="Perdida">Perdida</option>
+                  <option value="Falla sistema">Falla sistema</option>
                   <option value="Mantenimiento">Mantenimiento</option>
                   <option value="Otro">Otro</option>
                 </select>
@@ -214,7 +216,7 @@ const Informes = () => {
               />
             </div>
 
-            {/* Zona de Archivos */}
+            {/* Archivos */}
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
               <label className="block text-sm font-bold text-gray-600 mb-3">
                 Adjuntar Documentos o Fotos

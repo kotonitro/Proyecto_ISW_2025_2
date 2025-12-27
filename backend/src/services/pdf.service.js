@@ -65,7 +65,7 @@ export function generateInformePdf(Informe) {
 
     const row = (label, value, x, y) => {
         doc.font("Helvetica-Bold").fontSize(11).fillColor("#333").text(label, x, y);
-        doc.font("Helvetica").fontSize(11).fillColor("#555").text(value, x + 100, y);
+        doc.font("Helvetica").fontSize(11).fillColor("#555").text(value, x + 70, y);
     };
 
     const fechaTexto = Informe.fechaInforme 
