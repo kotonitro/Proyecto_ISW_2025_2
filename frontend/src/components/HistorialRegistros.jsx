@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { fetchRegistros } from "../api/custodiaApi";
 
+// Mapeo de nombres para las ubicaciones basadas en el ID del bicicletero
+const NOMBRES_BICICLETEROS = {
+  1: "Av. Principal",
+  2: "Plaza Central",
+  3: "Parque Norte",
+  4: "Calle Secundaria"
+};
+
 export default function HistorialRegistros() {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchId, setSearchId] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
 
-  async function load(estado = "") {
+  async function load(estado = "", idBici = "") {
     setLoading(true);
     setError(null);
     try {
       const filters = {};
       if (estado) filters.estado = estado;
+      if (idBici) filters.idBicicleta = idBici;
+      
       const data = await fetchRegistros(filters);
       setRegistros(data);
     } catch (e) {
-      setError(e.message || String(e));
+      setError("Error al cargar los registros");
     } finally {
       setLoading(false);
     }
@@ -26,147 +37,84 @@ export default function HistorialRegistros() {
     load();
   }, []);
 
-  function handleFiltroChange(e) {
-    const estado = e.target.value;
-    setFiltroEstado(estado);
-    load(estado);
-  }
+  const handleSearch = (e) => {
+    e.preventDefault();
+    load(filtroEstado, searchId);
+  };
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          <svg
-            className="w-5 h-5 text-blue-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          Historial de Registros
-        </h2>
+    <div className="space-y-4">
+      {/* BUSCADOR Y FILTRO */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+        <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
+          <input
+            type="number"
+            placeholder="ID Bicicleta..."
+            value={searchId}
+            onChange={(e) => setSearchId(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full"
+          />
+          <button type="submit" className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-bold hover:bg-blue-700">
+            BUSCAR
+          </button>
+        </form>
 
-        <div className="flex items-center gap-2">
-          <label
-            htmlFor="filtro-estado"
-            className="text-sm font-medium text-gray-600"
-          >
-            Filtrar:
-          </label>
-          <select
-            id="filtro-estado"
-            value={filtroEstado}
-            onChange={handleFiltroChange}
-            className="border border-gray-300 rounded-lg text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Todos</option>
-            <option value="entrada">Entradas</option>
-            <option value="salida">Salidas</option>
-          </select>
-        </div>
+        <select
+          value={filtroEstado}
+          onChange={(e) => { setFiltroEstado(e.target.value); load(e.target.value, searchId); }}
+          className="border border-gray-300 rounded-md px-3 py-1.5 text-sm outline-none bg-white w-full md:w-48"
+        >
+          <option value="">Todos los estados</option>
+          <option value="entrada">En Custodia</option>
+          <option value="salida">Retirada</option>
+        </select>
       </div>
 
-      {loading && (
-        <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-          {error}
-        </div>
-      )}
-
-      {!loading && registros.length === 0 && (
-        <div className="bg-gray-50 rounded-lg p-8 text-center text-gray-500 border border-gray-100">
-          No hay registros en el historial.
-        </div>
-      )}
-
-      {!loading && registros.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Usuario
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  RUT
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Bicicleta
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Bicicletero
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha Entrada
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha Salida
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {registros.map((r) => (
-                <tr
-                  key={r.idRegistroAlmacen}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #{r.idRegistroAlmacen}
+      {/* TABLA SIMPLIFICADA */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">ID Bici</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">RUT Usuario</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Ubicación</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Estado</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {loading ? (
+              <tr><td colSpan="4" className="px-6 py-10 text-center text-gray-400">Cargando...</td></tr>
+            ) : registros.length === 0 ? (
+              <tr><td colSpan="4" className="px-6 py-10 text-center text-gray-400">No hay registros.</td></tr>
+            ) : (
+              registros.map((r) => (
+                <tr key={r.idRegistroAlmacen} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm font-bold text-blue-600">
+                    #{r.idBicicleta}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {r.nombreUsuario}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-600 font-mono">
                     {r.rutUsuario}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {r.bicicleta?.idBicicleta || r.idBicicleta || "-"}
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {NOMBRES_BICICLETEROS[r.idBicicletero] || `ID: ${r.idBicicletero}`}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {r.bicicletero?.idBicicletero || r.idBicicletero || "-"}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        r.estadoBicicleta === "entrada"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {r.estadoBicicleta?.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(r.fechaEntrada).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {r.fechaSalida
-                      ? new Date(r.fechaSalida).toLocaleString()
-                      : "-"}
+                  <td className="px-6 py-4">
+                    {r.estadoBicicleta === "entrada" ? (
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                        EN CUSTODIA
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
+                        RETIRADA
+                      </span>
+                    )}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/bicicletas';
+const API_URL = 'http://localhost:3000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -19,3 +19,4 @@ export const getBicicletasByUsuario = (idUsuario) => api.get(`/usuario/${idUsuar
 export const createBicicleta = (data) => api.post('/', data);
 export const updateBicicleta = (id, data) => api.patch(`/${id}`, data);
 export const deleteBicicleta = (id) => api.delete(`/${id}`);
+export const getDisponibilidadBicicleteros = () => api.get('/disponibilidad');
