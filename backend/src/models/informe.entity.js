@@ -47,5 +47,11 @@ export const Informe = new EntitySchema({
         name: "idRegistroAlmacen",
       },
     },
+    documentos: {
+          target: "Documento", // Nombre de la entidad hija
+          type: "one-to-many", // Un informe tiene muchos documentos
+          inverseSide: "informe", // Esto debe coincidir con la relación en Documento.js
+          cascade: true, // Para que si borras el informe, se borren los docs (opcional)
+        },
   },
 });

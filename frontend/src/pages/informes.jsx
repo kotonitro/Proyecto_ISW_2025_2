@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import InformesList from '../components/InformesList';
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString('en-CA');
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
+  const token = localStorage.getItem("token");
   if (!idUsuarioLogueado) {
        console.warn("No hay usuario logueado");
-       // Aquí podrías poner un return null; o redirigir al login
     }
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,13 +17,18 @@ const Informes = () => {
     fechaInforme: hoy,
     idEncargado: idUsuarioLogueado 
   });
-  
+
   
   const [archivos, setArchivos] = useState([]);
 
   const fetchInformes = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/informes');
+      const token = localStorage.getItem("token");
+      const res = await axios.get('http://localhost:3000/api/informes', {
+              headers: {
+                Authorization: `Bearer ${token}` 
+              }
+            });
       setInformes(res.data.data || res.data); 
     } catch (error) {
       console.error("Error cargando informes:", error);
@@ -41,11 +47,26 @@ const Informes = () => {
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      setArchivos(filesArray);
-    }
-  };
+      if (e.target.files) {
+        const nuevosArchivos = Array.from(e.target.files);
+        setArchivos((prevArchivos) => {
+          const totalArchivos = [...prevArchivos, ...nuevosArchivos];
+  
+          if (totalArchivos.length > 5) {
+            alert("Solo puedes subir un máximo de 5 archivos por informe.");
+            return prevArchivos;
+          }
+          return totalArchivos;
+        });
+      }
+      e.target.value = ""; 
+    };
+  
+  const removerArchivo = (indexToRemove) => {
+      setArchivos((prevArchivos) => 
+        prevArchivos.filter((_, index) => index !== indexToRemove)
+      );
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,9 +82,15 @@ const Informes = () => {
       archivos.forEach((archivo) => {
         data.append('archivosExtras', archivo);
       });
+      console.log("Enviando informe con ID Encargado:", formData.idEncargado);
+      
+      
       // peticion post
       await axios.post('http://localhost:3000/api/informes', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+                  'Content-Type': 'multipart/form-data',
+                  Authorization: `Bearer ${token}` 
+                }
       });
 
       alert('¡Informe creado y documentos subidos!');
@@ -83,8 +110,12 @@ const Informes = () => {
 
   const descargarPDF = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(`http://localhost:3000/api/informes/download/${id}`, {
         responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -97,6 +128,30 @@ const Informes = () => {
       alert("Error al descargar el PDF");
     }
   };
+  
+  const descargarZIP = async (id) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`http://localhost:3000/api/informes/download-zip/${id}`, {
+          responseType: 'blob',
+          headers: {
+            Authorization: `Bearer ${token}` 
+          }
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        
+        link.setAttribute('download', `Evidencias_Informe_${id}.zip`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        
+      } catch (error) {
+        console.error("Error descargando ZIP:", error);
+        alert("Error al descargar las evidencias (o no existen archivos adjuntos).");
+      }
+    };
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
@@ -160,18 +215,39 @@ const Informes = () => {
               onChange={handleFileChange}
               accept="image/*,application/pdf" 
               style={{ marginBottom: '10px' }}
+              disabled={archivos.length >= 5}
             />
-
+            <small style={{ display: 'block', color: '#666', marginBottom: '10px' }}>
+                          ({archivos.length}/5 archivos seleccionados)
+            </small>
+                        
             {archivos.length > 0 && (
-              <div style={{ background: '#eef', padding: '10px', borderRadius: '4px' }}>
-                <p style={{ margin: '0 0 5px 0', fontWeight: 'bold', fontSize: '0.9rem' }}>Archivos listos para subir:</p>
-                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
-                  {archivos.map((file, index) => (
-                    <li key={index}>{file.name} ({(file.size / 1024).toFixed(1)} KB)</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                          <div style={{ background: '#eef', padding: '10px', borderRadius: '4px' }}>
+                            <p style={{ margin: '0 0 5px 0', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                              Archivos listos:
+                            </p>
+                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                              {archivos.map((file, index) => (
+                                <li key={index} style={{ marginBottom: '5px' }}>
+                                  {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                                  <button 
+                                    type="button" 
+                                    onClick={() => removerArchivo(index)}
+                                    style={{ 
+                                      marginLeft: '10px', 
+                                      border: 'none', 
+                                      background: 'transparent', 
+                                      color: 'red', 
+                                      cursor: 'pointer',
+                                      fontWeight: 'bold'
+                                    }}
+                                  >
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
           </div>
 
           <button 
@@ -194,34 +270,11 @@ const Informes = () => {
       </div>
 
       <div>
-        <h2> Historial</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-          <thead>
-            <tr style={{ background: '#333', color: '#fff', textAlign: 'left' }}>
-              <th style={{ padding: '10px' }}>ID</th>
-              <th style={{ padding: '10px' }}>Incidente</th>
-              <th style={{ padding: '10px' }}>Fecha</th>
-              <th style={{ padding: '10px' }}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {informes.map((info) => (
-              <tr key={info.id} style={{ borderBottom: '1px solid #ddd' }}>
-                <td style={{ padding: '10px' }}>{info.id}</td>
-                <td style={{ padding: '10px' }}>{info.tipoIncidente}</td>
-                <td style={{ padding: '10px' }}>{info.fechaInforme}</td>
-                <td style={{ padding: '10px' }}>
-                  <button 
-                    onClick={() => descargarPDF(info.id)}
-                    style={{ background: '#007bff', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}
-                  >
-                    Descargar PDF
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <InformesList 
+                informes={informes} 
+                onDescargar={descargarPDF} 
+                onDescargarZIP={descargarZIP}
+              />
       </div>
     </div>
   );
