@@ -7,8 +7,9 @@ import {
   getBicicletasAlmacenadas,
   getBicicletasRetiradas,
 } from "../services/custodia.service.js";
+import { AppDataSource } from "../config/configDB.js"; // Verifica que la ruta sea correcta según tu estructura
 
-//registra la entrada de una bicicleta
+// Registra la entrada de una bicicleta
 export async function createEntrada(req, res) {
   try {
     const { rutUsuario, nombreUsuario, emailUsuario, telefonoUsuario, idBicicleta, idBicicletero, fechaEntrada, fechaSalida } = req.body;
@@ -34,7 +35,7 @@ export async function createEntrada(req, res) {
   }
 }
 
-//registra la salida de una bicicleta
+// Registra la salida de una bicicleta
 export async function createSalida(req, res) {
   try {
     const { idRegistroAlmacen, fechaSalida } = req.body;
@@ -48,15 +49,19 @@ export async function createSalida(req, res) {
   }
 }
 
-//obtiene todos los registros 
+// Obtiene todos los registros (MODIFICADO PARA SOPORTAR BÚSQUEDA POR ID BICI)
 export async function getRegistros(req, res) {
   try {
-  const { idEncargado, rutUsuario, estadoBicicleta } = req.query;
+    // Agregamos idBicicleta a la desestructuración del query
+    const { idEncargado, rutUsuario, estadoBicicleta, idBicicleta } = req.query;
 
-  const filtros = {};
-  if (idEncargado) filtros.idEncargado = parseInt(idEncargado);
-  if (rutUsuario) filtros.rutUsuario = rutUsuario;
-  if (estadoBicicleta) filtros.estadoBicicleta = estadoBicicleta;
+    const filtros = {};
+    if (idEncargado) filtros.idEncargado = parseInt(idEncargado);
+    if (rutUsuario) filtros.rutUsuario = rutUsuario;
+    if (estadoBicicleta) filtros.estadoBicicleta = estadoBicicleta;
+    
+    // NUEVO: Filtro para el buscador del frontend
+    if (idBicicleta) filtros.idBicicleta = parseInt(idBicicleta);
 
     const registros = await getAllRegistros(filtros);
 
@@ -66,20 +71,14 @@ export async function getRegistros(req, res) {
   }
 }
 
-//registro específico
+// Registro específico
 export async function getRegistroDetalle(req, res) {
   try {
     const { id } = req.params;
-
     const registro = await getRegistroById(parseInt(id));
 
     if (!registro) {
-      return handleErrorClient(
-        res,
-        404,
-        `Registro con ID ${id} no encontrado`,
-        null
-      );
+      return handleErrorClient(res, 404, `Registro con ID ${id} no encontrado`, null);
     }
 
     return handleSuccess(res, 200, "Registro obtenido correctamente", registro);
@@ -88,7 +87,7 @@ export async function getRegistroDetalle(req, res) {
   }
 }
 
-//bicicletas almacenadas
+// Bicicletas almacenadas (Para la lista "Hoy")
 export async function getBicicletasAlmacendasController(req, res) {
   try {
     const bicicletas = await getBicicletasAlmacenadas();
@@ -98,12 +97,43 @@ export async function getBicicletasAlmacendasController(req, res) {
   }
 }
 
-//bicicletas retiradas
+// Bicicletas retiradas
 export async function getBicicletasRetiradasController(req, res) {
   try {
     const bicicletas = await getBicicletasRetiradas();
     return handleSuccess(res, 200, "Bicicletas retiradas obtenidas correctamente", bicicletas);
   } catch (error) {
     return handleErrorServer(res, 500, "Error al obtener bicicletas retiradas", error.message);
+  }
+}
+
+export async function getDisponibilidadBicicleteros(req, res) {
+  try {
+    // Usamos el AppDataSource importado para obtener los repositorios
+    const bicicleteroRepo = AppDataSource.getRepository("Bicicletero");
+    const registroRepo = AppDataSource.getRepository("RegistroAlmacen");
+
+    const bicicleteros = await bicicleteroRepo.find();
+    
+    const disponibilidad = await Promise.all(bicicleteros.map(async (b) => {
+  const ocupados = await registroRepo.countBy({
+    idBicicletero: b.idBicicletero,
+    fechaSalida: null 
+  });
+
+  return {
+    id: b.idBicicletero,
+    title: b.nombre, // Ahora sí usamos b.nombre
+    location: b.ubicacion,
+    ocupados: ocupados,
+    total: b.capacidad 
+  };
+}));
+
+    // Importante: Enviar la respuesta con la estructura que espera tu frontend
+    return res.status(200).json({ status: "Success", data: disponibilidad });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: "Error", message: error.message });
   }
 }

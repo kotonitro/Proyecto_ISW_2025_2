@@ -14,9 +14,15 @@ export const Notificacion = new EntitySchema({
       length: 255,
       nullable: false,
     },
-    leida: {
-      type: "boolean",
-      default: false,
+    rutSolicitante: {
+            type: "varchar",
+            length: 12, 
+            nullable: false,
+        },
+    estado: {
+      type: "enum",
+      enum: ["Pendiente", "En Camino", "Finalizada"],
+      default: "Pendiente",
       nullable: false,
     },
     fechaCreacion: {
@@ -38,6 +44,14 @@ export const Notificacion = new EntitySchema({
         name: "bicicletero_id",
       },
       nullable: false,
+    },
+    encargado: {
+      type: "many-to-one",
+      target: "Encargado",
+      joinColumn: {
+        name: "encargado_id",
+      },
+      nullable: true,
     },
   },
 });
