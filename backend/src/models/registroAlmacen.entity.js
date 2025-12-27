@@ -23,22 +23,22 @@ export const RegistroAlmacen = new EntitySchema({
     },
     rutUsuario: {
       type: "varchar",
-      length: 8,
+      length: 12,
       nullable: false,
     },
     nombreUsuario: {
       type: "varchar",
       length: 255,
-      nullable: false,
+      nullable: true,
     },
     emailUsuario: {
       type: "varchar",
       length: 255,
-      nullable: false,
+      nullable: true,
     },
     telefonoUsuario: {
       type: "int",
-      nullable: false,
+      nullable: true,
     },
     fechaEntrada: {
       type: "timestamp",

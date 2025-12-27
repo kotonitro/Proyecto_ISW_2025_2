@@ -1,20 +1,20 @@
 "use strict";
 import Joi from "joi";
 
-const rutPattern = /^[0-9]{7,8}$/;
+
+const rutPattern = /^[0-9]{7,8}-[0-9Kk]$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const registroEntradaValidation = Joi.object({
-  rutUsuario: Joi.string()
-    .trim()
-    .pattern(rutPattern)
-    .required()
-    .messages({
-      "string.base": "RUT debe ser una cadena",
-      "string.empty": "RUT no puede estar vacío",
-      "string.pattern.base": "RUT debe contener 7 u 8 dígitos",
-      "any.required": "RUT es obligatorio"
-    }),
+  // Actualiza esta sección en tu Joi object
+rutUsuario: Joi.string()
+  .trim()
+  .pattern(rutPattern)
+  .required()
+  .messages({
+    "string.pattern.base": "RUT debe tener formato 12345678-K",
+    "any.required": "RUT es obligatorio"
+  }),
 
   nombreUsuario: Joi.string()
     .trim()

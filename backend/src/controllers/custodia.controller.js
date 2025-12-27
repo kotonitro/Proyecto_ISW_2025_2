@@ -10,42 +10,60 @@ import {
 import { AppDataSource } from "../config/configDB.js"; // Verifica que la ruta sea correcta según tu estructura
 
 // Registra la entrada de una bicicleta
+// En custodia.controller.js
 export async function createEntrada(req, res) {
   try {
-    const { rutUsuario, nombreUsuario, emailUsuario, telefonoUsuario, idBicicleta, idBicicletero, fechaEntrada, fechaSalida } = req.body;
-    const idEncargado = req.user.idEncargado || req.user.sub;
+    const { 
+      rutUsuario, 
+      idBicicleta, 
+      idBicicletero, 
+      nombreUsuario, 
+      emailUsuario, 
+      telefonoUsuario 
+    } = req.body;
+    
+    // CAMBIO CLAVE: Usar req.encargado en lugar de req.user
+    const idEncargado = req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
+
+    if (!idEncargado) {
+      return handleErrorClient(res, 401, "No se pudo identificar al encargado en el token.");
+    }
 
     const registro = await registerEntrada(
-      {
-        rutUsuario,
-        nombreUsuario,
-        emailUsuario,
-        telefonoUsuario,
-        idBicicleta,
-        idBicicletero,
-        fechaEntrada,
-        fechaSalida,
-      },
+      { rutUsuario, idBicicleta, idBicicletero, nombreUsuario, emailUsuario, telefonoUsuario },
       idEncargado
     );
 
-    return handleSuccess(res, 201, "Entrada registrada correctamente", registro);
+    return handleSuccess(res, 201, "Entrada registrada", registro);
   } catch (error) {
-    return handleErrorClient(res, 400, error.message, error.message);
+    return handleErrorClient(res, 400, error.message);
   }
 }
 
 // Registra la salida de una bicicleta
+// src/controllers/custodia.controller.js
+
 export async function createSalida(req, res) {
   try {
+    console.log("Intentando salida...");
+    console.log("REQ.USER es:", req.user);           // ¿Existe esto?
+    console.log("REQ.ENCARGADO es:", req.encargado);
     const { idRegistroAlmacen, fechaSalida } = req.body;
-    const idEncargado = req.user.idEncargado || req.user.sub;
+    
+    // --- ESTA ES LA LÍNEA CLAVE ---
+    // NO uses req.user, USA req.encargado
+    const idEncargado = req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
+    // ------------------------------
+
+    if (!idEncargado) {
+       return handleErrorClient(res, 401, "No se pudo identificar al encargado.");
+    }
 
     const registro = await registerSalida(idRegistroAlmacen, idEncargado, fechaSalida);
 
     return handleSuccess(res, 201, "Salida registrada correctamente", registro);
   } catch (error) {
-    return handleErrorClient(res, 400, error.message, error.message);
+    return handleErrorClient(res, 400, error.message);
   }
 }
 

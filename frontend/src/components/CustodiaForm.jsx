@@ -17,10 +17,8 @@ export default function CustodiaForm({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Referencia para saltar al siguiente input automáticamente
   const dvInputRef = useRef(null);
 
-  // Efecto que dispara la búsqueda automática cuando el DV está presente
   useEffect(() => {
     if (rutBase.length >= 7 && rutDV.length === 1) {
       buscarUsuario();
@@ -41,7 +39,16 @@ export default function CustodiaForm({ onSuccess }) {
       });
 
       if (res.data && res.data.data) {
-        setUserData(res.data.data);
+        const user = res.data.data;
+        // EXTRAER EL ID DE BICI: Buscamos en el array de bicicletas que devuelve el backend
+        const idBiciPrincipal = user.bicicletas && user.bicicletas.length > 0 
+          ? user.bicicletas[0].idBicicleta 
+          : "N/A";
+          
+        setUserData({
+          ...user,
+          idBicicletaPrincipal: idBiciPrincipal // Guardamos esto para el submit
+        });
       }
     } catch (e) {
       setUserData(null);
@@ -52,11 +59,7 @@ export default function CustodiaForm({ onSuccess }) {
   const handleBaseChange = (e) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
     if (val.length <= 8) setRutBase(val);
-    
-    // Salto automático al DV cuando llega a 8 dígitos
-    if (val.length === 8) {
-      dvInputRef.current.focus();
-    }
+    if (val.length === 8) dvInputRef.current.focus();
   };
 
   const handleDVChange = (e) => {
@@ -64,38 +67,48 @@ export default function CustodiaForm({ onSuccess }) {
     if (val.length <= 1) setRutDV(val);
   };
 
-  async function submit(e) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // Intentamos sacar el ID de la bici desde los datos del usuario
-      const idBici = userData.idBicicleta || (userData.bicicletas && userData.bicicletas[0]?.idBicicleta);
-      
-      await postEntrada({
-        rutUsuario: `${rutBase}-${rutDV}`,
-        idBicicleta: idBici,
-        idBicicletero: parseInt(idBicicletero, 10),
-      });
+  // En CustodiaForm.jsx, modifica la función submit:
+async function submit(e) {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
 
-      setRutBase("");
-      setRutDV("");
-      setUserData(null);
-      setIdBicicletero("");
-      if (onSuccess) onSuccess();
-      alert("¡Entrada registrada con éxito!");
-    } catch (e) {
-      setError("Error al procesar la entrada.");
-    } finally {
-      setLoading(false);
-    }
+  try {
+    const idBici = userData.idBicicletaPrincipal; 
+
+    // El payload debe contener estos campos exactos para que el service no lance error
+    const payload = {
+      rutUsuario: `${rutBase}-${rutDV}`,
+      idBicicleta: parseInt(idBici, 10),
+      idBicicletero: parseInt(idBicicletero, 10),
+      // Datos del usuario recuperados en la búsqueda previa
+      nombreUsuario: userData.nombre,
+      emailUsuario: userData.email,
+      telefonoUsuario: parseInt(userData.telefono, 10),
+    };
+
+    console.log("Enviando a custodia:", payload);
+
+    await postEntrada(payload);
+    
+    // Limpieza tras éxito
+    setRutBase(""); setRutDV(""); setUserData(null); setIdBicicletero("");
+    if (onSuccess) onSuccess();
+    alert("¡Bicicleta ingresada con éxito!");
+
+  } catch (e) {
+    // Aquí se mostrará el mensaje del service (ej: "Bicicleta ya tiene un registro activo")
+    setError(e.message || "Error de validación en el servidor.");
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <form onSubmit={submit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
       <h2 className="text-xl font-bold text-gray-800 mb-6">Registro de Entrada</h2>
 
       <div className="space-y-4">
-        {/* Sistema de Doble Input con Guion Estático */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">RUT del Usuario</label>
           <div className="flex items-center gap-2">
@@ -108,7 +121,7 @@ export default function CustodiaForm({ onSuccess }) {
             />
             <span className="text-xl font-bold text-gray-400">-</span>
             <input
-              ref={dvInputRef} // Referencia para el salto automático
+              ref={dvInputRef}
               type="text"
               placeholder="K"
               value={rutDV}
@@ -118,18 +131,18 @@ export default function CustodiaForm({ onSuccess }) {
           </div>
         </div>
 
-        {/* LOG DEL USUARIO (Aparece solo si lo encuentra) */}
         {userData && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg animate-in fade-in zoom-in duration-300">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex flex-col gap-1">
               <p className="text-xs font-bold text-blue-600 uppercase">Datos del Usuario</p>
               <p className="text-sm text-gray-800"><strong>Nombre:</strong> {userData.nombre}</p>
-              <p className="text-sm text-gray-800"><strong>Bicicleta ID:</strong> {userData.idBicicleta || userData.bicicletas?.[0]?.idBicicleta || "N/A"}</p>
+              <p className="text-sm text-gray-800">
+                <strong>Bicicleta ID:</strong> {userData.idBicicletaPrincipal}
+              </p>
             </div>
           </div>
         )}
 
-        {/* ERROR (Solo aparece si falla la búsqueda final) */}
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
             {error}
@@ -153,7 +166,7 @@ export default function CustodiaForm({ onSuccess }) {
 
       <button
         type="submit"
-        disabled={loading || !userData || !idBicicletero}
+        disabled={loading || !userData || !idBicicletero || userData?.idBicicletaPrincipal === "N/A"}
         className="mt-6 w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-md"
       >
         {loading ? "Registrando..." : "Confirmar Entrada"}
