@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import morgan from "morgan";
 import cors from "cors";
 import { routerApi } from "./routes/index.routes.js";
