@@ -35,10 +35,6 @@ export default function Sidebar({ role }) {
           Usuarios
         </Link>
 
-        <Link to="/bicicletas" className={linkClasses("/bicicletas")}>
-          Bicicletas
-        </Link>
-
         <Link to="/informes" className={linkClasses("/informes")}>
           Informes
         </Link>

@@ -94,9 +94,14 @@ const Usuarios = () => {
       });
       setIsCreating(false);
 
-      // Fetch bicycles
-      const bikeRes = await getBicicletasByUsuario(user.idUsuario);
-      setUserBicicletas(bikeRes.data.data);
+      // Fetch bicycles independently
+      try {
+        const bikeRes = await getBicicletasByUsuario(user.idUsuario);
+        setUserBicicletas(bikeRes.data.data);
+      } catch (bikeError) {
+        console.error("Error al obtener bicicletas:", bikeError);
+        setUserBicicletas([]);
+      }
     } catch (error) {
       if (error.response && error.response.status === 404) {
         if (
@@ -129,28 +134,50 @@ const Usuarios = () => {
     e.preventDefault();
     try {
       // 1. Create User
-      const userRes = await createUsuario(userForm);
+      // Ensure telefono is string to satisfy Joi validation
+      const userData = { ...userForm, telefono: String(userForm.telefono) };
+      const userRes = await createUsuario(userData);
       const newUser = userRes.data.data;
 
       // 2. Create Bike
-      await createBicicleta({
-        ...bikeForm,
-        idUsuario: newUser.idUsuario,
-      });
+      try {
+        await createBicicleta({
+          ...bikeForm,
+          idUsuario: newUser.idUsuario,
+        });
+      } catch (bikeError) {
+        console.error("Error al crear bicicleta inicial:", bikeError);
+        alert(
+          "Usuario creado, pero hubo un error al crear la bicicleta: " +
+            (bikeError.response?.data?.message || bikeError.message),
+        );
+        // We still proceed to show the user
+      }
 
-      alert("Usuario y bicicleta creados exitosamente");
+      alert("Usuario creado exitosamente");
       setIsCreating(false);
       setRutSearch(newUser.rut);
-      // Simulate search to show the created user
       setCurrentUser(newUser);
 
       // Fetch bike to update list
-      const bikeRes = await getBicicletasByUsuario(newUser.idUsuario);
-      setUserBicicletas(bikeRes.data.data);
+      try {
+        const bikeRes = await getBicicletasByUsuario(newUser.idUsuario);
+        setUserBicicletas(bikeRes.data.data);
+      } catch (e) {
+        setUserBicicletas([]);
+      }
     } catch (error) {
-      alert(
-        "Error al crear: " + (error.response?.data?.message || error.message),
-      );
+      console.error("Error creating user:", error);
+      const errorDetails = error.response?.data?.errorDetails;
+      if (errorDetails && Array.isArray(errorDetails)) {
+        const messages = errorDetails.map((d) => `• ${d.message}`).join("\n");
+        alert(`Error de validación:\n${messages}`);
+      } else {
+        alert(
+          "Error al crear usuario: " +
+            (error.response?.data?.message || error.message),
+        );
+      }
     }
   };
 
@@ -210,10 +237,17 @@ const Usuarios = () => {
       const bikeRes = await getBicicletasByUsuario(currentUser.idUsuario);
       setUserBicicletas(bikeRes.data.data);
     } catch (error) {
-      alert(
-        "Error al agregar bicicleta: " +
-          (error.response?.data?.message || error.message),
-      );
+      console.error("Error adding bike:", error);
+      const errorDetails = error.response?.data?.errorDetails;
+      if (errorDetails && Array.isArray(errorDetails)) {
+        const messages = errorDetails.map((d) => `• ${d.message}`).join("\n");
+        alert(`Error de validación:\n${messages}`);
+      } else {
+        alert(
+          "Error al agregar bicicleta: " +
+            (error.response?.data?.message || error.message),
+        );
+      }
     }
   };
 
@@ -494,8 +528,7 @@ const Usuarios = () => {
                       className="px-3 py-2 border rounded-lg"
                       required
                     />
-                    <input
-                      placeholder="Color"
+                    <select
                       value={newBikeForm.color}
                       onChange={(e) =>
                         setNewBikeForm({
@@ -503,9 +536,15 @@ const Usuarios = () => {
                           color: e.target.value,
                         })
                       }
-                      className="px-3 py-2 border rounded-lg"
+                      className="px-3 py-2 border rounded-lg bg-white"
                       required
-                    />
+                    >
+                      {COLOR_PALETA.map((c) => (
+                        <option key={c} value={c}>
+                          {c.charAt(0).toUpperCase() + c.slice(1)}
+                        </option>
+                      ))}
+                    </select>
                     <div className="md:col-span-3 flex justify-end">
                       <button
                         type="submit"
