@@ -182,31 +182,40 @@ export async function getAllRegistros(filtros = {}) {
     .leftJoinAndSelect("registro.bicicletero", "bicicletero")
     .leftJoinAndSelect("registro.encargado", "encargado");
 
+  // Filtro por Encargado
   if (filtros.idEncargado) {
     query = query.where("registro.idEncargado = :idEncargado", { 
       idEncargado: filtros.idEncargado 
     });
   }
 
-  // Eliminar filtro por estado (ya no existe en entidad)
-
+  // Filtro por RUT de Usuario
   if (filtros.rutUsuario) {
     query = query.andWhere("registro.rutUsuario = :rutUsuario", { 
       rutUsuario: filtros.rutUsuario 
     });
   }
 
+  // NUEVO: Filtro para el Buscador del Frontend (ID Bicicleta)
+  if (filtros.idBicicleta) {
+    query = query.andWhere("registro.idBicicleta = :idBicicleta", { 
+      idBicicleta: filtros.idBicicleta 
+    });
+  }
+
+  // Filtro por Estado (ALMACENADA/RETIRADA)
   if (filtros.estadoBicicleta) {
-    if (filtros.estadoBicicleta === "ALMACENADA") {
+    // Ajuste para coincidir con lo que envía el frontend ("entrada" o "salida")
+    if (filtros.estadoBicicleta === "entrada" || filtros.estadoBicicleta === "ALMACENADA") {
       query = query.andWhere("registro.fechaSalida IS NULL");
-    } else if (filtros.estadoBicicleta === "RETIRADA") {
+    } else if (filtros.estadoBicicleta === "salida" || filtros.estadoBicicleta === "RETIRADA") {
       query = query.andWhere("registro.fechaSalida IS NOT NULL");
     }
   }
 
   const registros = await query.orderBy("registro.fechaEntrada", "DESC").getMany();
   
-  // Agregar el estado calculado a cada registro
+  // Agregar el estado calculado a cada registro para el frontend
   return registros.map(r => ({
     ...r,
     estadoBicicleta: determineEstadoBicicleta(r),
