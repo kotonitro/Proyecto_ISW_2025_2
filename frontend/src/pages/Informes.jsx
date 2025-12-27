@@ -1,34 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import InformesList from '../components/InformesList';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Informes = () => {
-  const hoy = new Date().toLocaleDateString('en-CA');
+  const hoy = new Date().toLocaleDateString("en-CA");
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
   const token = localStorage.getItem("token");
 
   if (!idUsuarioLogueado) {
     console.warn("No hay usuario logueado");
   }
-
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    descripcion: '',
-    tipoIncidente: '',
+    descripcion: "",
+    tipoIncidente: "",
     fechaInforme: hoy,
-    idEncargado: idUsuarioLogueado 
+    idEncargado: idUsuarioLogueado,
   });
-  
+
   const [archivos, setArchivos] = useState([]);
 
   const fetchInformes = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get('http://localhost:3000/api/informes', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setInformes(res.data.data || res.data); 
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+      const res = await axios.get("http://localhost:3000/api/informes", config);
+      setInformes(res.data.data || res.data);
     } catch (error) {
       console.error("Error cargando informes:", error);
     }
@@ -41,7 +39,7 @@ const Informes = () => {
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -93,9 +91,22 @@ const Informes = () => {
       setArchivos([]); 
       fetchInformes(); 
 
+      await axios.post("http://localhost:3000/api/informes", data, config);
+
+      alert("¡Informe creado y documentos subidos!");
+
+      setFormData({
+        descripcion: "",
+        tipoIncidente: "",
+        fechaInforme: "",
+        idEncargado: idUsuarioLogueado || 1,
+      });
+      setArchivos([]); // Limpia
+
+      fetchInformes(); // Actualiza
     } catch (error) {
       console.error("Error:", error);
-      alert('Hubo un error al crear el informe.');
+      alert("Hubo un error al crear el informe.");
     } finally {
       setLoading(false);
     }
@@ -109,9 +120,9 @@ const Informes = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', `informe_${id}.pdf`);
+      link.setAttribute("download", `informe_${id}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
