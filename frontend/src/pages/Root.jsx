@@ -73,7 +73,7 @@ export default function Root() {
 
             <Link to="/" className="no-underline flex items-center gap-3 group">
               <img src={logoUBB} alt="Logo UBB" className="h-10 w-auto" />
-              <span className="text-white text-lg font-bold group-hover:text-blue-100 transition-colors hidden xs:block">
+              <span className="text-white text-xl font-bold group-hover:text-blue-100 transition-colors">
                 Bicicleteros UBB
               </span>
             </Link>
@@ -127,17 +127,16 @@ export default function Root() {
         {token && (
           <aside
             className={`
-              bg-blue-900 text-white z-40 transition-transform duration-300 ease-in-out
-              absolute top-0 left-0 h-full w-64 shadow-xl
-              ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-            `}
+                          bg-blue-900 text-white z-40 transition-transform duration-300 ease-in-out
+                          absolute top-0 left-0 h-full w-64 shadow-xl
+                          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                        `}
           >
             <div className="w-64 h-full">
               <Sidebar role={rol} />
             </div>
           </aside>
         )}
-
         {/* B. ÁREA DE CONTENIDO */}
         <main className="flex-1 overflow-y-auto p-6 bg-slate-100 scroll-smooth w-full">
           {token && (
