@@ -1,18 +1,21 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import { authMiddleware } from "../middleware/auth.middleware.js"; // Asegúrate que esta ruta sea correcta
 import {
   handleCreateNotificacion,
   handleGetNotificaciones,
-  handleMarcarLeida,
+  handleAceptar,
+  handleGetEstado,
+  handleFinalizar,
 } from "../controllers/notificacion.controller.js";
 
 const router = Router();
 
-// RUTA PÚBLICA — Cualquiera puede crear una notificación
+//Rutas Publicas
 router.post("/", handleCreateNotificacion);
+router.get("/:id/estado", handleGetEstado);
 
-// RUTAS PROTEGIDAS — Solo encargados autenticados pueden ver o marcar
+//Rutas protegidas
 router.get("/", authMiddleware, handleGetNotificaciones);
-router.patch("/:id/leida", authMiddleware, handleMarcarLeida);
-
+router.patch("/:id/aceptar", authMiddleware, handleAceptar);
+router.patch("/:id/finalizar", authMiddleware, handleFinalizar);
 export default router;
