@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import InformesList from '../components/InformesList';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString("en-CA");
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
   const token = localStorage.getItem("token");
+
   if (!idUsuarioLogueado) {
-<<<<<<< HEAD
-       console.warn("No hay usuario logueado");
-    }
-=======
     console.warn("No hay usuario logueado");
-    // Aquí podrías poner un return null; o redirigir al login
   }
->>>>>>> 5f6d42b (FIX: modificación de algunos archivos para utilizar Tailwind)
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,18 +18,15 @@ const Informes = () => {
     idEncargado: idUsuarioLogueado,
   });
 
-  
   const [archivos, setArchivos] = useState([]);
 
   const fetchInformes = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get('http://localhost:3000/api/informes', {
-              headers: {
-                Authorization: `Bearer ${token}` 
-              }
-            });
-      setInformes(res.data.data || res.data); 
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+      const res = await axios.get("http://localhost:3000/api/informes", config);
+      setInformes(res.data.data || res.data);
     } catch (error) {
       console.error("Error cargando informes:", error);
     }
@@ -53,26 +44,11 @@ const Informes = () => {
   };
 
   const handleFileChange = (e) => {
-      if (e.target.files) {
-        const nuevosArchivos = Array.from(e.target.files);
-        setArchivos((prevArchivos) => {
-          const totalArchivos = [...prevArchivos, ...nuevosArchivos];
-  
-          if (totalArchivos.length > 5) {
-            alert("Solo puedes subir un máximo de 5 archivos por informe.");
-            return prevArchivos;
-          }
-          return totalArchivos;
-        });
-      }
-      e.target.value = ""; 
-    };
-  
-  const removerArchivo = (indexToRemove) => {
-      setArchivos((prevArchivos) => 
-        prevArchivos.filter((_, index) => index !== indexToRemove)
-      );
-    };
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setArchivos(filesArray);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,21 +64,15 @@ const Informes = () => {
       archivos.forEach((archivo) => {
         data.append("archivosExtras", archivo);
       });
-      console.log("Enviando informe con ID Encargado:", formData.idEncargado);
-      
-      
-      // peticion post
-<<<<<<< HEAD
-      await axios.post('http://localhost:3000/api/informes', data, {
-        headers: { 
-                  'Content-Type': 'multipart/form-data',
-                  Authorization: `Bearer ${token}` 
-                }
-=======
-      await axios.post("http://localhost:3000/api/informes", data, {
-        headers: { "Content-Type": "multipart/form-data" },
->>>>>>> 5f6d42b (FIX: modificación de algunos archivos para utilizar Tailwind)
-      });
+
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      };
+
+      await axios.post("http://localhost:3000/api/informes", data, config);
 
       alert("¡Informe creado y documentos subidos!");
 
@@ -110,7 +80,7 @@ const Informes = () => {
         descripcion: "",
         tipoIncidente: "",
         fechaInforme: "",
-        idEncargado: 1,
+        idEncargado: idUsuarioLogueado || 1,
       });
       setArchivos([]); // Limpia
 
@@ -125,22 +95,14 @@ const Informes = () => {
 
   const descargarPDF = async (id) => {
     try {
-<<<<<<< HEAD
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`http://localhost:3000/api/informes/download/${id}`, {
-        responseType: 'blob',
-        headers: {
-          Authorization: `Bearer ${token}` 
-        }
-      });
-=======
+      const config = {
+        responseType: "blob",
+        ...(token && { headers: { Authorization: `Bearer ${token}` } }),
+      };
       const response = await axios.get(
         `http://localhost:3000/api/informes/download/${id}`,
-        {
-          responseType: "blob",
-        },
+        config,
       );
->>>>>>> 5f6d42b (FIX: modificación de algunos archivos para utilizar Tailwind)
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -152,30 +114,6 @@ const Informes = () => {
       alert("Error al descargar el PDF");
     }
   };
-  
-  const descargarZIP = async (id) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:3000/api/informes/download-zip/${id}`, {
-          responseType: 'blob',
-          headers: {
-            Authorization: `Bearer ${token}` 
-          }
-        });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        
-        link.setAttribute('download', `Evidencias_Informe_${id}.zip`);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-        
-      } catch (error) {
-        console.error("Error descargando ZIP:", error);
-        alert("Error al descargar las evidencias (o no existen archivos adjuntos).");
-      }
-    };
 
   return (
     <div
@@ -315,48 +253,11 @@ const Informes = () => {
               type="file"
               multiple
               onChange={handleFileChange}
-<<<<<<< HEAD
-              accept="image/*,application/pdf" 
-              style={{ marginBottom: '10px' }}
-              disabled={archivos.length >= 5}
-=======
               accept="image/*,application/pdf"
               style={{ marginBottom: "10px" }}
->>>>>>> 5f6d42b (FIX: modificación de algunos archivos para utilizar Tailwind)
             />
-            <small style={{ display: 'block', color: '#666', marginBottom: '10px' }}>
-                          ({archivos.length}/5 archivos seleccionados)
-            </small>
-                        
+
             {archivos.length > 0 && (
-<<<<<<< HEAD
-                          <div style={{ background: '#eef', padding: '10px', borderRadius: '4px' }}>
-                            <p style={{ margin: '0 0 5px 0', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                              Archivos listos:
-                            </p>
-                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
-                              {archivos.map((file, index) => (
-                                <li key={index} style={{ marginBottom: '5px' }}>
-                                  {file.name} ({(file.size / 1024).toFixed(1)} KB)
-                                  <button 
-                                    type="button" 
-                                    onClick={() => removerArchivo(index)}
-                                    style={{ 
-                                      marginLeft: '10px', 
-                                      border: 'none', 
-                                      background: 'transparent', 
-                                      color: 'red', 
-                                      cursor: 'pointer',
-                                      fontWeight: 'bold'
-                                    }}
-                                  >
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-=======
               <div
                 style={{
                   background: "#eef",
@@ -384,7 +285,6 @@ const Informes = () => {
                 </ul>
               </div>
             )}
->>>>>>> 5f6d42b (FIX: modificación de algunos archivos para utilizar Tailwind)
           </div>
 
           <button
@@ -409,13 +309,6 @@ const Informes = () => {
       </div>
 
       <div>
-<<<<<<< HEAD
-        <InformesList 
-                informes={informes} 
-                onDescargar={descargarPDF} 
-                onDescargarZIP={descargarZIP}
-              />
-=======
         <h2> Historial</h2>
         <table
           style={{
@@ -459,7 +352,6 @@ const Informes = () => {
             ))}
           </tbody>
         </table>
->>>>>>> 5f6d42b (FIX: modificación de algunos archivos para utilizar Tailwind)
       </div>
     </div>
   );
