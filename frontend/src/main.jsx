@@ -7,7 +7,7 @@ import Error404 from "./pages/Error404";
 import Root from "./pages/Root";
 import ProtectedRoute, { ErrorBoundary } from "./components/ProtectedRoute";
 import "./index.css";
-import AdminEncargados from './pages/AdminEncargados'; // <--- IMPORTAR
+import AdminEncargados from './pages/AdminEncargados'; 
 import Informes from "./pages/Informes";
 
 const router = createBrowserRouter([

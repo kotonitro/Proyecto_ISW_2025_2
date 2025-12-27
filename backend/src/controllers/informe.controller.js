@@ -7,7 +7,10 @@ import {createDocumentos} from "../services/documento.service.js"
 export async function handleCreateInforme(req, res) {
   const informeData = req.body;
   const archivos = req.files; 
-  informeData.fechaInforme = new Date();
+  const fechaUTC = new Date();
+  const fechaChile = fechaUTC.toLocaleString("en.US",{timeZone:"America/Santiago"})
+  informeData.fechaInforme = new Date(fechaChile);
+  
   try {
     const { error, value } = informeValidation.validate(informeData, {
       abortEarly: false,

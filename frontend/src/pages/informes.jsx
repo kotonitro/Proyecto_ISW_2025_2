@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Informes = () => {
-  const hoy = new Date().toISOString().split('T')[0];
+  const hoy = new Date().toLocaleDateString('en-CA');
+  const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
+  if (!idUsuarioLogueado) {
+       console.warn("No hay usuario logueado");
+       // Aquí podrías poner un return null; o redirigir al login
+    }
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     descripcion: '',
     tipoIncidente: '',
     fechaInforme: hoy,
-    idEncargado: 1 
+    idEncargado: idUsuarioLogueado 
   });
   
   
@@ -140,7 +145,7 @@ const Informes = () => {
               rows="4"
               required 
               placeholder="Describa detalladamente qué sucedió..."
-              style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', resize: 'none' }}
             />
           </div>
 

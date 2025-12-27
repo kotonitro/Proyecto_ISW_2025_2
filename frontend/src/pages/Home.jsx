@@ -6,17 +6,6 @@ import bike3 from "../images/bike3.jpg";
 import bike4 from "../images/bike4.jpg";
 import Informes from "./Informes";
 
-/**
- * Home.jsx
- * Usa las clases CSS del proyecto definidas en `src/index.css`:
- * - header-brand
- * - header-inner
- * - avatar-circle
- * - cards-grid
- *
- * Y las clases de las tarjetas definidas para BicicleteroCard.
- */
-
 const mockData = [
   {
     id: 1,
@@ -64,12 +53,6 @@ export default function Home() {
             />
           ))}
         </div>
-        {/* --- SEPARADOR VISUAL --- */}
-                <div style={{ margin: "50px 0", borderTop: "2px dashed #ccc" }}></div>
-        <div className="section-informes">
-                    <h2 style={{textAlign: 'center', color: '#666'}}>Zona de Pruebas: Informes</h2>
-                    <Informes /> 
-                </div>
       </main>
     </div>
   );

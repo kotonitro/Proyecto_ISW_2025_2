@@ -37,6 +37,7 @@ export default function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("nombre", infoEncargado.nombre);
       localStorage.setItem("email", infoEncargado.email);
+      localStorage.setItem("idEncargado", infoEncargado.idEncargado);
 
       // Convertimos el booleano a rol de texto
       const rolUsuario = infoEncargado.esAdmin ? "admin" : "encargado";
@@ -106,7 +107,7 @@ export default function Login() {
           <button type="submit" className="btn-login" disabled={loading}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                ⏳ Ingresando...
+                 Ingresando...
               </span>
             ) : (
               "Ingresar"
