@@ -7,6 +7,7 @@ import {
 } from "../services/notificacion.service.js";
 
 import { crearNotificacion } from "../validations/notificacion.validation.js";
+import { enviarAlertaCorreo } from "../utils/email.util.js";
 
 export async function handleCreateNotificacion(req, res) {
   try {
@@ -23,10 +24,28 @@ export async function handleCreateNotificacion(req, res) {
 
     const nueva = await createNotificacion(value);
 
+    try {
+        const idNotif = nueva.id || nueva.notificacionId; 
+        const baseUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+        const link = `${baseUrl}/aceptar/${idNotif}`;
+        const listaDestinatarios = [process.env.EMAIL_USER]; 
+
+        await enviarAlertaCorreo(
+            listaDestinatarios,
+            link,
+            value.bicicleteroId,
+            value.mensaje
+        );
+
+    } catch (emailError) {
+        console.warn("Notificación guardada, pero el correo falló:", emailError.message);
+    }
+
     return res.status(201).json({
       message: "Solicitud enviada. Esperando a un guardia.",
       data: nueva,
     });
+
   } catch (err) {
     console.error("Error al crear notificación:", err);
     
@@ -52,8 +71,7 @@ export async function handleCreateNotificacion(req, res) {
 
 export async function handleGetNotificaciones(req, res) {
   try {
-    const idGuardia = req.encargado.idEncargado; 
-        
+    const idGuardia = req.encargado.idEncargado;       
     const data = await getNotificaciones(idGuardia);
     return res.status(200).json(data);
   } catch (err) {
@@ -99,7 +117,6 @@ export async function handleGetEstado(req, res) {
 export async function handleFinalizar(req, res) {
   try {
     const { id } = req.params;
-    // Obtenemos ID del token
     const idEncargado = req.encargado.idEncargado;
 
     const data = await finalizarNotificacion(parseInt(id), idEncargado);
