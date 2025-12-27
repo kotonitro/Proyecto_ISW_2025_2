@@ -1,107 +1,73 @@
 import React from "react";
-// 1. AGREGAMOS 'useLocation' AQUI
-import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import logoUBB from "../images/logoUBB.webp";
 
 export default function Root() {
-  const navigate = useNavigate();
-  const location = useLocation(); // 2. OBTENEMOS LA URL ACTUAL
-
+  const location = useLocation();
   const token = localStorage.getItem("token");
-  const rol = localStorage.getItem("rol");
-
+  const nombreUsuario = localStorage.getItem("nombre");
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("rol");
-    localStorage.removeItem("nombre");
-    localStorage.removeItem("email");
-    navigate("/login");
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "var(--bg-gray)" }}
-    >
-      <header className="header-brand">
-        <div
-          className="header-inner"
-          style={{ justifyContent: "space-between", padding: "0 20px" }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div className="avatar-circle" aria-hidden="true" />
-                <span style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>
-                Proyecto ISW
-                </span>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-orange-50 flex flex-col font-sans text-gray-800">
+      
+      {/* Header Azul */}
+      <header className="w-full h-16 bg-blue-700 shadow-md flex items-center justify-between px-18">
 
-          <nav style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-            
-            {token && (
-              <>
-                <Link to="/custodia" style={{ color: "#fff", textDecoration: "none" }}>Custodia</Link>
-              </>
-            )}
+        {/* Logo */}
+        <Link to="/" className="ml-18 text-white text-xl font-bold flex items-center gap-3 hover:opacity-90 transition drop-shadow-[0_4px_4px_rgba(0,0,0,0.4)]">
+        <img src={logoUBB} alt="Logo UBB" className="h-10 w-auto" />
+          Bicicleteros UBB
+        </Link>
 
-            {token && rol === "admin" && (
-              <>
-                <Link to="/admin/encargados" style={{ color: "#ddd", textDecoration: "none" }}>
-                  Admin Encargados
-                </Link>
-                <Link to="/admin/bicicleteros" style={{ color: "#ddd", textDecoration: "none" }}>
-                  Admin Bicicleteros
-                </Link>
-              </>
-            )}
-
-            {/* BOTÓN DE INGRESAR / SALIR */}
-            {token ? (
+        {/* Botón Ingresar o Salir*/}
+        <div>
+          {token ? (
+            <div className="flex items-center gap-4">
+              {/*Salir*/}
+              <span className="text-white text-sm font-medium hidden sm:block">
+                ¡Hola, {nombreUsuario}!
+              </span>
               <button
                 onClick={handleLogout}
-                style={{
-                    background: "rgba(255, 0, 0, 0.6)",
-                    color: "#fff",
-                    border: "none",
-                    padding: "8px 14px",
-                    borderRadius: 8,
-                    cursor: "pointer",
-                    fontWeight: 600,
-                }}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition shadow-md hover:shadow-lg"
               >
                 Salir
               </button>
-            ) : (
-              // 3. LA CONDICIÓN MÁGICA:
-              // Solo mostramos el botón si NO estamos ya en "/login"
-              location.pathname !== "/login" && (
-                <Link
-                    to="/login"
-                    style={{
-                    background: "transparent",
-                    color: "#fff",
-                    border: "1px solid rgba(255,255,255,0.4)",
-                    padding: "8px 14px",
-                    borderRadius: 8,
-                    textDecoration: "none",
-                    fontWeight: 600,
-                    }}
+            </div>
+          ) : (
+            location.pathname !== "/login" && (
+              <div className="flex items-center gap-4">
+                {/*Ingresar*/}
+                <span className="text-white text-sm font-medium hidden sm:block">
+                  ¿Eres encargado?
+                </span>
+                <Link 
+                  to="/login" 
+                  className="bg-white text-blue-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition shadow-md hover:shadow-lg"
                 >
-                    Ingresar
+                  Ingresar
                 </Link>
-              )
-            )}
-          </nav>
+              </div>
+            )
+          )}
         </div>
+
       </header>
 
-      <main style={{ flex: 1 }}>
+      {/* Contenido */}
+      <main className="flex-1 p-6">
         <Outlet />
       </main>
 
-      <footer className="py-4 text-center text-sm text-gray-600">
-        © {new Date().getFullYear()} Proyecto ISW
+      {/* Footer */}
+      <footer className="text-center py-4 text-gray-500 text-sm">
+        © 2025 Universidad del Bío-Bío
       </footer>
+
     </div>
   );
 }
