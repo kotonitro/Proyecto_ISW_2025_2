@@ -9,17 +9,19 @@ import {
 } from '../api/informesApi'; 
 import InformesList from '../components/InformesList';
 import { TIPOS_INCIDENTE } from '../../../backend/src/utils/tiposIncidente'; 
+import Alert from '../components/Alert'; 
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString('en-CA');
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
   
-  // Estados
   const [listaBicicletas, setListaBicicletas] = useState([]);
   const [listaBicicleteros, setListaBicicleteros] = useState([]);
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [archivos, setArchivos] = useState([]);
+
+  const [alerts, setAlerts] = useState([]);
 
   const [formData, setFormData] = useState({
     descripcion: '',
@@ -29,6 +31,21 @@ const Informes = () => {
     idBicicleta: '',    
     idBicicletero: ''   
   });
+
+  const addAlert = (type, message) => {
+    const id = Date.now();
+    setAlerts((prev) => [...prev, { id, type, message }]);
+
+    // 5 segundo max
+    setTimeout(() => {
+        removeAlert(id);
+    }, 5000);
+  };
+
+  const removeAlert = (id) => {
+    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+  };
+  // ----------------------------------------
 
   const fetchData = async () => {
     try {
@@ -44,6 +61,7 @@ const Informes = () => {
 
     } catch (error) {
       console.error("Error cargando datos:", error);
+      addAlert('error', 'Error al cargar los datos del sistema.');
     }
   };
 
@@ -63,7 +81,11 @@ const Informes = () => {
       const nuevosArchivos = Array.from(e.target.files);
       setArchivos((prev) => {
         const total = [...prev, ...nuevosArchivos];
-        return total.length > 5 ? prev : total;
+        if (total.length > 5) {
+            addAlert('warning', 'Solo se permiten máximo 5 archivos.');
+            return prev;
+        }
+        return total;
       });
     }
     e.target.value = ""; 
@@ -71,7 +93,6 @@ const Informes = () => {
    
   const removerArchivo = (idx) => setArchivos(prev => prev.filter((_, i) => i !== idx));
 
-  // 3. Refactorizamos el Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -89,10 +110,9 @@ const Informes = () => {
         data.append('archivosExtras', archivo);
       });
 
-      // Llamada a la API importada
       await createInforme(data);
 
-      alert('¡Informe creado exitosamente!');
+      addAlert('success', '¡Informe creado exitosamente!');
       
       setFormData({ 
         descripcion: '', 
@@ -108,7 +128,7 @@ const Informes = () => {
     } catch (error) {
       console.error("Error al crear informe:", error);
       const msg = error.response?.data?.message || 'Hubo un error al crear el informe.';
-      alert(msg);
+      addAlert('error', msg);
     } finally {
       setLoading(false);
     }
@@ -118,12 +138,10 @@ const Informes = () => {
   const mostrarSelectorBicicleta = ['Robo', 'Daño Fisico', 'Perdida', 'ROBO', 'DAÑO FISICO', 'PERDIDA'].includes(tipoActual);
   const mostrarSelectorBicicletero = ['Mantenimiento', 'MANTENIMIENTO', 'Robo', 'Daño Fisico', 'Perdida', 'ROBO', 'DAÑO FISICO', 'PERDIDA'].includes(tipoActual);
 
-  // 4. Refactorizamos las Descargas
   const descargarPDF = async (id) => {
      try {
        const response = await downloadInformePdf(id);
        
-       // Crear URL temporal para descarga
        const url = window.URL.createObjectURL(new Blob([response.data]));
        const link = document.createElement("a");
        link.href = url;
@@ -131,9 +149,10 @@ const Informes = () => {
        document.body.appendChild(link);
        link.click();
        link.parentNode.removeChild(link);
+       addAlert('success', 'PDF descargado correctamente.');
      } catch (error) {
        console.error("Error PDF:", error);
-       alert("Error al descargar el PDF");
+       addAlert('error', "Error al descargar el PDF");
      }
    };
  
@@ -148,14 +167,29 @@ const Informes = () => {
        document.body.appendChild(link);
        link.click();
        link.parentNode.removeChild(link);
+       addAlert('success', 'Evidencias descargadas correctamente.');
      } catch (error) {
        console.error("Error ZIP:", error);
-       alert("Error al descargar las evidencias.");
+       addAlert('error', "Error al descargar las evidencias.");
      }
    };
     
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans relative">
+      
+      {/* Alertas */}
+      <div className="fixed top-5 right-5 z-50 flex flex-col gap-2">
+        {alerts.map((alerta) => (
+          <Alert 
+            key={alerta.id} 
+            id={alerta.id}
+            type={alerta.type} 
+            message={alerta.message} 
+            onClose={removeAlert} 
+          />
+        ))}
+      </div>
+
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Panel de Informes</h1>
 
@@ -192,7 +226,7 @@ const Informes = () => {
                 />
               </div>
 
-              {/* BICICLETAS */}
+              {/* === SELECTOR DE BICICLETAS === */}
               {mostrarSelectorBicicleta && (
                 <div className="md:col-span-2 bg-red-50 p-4 rounded-lg border border-red-100 animate-fadeIn">
                   <label className="block text-sm font-bold text-red-800 mb-2">
@@ -215,7 +249,7 @@ const Informes = () => {
                 </div>
               )}
 
-              {/* BICICLETEROS */}
+              {/* SELECTOR DE BICICLETEROS */}
               {mostrarSelectorBicicletero && (
                 <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100 animate-fadeIn">
                   <label className="block text-sm font-bold text-blue-800 mb-2">

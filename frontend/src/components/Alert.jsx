@@ -88,7 +88,7 @@ export default function Alert({ id, type, message, onClose }) {
         </div>
 
         {/* Icono */}
-        <div className="ml-3 inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg">
+        <div className="ml-3 inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg">
           {currentStyle.icon}
         </div>
       </div>
