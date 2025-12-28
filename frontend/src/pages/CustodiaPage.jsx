@@ -9,7 +9,7 @@ export default function CustodiaPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeTab, setActiveTab] = useState("custodia");
 
-  // Alert State
+  // alertas
   const [alerts, setAlerts] = useState([]);
   
   const addAlert = useCallback((type, message) => {
