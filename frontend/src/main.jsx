@@ -59,6 +59,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "notificaciones",
+        element: (
+          <ProtectedRoute>
+            <NotificacionesEncargado />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "aceptar/:id",
         element: (
           <ProtectedRoute>
