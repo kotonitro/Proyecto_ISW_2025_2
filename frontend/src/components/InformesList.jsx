@@ -68,6 +68,7 @@ const InformesList = ({ informes, onDescargar, onDescargarZIP }) => {
                     
                     
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border border-gray-300">
+                      
                       {info.idInforme}
                     </td>
                     
@@ -79,7 +80,12 @@ const InformesList = ({ informes, onDescargar, onDescargarZIP }) => {
                     </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 border border-gray-300">
-                      {info.fechaInforme}
+                      {new Date(info.fechaInforme).toLocaleDateString('es-CL', {
+                                timeZone: 'UTC',
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            })}
                     </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border border-gray-300">
