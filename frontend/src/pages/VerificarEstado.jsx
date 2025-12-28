@@ -63,20 +63,20 @@ export default function VerificarEstado() {
           >
             Ingrese su RUT
           </label>
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <input
               type="text"
               id="rutUsuario"
               value={rut}
               onChange={handleRutChange}
-              className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono text-lg"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono text-lg"
               placeholder="12345678-K"
               maxLength={12}
             />
             <button
               type="submit"
               disabled={loading || !rut}
-              className="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md uppercase tracking-wider text-sm"
+              className="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md uppercase tracking-wider text-sm w-full md:w-auto"
             >
               {loading ? "Buscando..." : "Buscar"}
             </button>
@@ -127,8 +127,8 @@ export default function VerificarEstado() {
           )}
 
           {ubicaciones.length > 0 && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
+            <div>
+              <h2 className="text-xl font-bold text-blue-900 mb-4 flex items-center px-1">
                 <svg
                   className="w-6 h-6 mr-2 text-green-500"
                   fill="none"
@@ -145,110 +145,116 @@ export default function VerificarEstado() {
                 Resultados Encontrados ({ubicaciones.length})
               </h2>
 
-              {ubicaciones.map((registro) => (
-                <div
-                  key={registro.idRegistro}
-                  className="bg-blue-50/50 rounded-xl border border-blue-100 overflow-hidden hover:shadow-md transition-shadow duration-300"
-                >
-                  <div className="md:flex">
-                    {/* Imagen del Bicicletero */}
-                    <div className="md:w-1/3 bg-gray-200 h-48 md:h-auto relative overflow-hidden group">
-                      {registro.bicicletero.imagen ? (
-                        <img
-                          src={registro.bicicletero.imagen}
-                          alt={registro.bicicletero.nombre}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
-                          <svg
-                            className="w-12 h-12"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                          </svg>
+              <div className="flex md:flex-col overflow-x-auto md:overflow-visible gap-4 md:gap-6 snap-x snap-mandatory md:snap-none pb-6 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
+                {ubicaciones.map((registro) => (
+                  <div
+                    key={registro.idRegistro}
+                    className="bg-blue-50/50 rounded-xl border border-blue-100 overflow-hidden hover:shadow-md transition-shadow duration-300 min-w-[85vw] md:min-w-0 md:w-full snap-center shrink-0"
+                  >
+                    <div className="flex flex-col md:flex-row h-full">
+                      {/* Imagen del Bicicletero */}
+                      <div className="h-48 md:h-auto md:w-1/3 bg-gray-200 relative overflow-hidden group shrink-0">
+                        {registro.bicicletero.imagen ? (
+                          <img
+                            src={registro.bicicletero.imagen}
+                            alt={registro.bicicletero.nombre}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
+                            <svg
+                              className="w-12 h-12"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                          <span className="text-white font-bold text-lg drop-shadow-md leading-tight">
+                            {registro.bicicletero.nombre}
+                          </span>
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                        <span className="text-white font-bold text-lg drop-shadow-md">
-                          {registro.bicicletero.nombre}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Detalles */}
-                    <div className="p-6 md:w-2/3 flex flex-col justify-center">
-                      <div className="mb-4">
-                        <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">
-                          Ubicación
-                        </h3>
-                        <p className="text-gray-800 font-medium text-lg flex items-center">
-                          <svg
-                            className="w-5 h-5 mr-1 text-red-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
-                          {registro.bicicletero.ubicacion}
-                        </p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
+                      {/* Detalles */}
+                      <div className="p-5 md:p-6 md:w-2/3 flex flex-col justify-center flex-grow">
+                        <div className="mb-4">
                           <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">
-                            Tu Bicicleta
+                            Ubicación
                           </h3>
-                          <p className="text-gray-700 font-medium">
-                            {registro.bicicleta.marca}{" "}
-                            {registro.bicicleta.modelo}
-                          </p>
-                          <p className="text-gray-500 text-sm capitalize">
-                            {registro.bicicleta.color}
+                          <p className="text-gray-800 font-medium text-lg flex items-start">
+                            <svg
+                              className="w-5 h-5 mr-1 text-red-500 mt-0.5 shrink-0"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                            <span className="break-words">
+                              {registro.bicicletero.ubicacion}
+                            </span>
                           </p>
                         </div>
 
-                        <div>
-                          <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">
-                            Ingreso
-                          </h3>
-                          <p className="text-gray-700 text-sm">
-                            {new Date(
-                              registro.fechaEntrada,
-                            ).toLocaleDateString()}
-                          </p>
-                          <p className="text-gray-500 text-xs">
-                            {new Date(registro.fechaEntrada).toLocaleTimeString(
-                              [],
-                              { hour: "2-digit", minute: "2-digit" },
-                            )}{" "}
-                            hrs
-                          </p>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">
+                              Tu Bicicleta
+                            </h3>
+                            <p className="text-gray-700 font-medium truncate">
+                              {registro.bicicleta.marca}{" "}
+                              {registro.bicicleta.modelo}
+                            </p>
+                            <p className="text-gray-500 text-sm capitalize">
+                              {registro.bicicleta.color}
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">
+                              Ingreso
+                            </h3>
+                            <p className="text-gray-700 text-sm">
+                              {new Date(
+                                registro.fechaEntrada,
+                              ).toLocaleDateString()}
+                            </p>
+                            <p className="text-gray-500 text-xs">
+                              {new Date(
+                                registro.fechaEntrada,
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}{" "}
+                              hrs
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </div>
