@@ -31,11 +31,9 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "admin/encargados", // Esta será la URL: http://localhost:5173/admin/encargados
+        path: "admin/encargados",
         element: (
           <ProtectedRoute>
-            {" "}
-            {/* Bloquea el acceso si no estás logueado */}
             <AdminEncargados />
           </ProtectedRoute>
         ),
