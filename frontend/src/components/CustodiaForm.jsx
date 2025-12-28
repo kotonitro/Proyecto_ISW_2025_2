@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { postEntrada } from "../api/custodiaApi";
 import axios from "axios";
+import { getBicicleteros } from "../api/bicicleteroApi";
 
 const LISTA_BICICLETEROS = [
   { id: 1, nombre: "Bicicletero 1 - Av. Principal" },
@@ -33,6 +34,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
   const [idBicicletero, setIdBicicletero] = useState("");
   const [idBicicletaSeleccionada, setIdBicicletaSeleccionada] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bicicleteros, setBicicleteros] = useState([]);
 
   const dvInputRef = useRef(null);
 
@@ -78,6 +80,29 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
       setUserData(null);
     }
   }, [rutBase, rutDV, addAlert]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadBicicleteros() {
+      try {
+        const res = await getBicicleteros();
+        const list = res.data && res.data.data ? res.data.data : res.data;
+        if (mounted) setBicicleteros(list || []);
+      } catch (e) {
+        // ignore and keep static fallback
+      }
+    }
+
+    loadBicicleteros();
+
+    const handler = () => loadBicicleteros();
+    window.addEventListener('bicicletero:created', handler);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener('bicicletero:created', handler);
+    };
+  }, []);
 
   const handleBaseChange = (e) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
@@ -273,7 +298,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
               <option value="" className="text-grey-800">
                 Seleccione un bicicletero...
               </option>
-              {LISTA_BICICLETEROS.map((b) => (
+              {(bicicleteros.length ? bicicleteros : LISTA_BICICLETEROS).map((b) => (
                 <option
                   key={b.id}
                   value={b.id}
