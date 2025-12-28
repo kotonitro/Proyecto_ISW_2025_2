@@ -46,6 +46,7 @@ export default function CustodiaList({ addAlert, openConfirm }) {
 
   return (
     <>
+    {/* encabezados*/}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-xl font-bold text-blue-900 flex items-center gap-2">
@@ -74,7 +75,7 @@ export default function CustodiaList({ addAlert, openConfirm }) {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         )}
-
+        {/* no hay bici*/}
         {!loading && registros.length === 0 && (
           <div className="p-12 text-center text-gray-500">
             No hay bicicletas almacenadas en este momento.
@@ -88,6 +89,7 @@ export default function CustodiaList({ addAlert, openConfirm }) {
                 <tr className="bg-white-50 border-b border-gray-100">
                   <th className="px-6 py-4 text-left">
                     <div className="flex flex-col">
+                      {/*columnas*/}
                       <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
                         Bicicleta
                       </span>
@@ -128,6 +130,7 @@ export default function CustodiaList({ addAlert, openConfirm }) {
                         {r.rutUsuario}
                       </div>
                     </td>
+              
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {LISTA_BICICLETEROS.find((b) => b.id === r.idBicicletero)
                         ?.nombre || `ID: ${r.idBicicletero}`}

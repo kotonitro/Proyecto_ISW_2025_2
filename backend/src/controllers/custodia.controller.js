@@ -14,7 +14,7 @@ import {
   getHistorial,
   getUbicacionBicicleta,
 } from "../services/custodia.service.js";
-import { AppDataSource } from "../config/configDB.js"; // Verifica que la ruta sea correcta según nuestra estructura
+import { AppDataSource } from "../config/configDB.js";
 
 export async function createEntrada(req, res) {
   try {
@@ -34,7 +34,7 @@ export async function createEntrada(req, res) {
       return handleErrorClient(
         res,
         401,
-        "No se pudo identificar al encargado en el token.",
+        "No se pudo identificar al encargado en el token."
       );
     }
 
@@ -47,7 +47,7 @@ export async function createEntrada(req, res) {
         emailUsuario,
         telefonoUsuario,
       },
-      idEncargado,
+      idEncargado
     );
 
     return handleSuccess(res, 201, "Entrada registrada", registro);
@@ -70,14 +70,14 @@ export async function createSalida(req, res) {
       return handleErrorClient(
         res,
         401,
-        "No se pudo identificar al encargado.",
+        "No se pudo identificar al encargado."
       );
     }
 
     const registro = await registerSalida(
       idRegistroAlmacen,
       idEncargado,
-      fechaSalida,
+      fechaSalida
     );
 
     return handleSuccess(res, 201, "Salida registrada correctamente", registro);
@@ -103,14 +103,14 @@ export async function getRegistros(req, res) {
       res,
       200,
       "Registros obtenidos correctamente",
-      registros,
+      registros
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener registros",
-      error.message,
+      error.message
     );
   }
 }
@@ -125,7 +125,7 @@ export async function getRegistroDetalle(req, res) {
         res,
         404,
         `Registro con ID ${id} no encontrado`,
-        null,
+        null
       );
     }
 
@@ -135,7 +135,7 @@ export async function getRegistroDetalle(req, res) {
       res,
       500,
       "Error al obtener el registro",
-      error.message,
+      error.message
     );
   }
 }
@@ -148,14 +148,14 @@ export async function getBicicletasAlmacendasController(req, res) {
       res,
       200,
       "Bicicletas almacenadas obtenidas correctamente",
-      bicicletas,
+      bicicletas
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener bicicletas almacenadas",
-      error.message,
+      error.message
     );
   }
 }
@@ -168,21 +168,20 @@ export async function getBicicletasRetiradasController(req, res) {
       res,
       200,
       "Bicicletas retiradas obtenidas correctamente",
-      bicicletas,
+      bicicletas
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener bicicletas retiradas",
-      error.message,
+      error.message
     );
   }
 }
 
 export async function getDisponibilidadBicicleteros(req, res) {
   try {
-    // Usamos el AppDataSource importado para obtener los repositorios
     const bicicleteroRepo = AppDataSource.getRepository("Bicicletero");
     const registroRepo = AppDataSource.getRepository("RegistroAlmacen");
 
@@ -190,7 +189,6 @@ export async function getDisponibilidadBicicleteros(req, res) {
 
     const disponibilidad = await Promise.all(
       bicicleteros.map(async (b) => {
-        // Usar QueryBuilder para manejar NULL explícitamente
         const ocupados = await registroRepo
           .createQueryBuilder("registro")
           .where("registro.idBicicletero = :idBicicletero", {
@@ -200,7 +198,7 @@ export async function getDisponibilidadBicicleteros(req, res) {
           .getCount();
 
         console.log(
-          `[CAPACIDAD] Bicicletero ${b.idBicicletero} (${b.nombre}): ${ocupados} / ${b.capacidad}`,
+          `[CAPACIDAD] Bicicletero ${b.idBicicletero} (${b.nombre}): ${ocupados} / ${b.capacidad}`
         );
 
         return {
@@ -209,12 +207,11 @@ export async function getDisponibilidadBicicleteros(req, res) {
           location: b.ubicacion,
           ocupados: ocupados,
           total: b.capacidad,
-          activo: b.activo
         };
-      }),
+      })
     );
 
-    // Importante: Enviar la respuesta con la estructura que espera tu frontend
+    // Enviar la respuesta con la estructura que necesitamos
     return res.status(200).json({ status: "Success", data: disponibilidad });
   } catch (error) {
     console.error(error);
@@ -239,7 +236,7 @@ export async function deleteRegistroController(req, res) {
       res,
       500,
       "Error al eliminar el registro",
-      error.message,
+      error.message
     );
   }
 }
@@ -258,14 +255,14 @@ export async function getHistorialController(req, res) {
       res,
       200,
       "Historial obtenido correctamente",
-      historial,
+      historial
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener historial",
-      error.message,
+      error.message
     );
   }
 }
@@ -282,14 +279,14 @@ export async function getUbicacionController(req, res) {
       res,
       200,
       "Ubicación obtenida correctamente",
-      ubicacion,
+      ubicacion
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener la ubicación",
-      error.message,
+      error.message
     );
   }
 }
