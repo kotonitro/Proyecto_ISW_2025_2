@@ -42,7 +42,7 @@ export default function AdminBicicleteros() {
       type,
       message
     };
-    setAlertas((prev) => [...prev, newAlert]);
+    setAlertas((prev) => [newAlert, ...prev]);
   };
 
   const removeAlert = (idToRemove) => {

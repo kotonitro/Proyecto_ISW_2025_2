@@ -39,7 +39,7 @@ export default function ConfirmAlert({ isOpen, onClose, onConfirm, title, messag
               onClick={handleConfirmClick}
               className="flex-1 px-4 py-2.5 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-red-500"
             >
-              Sí, Eliminar
+              Confirmar
             </button>
           </div>
         </div>
