@@ -21,7 +21,13 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "usuarios", element: <Usuarios /> },
-      { path: "informes", element: <Informes /> },
+      { path: "informes", 
+        element: (
+          <ProtectedRoute>
+            <Informes />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "custodia",
         element: (

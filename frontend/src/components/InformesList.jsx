@@ -10,6 +10,25 @@ const InformesList = ({ informes, onDescargar, onDescargarZIP }) => {
   const informesActuales = informesOrdenados.slice(indicePrimerItem, indiceUltimoItem);
 
   const totalPaginas = Math.ceil(informes.length / itemsPorPagina);
+  
+  const obtenerColor = (tipo) => {
+      switch (tipo) {
+        case 'ROBO':
+          return 'bg-red-100 text-red-800 border-red-200';
+        case 'DAÑO FISICO': 
+          return 'bg-orange-100 text-orange-800 border-orange-200'; 
+        case 'PERDIDA':
+          return 'bg-yellow-100 text-yellow-800 border-yellow-200'; 
+        case 'FALLA SISTEMA':
+          return 'bg-purple-100 text-purple-800 border-purple-200';
+        case 'MANTENIMIENTO':
+          return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'OTRO':
+          return 'bg-gray-100 text-gray-800 border-gray-200';
+        default:
+          return 'bg-green-100 text-green-800 border-green-200';
+      }
+    };
 
   const irPaginaSiguiente = () => {
     if (paginaActual < totalPaginas) setPaginaActual(paginaActual + 1);
@@ -53,10 +72,8 @@ const InformesList = ({ informes, onDescargar, onDescargarZIP }) => {
                     </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border border-gray-300">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border border-gray-200 
-                        ${info.tipoIncidente === 'Robo' ? 'bg-red-100 text-red-800' : 
-                          info.tipoIncidente === 'Mantenimiento' ? 'bg-blue-100 text-blue-800' : 
-                          'bg-green-100 text-green-800'}`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border 
+                        ${obtenerColor(info.tipoIncidente)}`}>   
                         {info.tipoIncidente}
                       </span>
                     </td>

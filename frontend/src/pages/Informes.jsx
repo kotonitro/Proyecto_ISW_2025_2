@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import InformesList from "../components/InformesList";
+import PageTitle from "../components/PageTitle";
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString("en-CA");
@@ -150,11 +151,11 @@ const Informes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Panel de Informes
-        </h1>
+    <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8 font-sans ">
+      <div className="max-w-4xl mx-auto space-y-10">
+        <PageTitle
+                title="Informes" 
+        />
 
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-400">
           <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2">
