@@ -82,7 +82,7 @@ export async function getNotificaciones(idEncargadologueado) {
 
   const notificaciones = await notificacionRepo.find({
     relations: ["bicicletero", "encargado"],
-    where: [{ estado: "Pendiente" }, { estado: "En Camino", encargado: { idEncargado: idGuardiaLogueado }}],
+    where: [{ estado: "Pendiente" }, { estado: "En Camino", encargado: { idEncargado: idEncargadologueado }}],
     order: { fechaCreacion: "DESC" },
   });
 
