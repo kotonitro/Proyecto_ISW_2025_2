@@ -89,7 +89,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
         const list = res.data && res.data.data ? res.data.data : res.data;
         if (mounted) setBicicleteros(list || []);
       } catch (e) {
-        // ignore and keep static fallback
+        
       }
     }
 
@@ -329,7 +329,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
         </div>
       </div>
 
-      {/* Botón de Acción*/}
+      {/* Botón para la retirada*/}
       <button
         type="submit"
         disabled={

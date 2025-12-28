@@ -27,7 +27,7 @@ export default function CustodiaPage() {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
   }, []);
 
-  // Confirm State
+  
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: "",
@@ -55,7 +55,7 @@ export default function CustodiaPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 relative">
-      {/* Alerts Container */}
+      {/* Alerts */}
       <div className="fixed top-20 right-4 z-50 flex flex-col gap-2">
         {alerts.map((alert) => (
           <Alert
@@ -76,7 +76,7 @@ export default function CustodiaPage() {
         onClose={closeConfirm}
       />
 
-      {/* Header / Tabs */}
+      {/* Header-Tabs */}
       <div className="flex border-b border-gray-200 mb-8">
         <button
           className={`px-6 py-3 font-medium text-sm transition-colors duration-200 focus:outline-none ${

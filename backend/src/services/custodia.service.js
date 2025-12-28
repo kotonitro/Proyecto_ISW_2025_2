@@ -37,7 +37,7 @@ export async function registerEntrada(data, idEncargado) {
   // Validar horario
   if (!isWithinAllowedHours()) {
     throw new Error(
-      "El registro de entrada sólo está permitido de lunes a viernes entre 7:30 y 20:00.",
+      "El registro de entrada sólo está permitido de lunes a viernes entre 7:30 y 20:00."
     );
   }
 
@@ -45,24 +45,24 @@ export async function registerEntrada(data, idEncargado) {
   const usuario = await usuarioRepository.findOneBy({ rut: data.rutUsuario });
   if (!usuario) {
     throw new Error(
-      `Usuario con RUT ${data.rutUsuario} no existe en el sistema`,
+      `Usuario con RUT ${data.rutUsuario} no existe en el sistema`
     );
   }
 
   // Validar que los datos del usuario coincidan
   if (usuario.nombre !== data.nombreUsuario) {
     throw new Error(
-      `El nombre no coincide con el registrado para el RUT ${data.rutUsuario}`,
+      `El nombre no coincide con el registrado para el RUT ${data.rutUsuario}`
     );
   }
   if (usuario.email !== data.emailUsuario) {
     throw new Error(
-      `El email no coincide con el registrado para el RUT ${data.rutUsuario}`,
+      `El email no coincide con el registrado para el RUT ${data.rutUsuario}`
     );
   }
   if (usuario.telefono !== data.telefonoUsuario) {
     throw new Error(
-      `El teléfono no coincide con el registrado para el RUT ${data.rutUsuario}`,
+      `El teléfono no coincide con el registrado para el RUT ${data.rutUsuario}`
     );
   }
 
@@ -72,7 +72,7 @@ export async function registerEntrada(data, idEncargado) {
   });
   if (!bicicleta) {
     throw new Error(
-      `Bicicleta con ID ${data.idBicicleta} no existe en el sistema`,
+      `Bicicleta con ID ${data.idBicicleta} no existe en el sistema`
     );
   }
 
@@ -83,7 +83,7 @@ export async function registerEntrada(data, idEncargado) {
   });
   if (!bicicletero) {
     throw new Error(
-      `Bicicletero con ID ${data.idBicicletero} no existe en el sistema`,
+      `Bicicletero con ID ${data.idBicicletero} no existe en el sistema`
     );
   }
 
@@ -120,12 +120,12 @@ export async function registerEntrada(data, idEncargado) {
 export async function registerSalida(
   idRegistroAlmacen,
   idEncargado,
-  fechaSalida,
+  fechaSalida
 ) {
   // Validar horario
   if (!isWithinAllowedHours()) {
     throw new Error(
-      "La eliminación de registro sólo está permitida de lunes a viernes entre 7:30 y 20:00.",
+      "La eliminación de registro sólo está permitida de lunes a viernes entre 7:30 y 20:00."
     );
   }
 
@@ -139,7 +139,7 @@ export async function registerSalida(
   }
 
   console.log(
-    `[ELIMINAR] Guardando registro ID: ${idRegistroAlmacen} en historial antes de eliminar`,
+    `[ELIMINAR] Guardando registro ID: ${idRegistroAlmacen} en historial antes de eliminar`
   );
 
   // Crear entrada en historial antes de eliminar
@@ -181,7 +181,7 @@ export async function getBicicletasAlmacenadas() {
       registros.map((r) => ({
         ...r,
         estadoBicicleta: "ALMACENADA",
-      })),
+      }))
     );
 }
 
@@ -199,7 +199,7 @@ export async function getBicicletasRetiradas() {
       registros.map((r) => ({
         ...r,
         estadoBicicleta: "RETIRADA",
-      })),
+      }))
     );
 }
 

@@ -25,7 +25,7 @@ router.post(
   "/entrada",
   authMiddleware,
   validationMiddleware(registroEntradaValidation),
-  createEntrada,
+  createEntrada
 );
 
 //Registra la salida de una bicicleta
@@ -33,7 +33,7 @@ router.post(
   "/salida",
   authMiddleware,
   validationMiddleware(registroSalidaValidation),
-  createSalida,
+  createSalida
 );
 
 router.get("/registros", authMiddleware, getRegistros);
@@ -43,16 +43,17 @@ router.get("/registros/:id", authMiddleware, getRegistroDetalle);
 router.get(
   "/bicicletas/almacenadas",
   authMiddleware,
-  getBicicletasAlmacendasController,
+  getBicicletasAlmacendasController
 );
 
 //Obtiene todas las bicicletas retiradas (fechaSalida != NULL)
 router.get(
   "/bicicletas/retiradas",
   authMiddleware,
-  getBicicletasRetiradasController,
+  getBicicletasRetiradasController
 );
 
+// Eliminar un registro de almacén por ID
 router.delete("/registros/:id", authMiddleware, deleteRegistroController);
 
 // Obtener historial de custodia
