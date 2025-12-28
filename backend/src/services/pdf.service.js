@@ -10,6 +10,7 @@ const logoPath = path.join(__dirname, "../../../frontend/src/images/logoUBB.png"
 
 export function generateInformePdf(Informe) {
   return new Promise((resolve, reject) => {
+    console.log("Datos recibidos para PDF:", JSON.stringify(Informe, null, 2));
     const doc = new PDFDocument({ 
       size: "A4", 
       margin: 50,
@@ -61,7 +62,7 @@ export function generateInformePdf(Informe) {
     const startX = 50;
     let currentY = doc.y;
     const col1 = startX;
-    const col2 = 380;
+    const col2 = 320;
 
     const row = (label, value, x, y) => {
         doc.font("Helvetica-Bold").fontSize(11).fillColor("#333").text(label, x, y);
@@ -79,9 +80,26 @@ export function generateInformePdf(Informe) {
     currentY = doc.y;
 
     const nombreEncargado = Informe.encargados ? Informe.encargados.nombre : "Sin asignar";
-    row("Encargado:", nombreEncargado, col1, currentY);
+        row("Encargado:", nombreEncargado, col1, currentY);
+        
+        if (Informe.bicicleta) {
+             const marca = Informe.bicicleta.marca || "";
+             const modelo = Informe.bicicleta.modelo || "";
+             const color = Informe.bicicleta.color ? `(${Informe.bicicleta.color})` : "";
+             
+             const infoBici = `${marca} ${modelo} ${color}`.trim() || "Datos incompletos";
+             row("Bicicleta:", infoBici, col2, currentY);
+        }
+        
+        doc.moveDown(1.5); 
+        currentY = doc.y;
     
-    doc.moveDown(3);
+        if (Informe.bicicletero) {
+             const infoLugar = Informe.bicicletero.nombre || `Bicicletero #${Informe.bicicletero.idBicicletero}`;
+             row("Lugar:", infoLugar, col1, currentY);
+        }
+    
+        doc.moveDown(2); 
 
     // DESCRIPCIÓN 
   
