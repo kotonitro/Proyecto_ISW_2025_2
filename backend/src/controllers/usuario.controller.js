@@ -6,6 +6,7 @@ import {
 import {
   createUsuario,
   getUsuarioByRut,
+  getUsuarioByTelefono,
   getUsuarios,
   deleteUsuario,
   updateUsuario,
@@ -20,14 +21,14 @@ export async function handleGetUsuarios(req, res) {
       res,
       200,
       "Usuarios obtenidos correctamente",
-      usuarios,
+      usuarios
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener usuarios",
-      error.message,
+      error.message
     );
   }
 }
@@ -40,7 +41,7 @@ export async function handleGetUsuarioByRut(req, res) {
       return handleErrorClient(
         res,
         404,
-        `Usuario con RUT ${rut} no encontrado`,
+        `Usuario con RUT ${rut} no encontrado`
       );
     }
     return handleSuccess(res, 200, "Usuario obtenido correctamente", usuario);
@@ -49,7 +50,7 @@ export async function handleGetUsuarioByRut(req, res) {
       res,
       500,
       "Error al obtener usuario",
-      error.message,
+      error.message
     );
   }
 }
@@ -71,7 +72,7 @@ export async function handleCreateUsuario(req, res) {
         res,
         400,
         "Error de validación en los datos.",
-        errorDetails,
+        errorDetails
       );
     }
 
@@ -81,8 +82,20 @@ export async function handleCreateUsuario(req, res) {
       return handleErrorClient(
         res,
         409,
-        `Usuario con RUT ${value.rut} ya existe`,
+        `Usuario con RUT ${value.rut} ya existe`
       );
+    }
+
+    // Verificar si ya existe un usuario con ese teléfono
+    if (value.telefono) {
+      const existingPhone = await getUsuarioByTelefono(value.telefono);
+      if (existingPhone) {
+        return handleErrorClient(
+          res,
+          409,
+          `El teléfono ${value.telefono} ya está registrado por otro usuario`
+        );
+      }
     }
 
     const newUsuario = await createUsuario(value);
@@ -92,7 +105,7 @@ export async function handleCreateUsuario(req, res) {
       res,
       500,
       "Error interno al crear el usuario",
-      error.message,
+      error.message
     );
   }
 }
@@ -110,7 +123,7 @@ export async function handleUpdateUsuario(req, res) {
       return handleErrorClient(
         res,
         400,
-        "RUT del usuario es requerido para actualizar",
+        "RUT del usuario es requerido para actualizar"
       );
     }
 
@@ -128,10 +141,10 @@ export async function handleUpdateUsuario(req, res) {
       res,
       200,
       "Usuario actualizado correctamente",
-      updated,
+      updated
     );
   } catch (error) {
-    // service layer lanza errores descriptivos; distinguirlos si es posible
+    // service layer lanza errores descriptivos. distinguirlos si es posible
     if (error.message && error.message.includes("no encontrado")) {
       return handleErrorClient(res, 404, error.message);
     }
@@ -139,15 +152,14 @@ export async function handleUpdateUsuario(req, res) {
       res,
       500,
       "Error al actualizar el usuario",
-      error.message,
+      error.message
     );
   }
 }
 
-// Esta funcion elimina el usuario por RUT
 export async function handleDeleteUsuario(req, res) {
   try {
-    // Priorizar RUT en params, luego en body, luego en token (compatibilidad)
+    // Priorizar RUT en params, luego en body, luego en token
     const rutParam = req.params?.rut;
     const rutBody = req.body?.rut;
     const rutFromToken =
@@ -158,7 +170,7 @@ export async function handleDeleteUsuario(req, res) {
       return handleErrorClient(
         res,
         400,
-        "RUT del usuario es requerido para eliminar",
+        "RUT del usuario es requerido para eliminar"
       );
     }
 
@@ -173,7 +185,7 @@ export async function handleDeleteUsuario(req, res) {
       res,
       500,
       "Error al eliminar el usuario",
-      error.message,
+      error.message
     );
   }
 }

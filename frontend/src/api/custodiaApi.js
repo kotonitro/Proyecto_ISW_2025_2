@@ -29,7 +29,9 @@ async function request(path, options = {}) {
 }
 
 export async function fetchBicicletasAlmacenadas() {
-  const res = await request("/custodia/bicicletas/almacenadas", { method: "GET" });
+  const res = await request("/custodia/bicicletas/almacenadas", {
+    method: "GET",
+  });
   return res.data || res;
 }
 
@@ -76,4 +78,3 @@ export async function fetchHistorial(filters = {}) {
   const res = await request(`/custodia/historial${qs ? `?${qs}` : ""}`);
   return res.data || res;
 }
-

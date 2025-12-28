@@ -31,6 +31,7 @@ export default function VerificarEstado() {
     } finally {
       setEstadoLoading(false);
     }
+    return clean;
   };
 
 
@@ -55,7 +56,7 @@ export default function VerificarEstado() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-8">
+    <div className="max-w-3xl mx-auto p-4 md:p-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8 border-l-4 border-blue-600 pl-4">
         Estado de la Solicitud
       </h1>

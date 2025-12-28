@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PasswordInput from "../components/PasswordInput";
+import InputField from "../components/InputField";
 import logoUBB from "../images/logoTextoUBB.webp";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
@@ -12,6 +14,33 @@ export default function Login() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        
+        const payload = JSON.parse(jsonPayload);
+
+        const expirationTime = payload.exp * 1000;
+        const currentTime = Date.now();
+
+        if (currentTime < expirationTime) {
+          navigate("/");
+        } else {
+          localStorage.clear();
+        }
+      } catch (error) {
+        localStorage.clear();
+      }
+    }
+  }, [navigate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -57,14 +86,13 @@ export default function Login() {
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       {/* Tarjeta de login */}
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-        {/* ENCABEZADO */}
+        {/* Header */}
         <div className="text-center">
           <img src={logoUBB} alt="Logo UBB" className="mx-auto h-40 w-auto" />
         </div>
-
         {/* Formulario */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {/* Input Email */}
+          {/*Input Email*/}
           <div>
             <label
               htmlFor="email"
@@ -73,21 +101,18 @@ export default function Login() {
               Correo Electrónico
             </label>
             <div className="mt-1">
-              <input
+              <InputField
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
-                required
-                placeholder="encargado@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="encargado@ejemplo.com"
+                required
                 disabled={loading}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-200"
               />
             </div>
           </div>
-
           {/* Input Contraseña */}
           <div>
             <label
@@ -97,21 +122,17 @@ export default function Login() {
               Contraseña
             </label>
             <div className="mt-1">
-              <input
+              <PasswordInput
                 id="contrasena"
                 name="contrasena"
-                type="password"
-                autoComplete="current-password"
-                required
-                placeholder="Ingrese su contraseña"
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}
+                placeholder="Ingrese su contraseña"
+                required
                 disabled={loading}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-200"
               />
             </div>
           </div>
-
           {/* Mensaje de error */}
           {error && (
             <div className="rounded-md bg-red-50 p-4 border border-red-200">
@@ -124,7 +145,6 @@ export default function Login() {
               </div>
             </div>
           )}
-
           {/* Botón de ingresar */}
           <div>
             <button
@@ -163,7 +183,6 @@ export default function Login() {
             </button>
           </div>
         </form>
-
         {/* Olvido su contraseña */}
         <div className="text-center mt-4">
           <button
