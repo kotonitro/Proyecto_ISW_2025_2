@@ -6,6 +6,7 @@ import {
 import {
   createUsuario,
   getUsuarioByRut,
+  getUsuarioByTelefono,
   getUsuarios,
   deleteUsuario,
   updateUsuario,
@@ -83,6 +84,18 @@ export async function handleCreateUsuario(req, res) {
         409,
         `Usuario con RUT ${value.rut} ya existe`,
       );
+    }
+
+    // Verificar si ya existe un usuario con ese teléfono
+    if (value.telefono) {
+      const existingPhone = await getUsuarioByTelefono(value.telefono);
+      if (existingPhone) {
+        return handleErrorClient(
+          res,
+          409,
+          `El teléfono ${value.telefono} ya está registrado por otro usuario`,
+        );
+      }
     }
 
     const newUsuario = await createUsuario(value);
