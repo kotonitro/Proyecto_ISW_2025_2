@@ -14,10 +14,11 @@ export function isWithinAllowedHours() {
   const currentTime = hours * 60 + minutes;
   
   const startTime = 7 * 60 + 30; // 7:30 AM
-  const endTime = 14 * 60; // 2:00 PM
+  const endTime = 20 * 60; // 8:00 PM
   
   return currentTime >= startTime && currentTime < endTime;
 }
+  
 
 /**
  * Determina el estado de una bicicleta basado en el registro

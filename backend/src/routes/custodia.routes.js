@@ -7,6 +7,7 @@ import {
   getBicicletasAlmacendasController,
   getBicicletasRetiradasController,
 } from "../controllers/custodia.controller.js";
+
 import { validationMiddleware } from "../middleware/validation.middleware.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import {
@@ -14,9 +15,8 @@ import {
   registroSalidaValidation,
 } from "../validations/registroAlmacen.validation.js";
 
+
 const router = Router();
-
-
  // Registra la entrada de una bicicleta
 
 router.post(
