@@ -1,5 +1,6 @@
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
+
 function getToken() {
   // Asumimos que el token JWT se guarda en localStorage bajo 'token'
   return localStorage.getItem("token");
