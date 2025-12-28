@@ -45,7 +45,7 @@ export default function AdminEncargados() {
       type,
       message
     };
-    setAlertas((prev) => [...prev, newAlert]);
+    setAlertas((prev) => [newAlert, ...prev]);
   };
 
   const removeAlert = (idToRemove) => {
