@@ -52,10 +52,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "notificaciones",
+        path: "admin/bicicleteros",
         element: (
           <ProtectedRoute>
-            <NotificacionesEncargado />
+            <AdminBicicleteros />
           </ProtectedRoute>
         ),
       },
