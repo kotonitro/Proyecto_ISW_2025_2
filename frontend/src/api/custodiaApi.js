@@ -34,6 +34,10 @@ export async function fetchBicicletasAlmacenadas() {
 }
 
 export async function postEntrada(payload) {
+  if (!payload.idBicicleta || !payload.idBicicletero) {
+     throw new Error("Datos de bicicleta o bicicletero incompletos.");
+  }
+
   const res = await request(`/custodia/entrada`, {
     method: "POST",
     body: JSON.stringify(payload),

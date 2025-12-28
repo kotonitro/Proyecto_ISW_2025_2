@@ -9,18 +9,21 @@ export async function createUsuario(data) {
 }
 
 export async function getUsuarioByRut(rut) {
-  const Usuario = await userRepository.findOneBy({ rut });
-  return Usuario;
+  // Devolver también las bicicletas relacionadas para que el cliente pueda
+  // obtener `usuario.bicicletas` y extraer `idBicicleta` cuando sea necesario.
+  const usuario = await userRepository.findOne({ where: { rut }, relations: ["bicicletas"] });
+  return usuario;
 }
 
 export async function getUsuarioById(idUsuario) {
-  const Usuario = await userRepository.findOneBy({ idUsuario });
-  return Usuario;
+  const usuario = await userRepository.findOne({ where: { idUsuario }, relations: ["bicicletas"] });
+  return usuario;
 }
 
 export async function getUsuarios() {
-  const Usuario = await userRepository.find();
-  return Usuario;
+  // Incluir bicicletas en el listado para facilitar vistas administrativas.
+  const usuarios = await userRepository.find({ relations: ["bicicletas"] });
+  return usuarios;
 }
 
 export async function deleteUsuario(rut) {
