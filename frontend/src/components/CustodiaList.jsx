@@ -85,12 +85,12 @@ export default function CustodiaList() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
+                <tr className="bg-white-50 border-b border-gray-100">
                   <th className="px-6 py-4 text-left">
                     <div className="flex flex-col">
                       <span className="text-xs font-bold uppercase tracking-wider text-blue-800">Bicicleta
                         </span>
-                          <span className="text-[10px] text-gray-400 font-medium normal-case mt-0.5">Marca, Modelo, Color
+                          <span className="text-[10px] text-blue-700 font-medium normal-case mt-0.5">Marca, Modelo, Color
                             </span>
                           </div>
                         </th>
@@ -134,7 +134,7 @@ export default function CustodiaList() {
         )}
       </div>
 
-      {/* Modal de confirmación personalizado */}
+      {/*confirmación personalizado */}
       {confirmDialog.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
