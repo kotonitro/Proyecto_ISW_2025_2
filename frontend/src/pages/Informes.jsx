@@ -10,6 +10,7 @@ import {
 import InformesList from '../components/InformesList';
 import { TIPOS_INCIDENTE } from '../../../backend/src/utils/tiposIncidente'; 
 import Alert from '../components/Alert'; 
+import SearchBar from '../components/SearchBar';
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString('en-CA');
@@ -22,6 +23,7 @@ const Informes = () => {
   const [archivos, setArchivos] = useState([]);
 
   const [alerts, setAlerts] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
   const [formData, setFormData] = useState({
     descripcion: '',
@@ -64,7 +66,19 @@ const Informes = () => {
       addAlert('error', 'Error al cargar los datos del sistema.');
     }
   };
-
+  
+  const informesFiltrados = informes.filter((informe) => {
+      if (!busqueda) return true
+      if (!informe.fechaInforme) return false;
+  const fechaFormateada = new Date(informe.fechaInforme).toLocaleDateString('es-CL', {
+              timeZone: 'UTC', 
+              year: 'numeric',
+              month: '2-digit', 
+              day: '2-digit'
+  });
+  return fechaFormateada.includes(busqueda);
+  });
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -174,148 +188,155 @@ const Informes = () => {
      }
    };
     
-  return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans relative">
-      
-      {/* Alertas */}
-      <div className="fixed top-5 right-5 z-50 flex flex-col gap-2">
-        {alerts.map((alerta) => (
-          <Alert 
-            key={alerta.id} 
-            id={alerta.id}
-            type={alerta.type} 
-            message={alerta.message} 
-            onClose={removeAlert} 
-          />
-        ))}
-      </div>
-
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Panel de Informes</h1>
-
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2">Nuevo Informe</h2>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Tipo de Incidente */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Incidente</label>
-                <select 
-                  name="tipoIncidente" 
-                  value={formData.tipoIncidente} 
-                  onChange={handleInputChange} 
-                  required 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                >
-                  <option value="">Seleccione...</option>
-                  {TIPOS_INCIDENTE.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-
-              {/* Fecha */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-                <input 
-                  type="date" 
-                  name="fechaInforme" 
-                  value={formData.fechaInforme} 
-                  disabled 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
-                />
-              </div>
-
-              {/* === SELECTOR DE BICICLETAS === */}
-              {mostrarSelectorBicicleta && (
-                <div className="md:col-span-2 bg-red-50 p-4 rounded-lg border border-red-100 animate-fadeIn">
-                  <label className="block text-sm font-bold text-red-800 mb-2">
-                    Seleccione la Bicicleta afectada:
-                  </label>
-                  <select
-                    name="idBicicleta"
-                    value={formData.idBicicleta}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white"
-                  >
-                    <option value="">-- Seleccione Bicicleta --</option>
-                    {listaBicicletas.map((bici) => (
-                      <option key={bici.idBicicleta} value={bici.idBicicleta}>
-                        #{bici.idBicicleta} - {bici.marca} {bici.modelo} ({bici.color})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* SELECTOR DE BICICLETEROS */}
-              {mostrarSelectorBicicletero && (
-                <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100 animate-fadeIn">
-                  <label className="block text-sm font-bold text-blue-800 mb-2">
-                    {tipoActual && tipoActual.toUpperCase().includes('MANTENIMIENTO') 
-                      ? "Seleccione el Bicicletero a mantener:" 
-                      : "Lugar del incidente (Bicicletero):"}
-                  </label>
-                  <select
-                    name="idBicicletero"
-                    value={formData.idBicicletero}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                  >
-                    <option value="">-- Seleccione Bicicletero --</option>
-                    {listaBicicleteros.map((lugar) => (
-                      <option key={lugar.idBicicletero} value={lugar.idBicicletero}>
-                          {lugar.nombre || `Bicicletero #${lugar.idBicicletero}`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-            </div>
-
-            {/* Descripción */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-              <textarea 
-                name="descripcion" 
-                value={formData.descripcion} 
-                onChange={handleInputChange} 
-                rows="4"
-                required 
-                placeholder="Describa detalladamente qué sucedió..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none resize-none"
-              />
-            </div>
-
-            {/* Archivos */}
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
-               <input type="file" multiple onChange={handleFileChange} accept="image/*,application/pdf" disabled={archivos.length >= 5} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"/>
-               <p className="text-xs text-gray-500 mt-2">({archivos.length}/5 archivos seleccionados)</p>
-               {archivos.length > 0 && (
-                <ul className="mt-4 space-y-2">
-                  {archivos.map((file, idx) => (
-                    <li key={idx} className="text-sm text-gray-600 flex justify-between">
-                      {file.name} 
-                      <button type="button" onClick={() => removerArchivo(idx)} className="text-red-500 font-bold ml-2">✕</button>
-                    </li>
-                  ))}
-                </ul>
-               )}
-            </div>
-
-            <button type="submit" disabled={loading} className={`w-full py-3 px-4 rounded-lg text-white font-semibold text-lg shadow-md transition-all ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}>
-              {loading ? 'Guardando...' : 'Guardar Informe Completo'}
-            </button>
-          </form>
-        </div>
-
-        <InformesList informes={informes} onDescargar={descargarPDF} onDescargarZIP={descargarZIP}/>
-      </div>
-    </div>
-  );
-};
-
-export default Informes;
+   return (
+       <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans relative">
+         
+         {/* Alertas */}
+         <div className="fixed top-5 right-5 z-50 flex flex-col gap-2">
+           {alerts.map((alerta) => (
+             <Alert key={alerta.id} id={alerta.id} type={alerta.type} message={alerta.message} onClose={removeAlert} />
+           ))}
+         </div>
+   
+         <div className="max-w-4xl mx-auto">
+           <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Panel de Informes</h1>
+   
+           {/* FORMULARIO */}
+           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
+             <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2">Nuevo Informe</h2>
+             
+             <form onSubmit={handleSubmit} className="space-y-6">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 
+                 {/* Tipo de Incidente */}
+                 <div>
+                   <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Incidente</label>
+                   <select 
+                     name="tipoIncidente" 
+                     value={formData.tipoIncidente} 
+                     onChange={handleInputChange} 
+                     required 
+                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                   >
+                     <option value="">Seleccione...</option>
+                     {TIPOS_INCIDENTE.map(t => <option key={t} value={t}>{t}</option>)}
+                   </select>
+                 </div>
+   
+                 {/* Fecha */}
+                 <div>
+                   <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                   <input 
+                     type="date" 
+                     name="fechaInforme" 
+                     value={formData.fechaInforme} 
+                     disabled 
+                     className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                   />
+                 </div>
+   
+                 {mostrarSelectorBicicleta && (
+                   <div className="md:col-span-2 bg-red-50 p-4 rounded-lg border border-red-100 animate-fadeIn">
+                     <label className="block text-sm font-bold text-red-800 mb-2">Seleccione la Bicicleta afectada:</label>
+                     <select
+                       name="idBicicleta"
+                       value={formData.idBicicleta}
+                       onChange={handleInputChange}
+                       required
+                       className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white"
+                     >
+                       <option value="">-- Seleccione Bicicleta --</option>
+                       {listaBicicletas.map((bici) => (
+                         <option key={bici.idBicicleta} value={bici.idBicicleta}>
+                           #{bici.idBicicleta} - {bici.marca} {bici.modelo} ({bici.color})
+                         </option>
+                       ))}
+                     </select>
+                   </div>
+                 )}
+   
+                 {mostrarSelectorBicicletero && (
+                   <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100 animate-fadeIn">
+                     <label className="block text-sm font-bold text-blue-800 mb-2">
+                       {tipoActual && tipoActual.toUpperCase().includes('MANTENIMIENTO') 
+                         ? "Seleccione el Bicicletero a mantener:" 
+                         : "Lugar del incidente (Bicicletero):"}
+                     </label>
+                     <select
+                       name="idBicicletero"
+                       value={formData.idBicicletero}
+                       onChange={handleInputChange}
+                       required
+                       className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                     >
+                       <option value="">-- Seleccione Bicicletero --</option>
+                       {listaBicicleteros.map((lugar) => (
+                         <option key={lugar.idBicicletero} value={lugar.idBicicletero}>
+                             {lugar.nombre || `Bicicletero #${lugar.idBicicletero}`}
+                         </option>
+                       ))}
+                     </select>
+                   </div>
+                 )}
+               </div>
+   
+               {/* Descripción */}
+               <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                 <textarea 
+                   name="descripcion" 
+                   value={formData.descripcion} 
+                   onChange={handleInputChange} 
+                   rows="4"
+                   required 
+                   placeholder="Describa detalladamente qué sucedió..."
+                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none resize-none"
+                 />
+               </div>
+   
+               {/* Archivos */}
+               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+                  <input type="file" multiple onChange={handleFileChange} accept="image/*,application/pdf" disabled={archivos.length >= 5} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"/>
+                  <p className="text-xs text-gray-500 mt-2">({archivos.length}/5 archivos seleccionados)</p>
+                  {archivos.length > 0 && (
+                   <ul className="mt-4 space-y-2">
+                     {archivos.map((file, idx) => (
+                       <li key={idx} className="text-sm text-gray-600 flex justify-between">
+                         {file.name} 
+                         <button type="button" onClick={() => removerArchivo(idx)} className="text-red-500 font-bold ml-2">✕</button>
+                       </li>
+                     ))}
+                   </ul>
+                  )}
+               </div>
+   
+               <button type="submit" disabled={loading} className={`w-full py-3 px-4 rounded-lg text-white font-semibold text-lg shadow-md transition-all ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}>
+                 {loading ? 'Guardando...' : 'Guardar Informe Completo'}
+               </button>
+             </form>
+           </div>
+   
+           {/* HISTORIAL Y BÚSQUEDA */}
+           <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+             <h2 className="text-xl font-bold text-gray-800">Historial de Informes</h2>
+             <div className="w-full sm:w-72">
+               <SearchBar 
+                 value={busqueda}
+                 onChange={(e) => setBusqueda(e.target.value)}
+                 placeholder="Buscar por fecha (10-12-2025)"
+               />
+             </div>
+           </div>
+   
+           <InformesList 
+             informes={informesFiltrados} 
+             onDescargar={descargarPDF} 
+             onDescargarZIP={descargarZIP}
+           />
+   
+         </div>
+       </div>
+     );
+   };
+   
+   export default Informes;
