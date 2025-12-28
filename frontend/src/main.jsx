@@ -8,6 +8,7 @@ import Root from "./pages/Root";
 import ProtectedRoute, { ErrorBoundary } from "./components/ProtectedRoute";
 import "./index.css";
 import AdminEncargados from "./pages/AdminEncargados";
+import AdminBicicleteros from "./pages/AdminBicicleteros";
 import Informes from "./pages/Informes";
 import Usuarios from "./pages/Usuarios";
 import CustodiaPage from "./pages/CustodiaPage";
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AdminEncargados />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/bicicleteros",
+        element: (
+          <ProtectedRoute>
+            <AdminBicicleteros />
           </ProtectedRoute>
         ),
       },
