@@ -96,11 +96,11 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
     loadBicicleteros();
 
     const handler = () => loadBicicleteros();
-    window.addEventListener('bicicletero:created', handler);
+    window.addEventListener("bicicletero:created", handler);
 
     return () => {
       mounted = false;
-      window.removeEventListener('bicicletero:created', handler);
+      window.removeEventListener("bicicletero:created", handler);
     };
   }, []);
 
@@ -298,15 +298,17 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
               <option value="" className="text-grey-800">
                 Seleccione un bicicletero...
               </option>
-              {(bicicleteros.length ? bicicleteros : LISTA_BICICLETEROS).map((b) => (
-                <option
-                  key={b.id}
-                  value={b.id}
-                  className="font-medium text-blue-800"
-                >
-                  {b.nombre}
-                </option>
-              ))}
+              {(bicicleteros.length ? bicicleteros : LISTA_BICICLETEROS).map(
+                (b) => (
+                  <option
+                    key={b.idBicicletero || b.id}
+                    value={b.idBicicletero || b.id}
+                    className="font-medium text-blue-800"
+                  >
+                    {b.nombre}
+                  </option>
+                ),
+              )}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">
               <svg
