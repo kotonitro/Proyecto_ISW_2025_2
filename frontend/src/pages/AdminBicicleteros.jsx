@@ -233,7 +233,6 @@ export default function AdminBicicleteros() {
           </div>
           )}
       </div>
-
       {/*Formulario*/}
       {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity">
@@ -253,7 +252,7 @@ export default function AdminBicicleteros() {
                   <input 
                   type="text" 
                   required 
-                  placeholder="Ej: Bicicletero Norte"
+                  placeholder="Bicicletero Norte"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                   value={form.nombre} 
                   onChange={(e) => setForm({ ...form, nombre: e.target.value })} 
@@ -266,7 +265,7 @@ export default function AdminBicicleteros() {
                   <input 
                   type="text" 
                   required 
-                  placeholder="Ej: Costado Edificio Aulas AA"
+                  placeholder="Costado Edificio Aulas AA"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                   value={form.ubicacion} 
                   onChange={(e) => setForm({ ...form, ubicacion: e.target.value })} 
@@ -280,7 +279,7 @@ export default function AdminBicicleteros() {
                   type="number" 
                   required 
                   min="1"
-                  placeholder="Ej: 12"
+                  placeholder="12"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                   value={form.capacidad} 
                   onChange={(e) => setForm({ ...form, capacidad: e.target.value })} 
