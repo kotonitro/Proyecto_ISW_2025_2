@@ -48,10 +48,24 @@ export const Informe = new EntitySchema({
       },
     },
     documentos: {
-          target: "Documento", // Nombre de la entidad hija
-          type: "one-to-many", // Un informe tiene muchos documentos
-          inverseSide: "informe", // Esto debe coincidir con la relación en Documento.js
-          cascade: true, // Para que si borras el informe, se borren los docs (opcional)
+          target: "Documento", 
+          type: "one-to-many", 
+          inverseSide: "informe", 
+          cascade: true, 
         },
+     bicicleta: {  
+           target: "Bicicleta",
+           type: "many-to-one",
+           joinColumn: {
+             name: "idBicicleta",
+           },
+  },
+      bicicletero: {
+          target: "Bicicletero",
+          type: "many-to-one",
+          joinColumn: {
+            name: "idBicicletero", 
+          },
+  },
   },
 });

@@ -9,7 +9,7 @@ export async function handleCreateInforme(req, res) {
   const informeData = req.body;
   const archivos = req.files; 
   informeData.fechaInforme = new Date();
-  
+
   try {
     const { error, value } = informeValidation.validate(informeData, {
       abortEarly: false,
@@ -20,18 +20,22 @@ export async function handleCreateInforme(req, res) {
         field: detail.context.key,
         message: detail.message.replace(/['"]/g, ""),
       }));
-      return handleErrorClient(res,400,"Error de validacion en los datos.",errorDetails);
+      return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails);
+    }
+
+    if (archivos && archivos.length > 0) {
+      value.documentos = archivos.map((archivo) => ({
+        nombreOriginal: archivo.originalname,
+        ruta: archivo.filename, 
+        mimetype: archivo.mimetype,
+      }));
     }
 
     const newInforme = await createInforme(value);
     
-    if (archivos && archivos.length > 0) {
-          await createDocumentos(archivos, newInforme);
-        }
-    
     handleSuccess(res, 201, "Informe creado exitosamente", newInforme);
   } catch (error) {
-    handleErrorServer(res,500,"Error interno al crear el informe",error.message);
+    handleErrorServer(res, 500, "Error interno al crear el informe", error.message);
   }
 }
 

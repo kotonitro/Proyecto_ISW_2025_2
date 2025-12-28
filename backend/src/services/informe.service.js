@@ -10,6 +10,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createInforme(data) {
+  if (data.idBicicleta) {
+      data.bicicleta = { idBicicleta: data.idBicicleta };
+    }
+    if (data.idBicicletero) {
+      data.bicicletero = { idBicicletero: data.idBicicletero };
+    }
   const newInforme = informeRepository.create(data);
   return await informeRepository.save(newInforme);
 }
@@ -18,7 +24,7 @@ export async function createInforme(data) {
 
 export async function getInformeById(idInforme) {
   return await informeRepository.findOne({where: { idInforme: idInforme },
-      relations: ["encargados","documentos"]});
+      relations: ["encargados","documentos","bicicleta","bicicletero"]});
 }
 export async function getInformes() {
   const Informe = await informeRepository.find();
