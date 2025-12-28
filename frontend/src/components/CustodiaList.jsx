@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { fetchBicicletasAlmacenadas, postSalida } from "../api/custodiaApi";
 
 const LISTA_BICICLETEROS = [
@@ -12,7 +12,7 @@ export default function CustodiaList({ addAlert, openConfirm }) {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchBicicletasAlmacenadas();
@@ -22,11 +22,11 @@ export default function CustodiaList({ addAlert, openConfirm }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [addAlert]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   function handleEliminar(idRegistro) {
     openConfirm(

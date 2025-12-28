@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import CustodiaList from "../components/CustodiaList";
 import CustodiaForm from "../components/CustodiaForm";
 import HistorialRegistros from "../components/HistorialRegistros";
@@ -11,12 +11,13 @@ export default function CustodiaPage() {
 
   // Alert State
   const [alerts, setAlerts] = useState([]);
-  const addAlert = (type, message) => {
+  const addAlert = useCallback((type, message) => {
     setAlerts((prev) => [...prev, { id: Date.now(), type, message }]);
-  };
-  const removeAlert = (id) => {
+  }, []);
+
+  const removeAlert = useCallback((id) => {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
-  };
+  }, []);
 
   // Confirm State
   const [confirmDialog, setConfirmDialog] = useState({
@@ -26,23 +27,23 @@ export default function CustodiaPage() {
     onConfirm: null,
   });
 
-  const openConfirm = (title, message, onConfirm) => {
+  const openConfirm = useCallback((title, message, onConfirm) => {
     setConfirmDialog({
       isOpen: true,
       title,
       message,
       onConfirm,
     });
-  };
+  }, []);
 
-  const closeConfirm = () => {
+  const closeConfirm = useCallback(() => {
     setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
-  };
+  }, []);
 
-  function onSuccess() {
+  const onSuccess = useCallback(() => {
     setRefreshKey((k) => k + 1);
     addAlert("success", "Operación realizada con éxito");
-  }
+  }, [addAlert]);
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 relative">
