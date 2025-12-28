@@ -5,6 +5,8 @@ import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
 import Alert from "../components/Alert";
 import ConfirmAlert from "../components/ConfirmAlert";
+import StatusButton from "../components/StatusButton";
+import PasswordInput from "../components/PasswordInput";
 import { 
   getEncargados,
   getEncargado,
@@ -90,6 +92,7 @@ export default function AdminEncargados() {
       rut: enc.rut || "",
       telefono: enc.telefono || "",
       contrasena: "",
+      activo: enc.activo
     });
     setCurrentId(enc.idEncargado);
     setShowPassword(false);
@@ -132,7 +135,7 @@ export default function AdminEncargados() {
       title: "¿Estás seguro que deseas eliminar al encargado?",
       message:(
         <span>
-          Vas a eliminar a <span className="font-bold text-gray-900">{nombreEncargado}</span> que tiene el rut <span className="font-bold text-gray-900">{rutEncargado}</span> de forma permanente.
+          Vas a eliminar a <span className="font-bold text-gray-900">{nombreEncargado}</span> rut <span className="font-bold text-gray-900">{rutEncargado}</span> de forma permanente.
         </span>
       ) 
     });
@@ -209,6 +212,7 @@ export default function AdminEncargados() {
                   <th className="px-6 py-4">CORREO ELECTRÓNICO</th>
                   <th className="px-6 py-4">TELÉFONO</th>
                   <th className="px-6 py-4 text-center">ROL</th>
+                  <th className="px-6 py-3 text-center">ESTADO</th>
                   <th className="px-6 py-4 text-right">ACCIONES</th>
                 </tr>
               </thead>
@@ -222,12 +226,23 @@ export default function AdminEncargados() {
                     <td className="px-6 py-4 font-mono text-gray-600 whitespace-nowrap">+569 {enc.telefono}</td>
                     <td className="px-6 py-4 text-center">
                       {enc.esAdmin ? (
-                        <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                        <span className="bg-purple-100 text-purple-700 border border-purple-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
                           Admin
                         </span>
                       ) : (
-                        <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                        <span className="bg-blue-100 text-blue-700 border border-blue-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
                           Encargado
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {enc.activo ? (
+                        <span className="bg-green-100 text-green-700 border border-green-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                          Activo
+                        </span>
+                      ) : (
+                        <span className="bg-red-100 text-red-700 border border-red-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                          Inactivo
                         </span>
                       )}
                     </td>
@@ -235,7 +250,7 @@ export default function AdminEncargados() {
                     <td className="px-6 py-4 text-right">
                       {enc.esAdmin ? (
                         // Si es admin mostrar protegido (no se puede modificar)
-                        <span className="inline-flex items-center gap-1 px-3 py-2 rounded-md bg-gray-200 text-gray-600 text-xs font-medium border border-gray-100 select-none">
+                        <span className="inline-flex items-center gap-1 px-3 py-2 rounded-md bg-gray-200 text-gray-600 text-sm font-medium border border-gray-100 select-none">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                           </svg>
@@ -251,11 +266,10 @@ export default function AdminEncargados() {
                     </td>
                   </tr>
                 ))}
-                
-                {/* Si no hay datos */}
+                {/*Si no hay datos*/}
                 {encargadosFiltrados.length === 0 && (
                   <tr>
-                    <td colSpan="6" className="px-6 py-6 text-center text-gray-400">
+                    <td colSpan="7" className="px-6 py-6 text-center text-gray-400">
                       {busqueda ? "No se encontraron encargados con ese Rut." : "No hay encargados registrados."}
                     </td>
                   </tr>
@@ -265,7 +279,6 @@ export default function AdminEncargados() {
           </div>
         )}
       </div>
-
       {/* Formulario */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -280,58 +293,49 @@ export default function AdminEncargados() {
               {/*Nombre*/}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                <input type="text" required placeholder="Ej: Juan Perez" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+                <input type="text" required placeholder="Juan Perez" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
               </div>
               {/*Rut*/}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Rut</label>
-                <input type="text" required placeholder="Ej: 12345678-9" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} />
+                <input type="text" required placeholder="12345678-9" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} />
               </div>
               {/*Teléfono*/}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                <input type="text" required placeholder="Ej: 12345678" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
+                <input type="text" required placeholder="12345678" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
               </div>
               {/*Email*/}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                <input type="email" required placeholder="Ej: encargado@dominio.com" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                <input type="email" required placeholder="encargado@dominio.com" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
               {/*Contraseña*/}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Contraseña {isEditing && <span className="text-gray-400 font-normal">(Opcional)</span>}
+                  Contraseña
                 </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required={!isEditing}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-10"
-                    value={form.password}
-                    onChange={(e) => setForm({ ...form, contrasena: e.target.value })}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                    title={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
-                  >
-                    {showPassword ? (
-                      // Icono ojo tachado (Ocultar)
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a9.043 9.043 0 012.817-.654c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
-                      </svg>
-                    ) : (
-                      // Icono Ojo Normal (Ver)
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
+                <PasswordInput
+                  value={form.contrasena}
+                  onChange={(e) => setForm({ ...form, contrasena: e.target.value })}
+                  required={!isEditing}
+                  placeholder={isEditing ? "Dejar en blanco para mantener la actual" : "********"}
+                />
               </div>
+
+              {isEditing && (
+                <div className="md:col-span-2 mt-2">
+                  <StatusButton
+                    isActive={form.activo}
+                    onToggle={() => setForm({ ...form, activo: !form.activo })}
+                    activeLabel="Activo"
+                    inactiveLabel="Inactivo"
+                    topText={"Estado actual del encargado"}
+                    bottomText={"Haga click para cambiar el estado"}
+                  />
+                </div>
+              )}
+
               <div className="md:col-span-2 flex gap-3 mt-4">
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">Cancelar</button>
                 <button type="submit" className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 font-medium shadow-md">{isEditing ? "Guardar Cambios" : "Crear Encargado"}</button>
