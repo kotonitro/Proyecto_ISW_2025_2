@@ -352,28 +352,6 @@ const Usuarios = () => {
         COLOR_PALETA={COLOR_PALETA}
       />
 
-      <UserForm
-        isCreating={isCreating}
-        currentUser={currentUser}
-        userForm={userForm}
-        setUserForm={setUserForm}
-        bikeForm={bikeForm}
-        setBikeForm={setBikeForm}
-        handleCreateUser={handleCreateUser}
-        handleUpdateUser={handleUpdateUser}
-        handleDeleteUser={handleDeleteUser}
-        setIsCreating={setIsCreating}
-        formatRut={formatRut}
-        COLOR_PALETA={COLOR_PALETA}
-      />
-
-      {currentUser && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-          </div>
-        </div>
-      )}
-
       {/* Correcting layout logic */}
       {!currentUser && isCreating && (
         <UserForm
