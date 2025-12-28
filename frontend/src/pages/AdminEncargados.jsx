@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PageTitle from "../components/PageTitle";
 import { 
   getEncargados,
   getEncargado,
@@ -29,7 +30,7 @@ export default function AdminEncargados() {
     setLoading(true);
     try {
       const res = await getEncargados();
-      setEncargados(res.data.data || res.data); 
+      setEncargados(res.data.data);
     } catch (err) {
       console.error("Error cargando encargados:", err);
       alert("Error al cargar la lista de encargados.");
@@ -64,7 +65,7 @@ export default function AdminEncargados() {
       telefono: enc.telefono || "",
       contrasena: "",
     });
-    setCurrentId(enc.id || enc._id);
+    setCurrentId(enc.idEncargado);
     setShowPassword(false);
     setIsEditing(true);
     setShowModal(true);
@@ -106,10 +107,10 @@ export default function AdminEncargados() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (idEncargado) => {
     if (!window.confirm("¿Estás seguro de eliminar este encargado?")) return;
     try {
-      await deleteEncargado(id);
+      await deleteEncargado(idEncargado);
       fetchEncargados();
     } catch (err) {
       const msg = err.response?.data?.message || "No se pudo eliminar";
@@ -118,13 +119,12 @@ export default function AdminEncargados() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 max-w-6xl mx-auto space-y-10">
       
       {/*Header (Título)*/}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-bold text-gray-800">Administración de Personal</h1>
-        <p className="text-gray-500 text-sm">Gestiona los encargados del sistema.</p>
-      </div>
+      <PageTitle
+              title="Administración de Encargados" 
+      />
 
       {/*Barra de búsqueda y botón crear */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -214,7 +214,7 @@ export default function AdminEncargados() {
                             Editar
                           </button>
                           <button 
-                            onClick={() => handleDelete(enc.id || enc._id)}
+                            onClick={() => handleDelete(enc.idEncargado)}
                             className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-red-700 shadow-sm transition-colors"
                           >
                             Eliminar
