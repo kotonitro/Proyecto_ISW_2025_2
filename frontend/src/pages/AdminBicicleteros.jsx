@@ -3,6 +3,8 @@ import PageTitle from "../components/PageTitle";
 import ActionToolbar from "../components/ActionToolbar";
 import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
+import Alert from "../components/Alert";
+import ConfirmAlert from "../components/ConfirmAlert"
 import { 
   getBicicleteros,
   getBicicletero, 
@@ -16,14 +18,36 @@ export default function AdminBicicleteros() {
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
+  
+  const [confirmConfig, setConfirmConfig] = useState({
+    title: "",
+    message: ""
+  });
 
   const [form, setForm] = useState({
     nombre: "",
     ubicacion: "", // Nuevo campo
     capacidad: "", 
   });
+
+  // Alertas
+  const [alertas, setAlertas] = useState([]);
+
+  const showAlert = (type, message) => {
+    const newAlert = {
+      id: Date.now(),
+      type,
+      message
+    };
+    setAlertas((prev) => [...prev, newAlert]);
+  };
+
+  const removeAlert = (idToRemove) => {
+    setAlertas((prev) => prev.filter((alerta) => alerta.id !== idToRemove));
+  };
 
   // Cargar bicicleteros
   const fetchBicicleteros = async () => {
@@ -32,8 +56,7 @@ export default function AdminBicicleteros() {
       const res = await getBicicleteros();
       setBicicleteros(res.data.data);
     } catch (err) {
-      console.error("Error cargando bicicleteros:", err);
-      alert("Error al cargar la lista de bicicleteros.");
+      showAlert("error", "Error al cargar la lista de bicicleteros")
     } finally {
       setLoading(false);
     }
@@ -74,10 +97,10 @@ export default function AdminBicicleteros() {
       if (isEditing) {
         const dataToUpdate = { ...form };
         await updateBicicletero(currentId, dataToUpdate);
-        alert("Bicicletero actualizado correctamente");
+        showAlert("success", "Bicicletero actualizado correctamente");
       } else {
         await createBicicletero(form);
-        alert("Bicicletero creado correctamente");
+        showAlert("success", "Bicicletero creado correctamente");
       }
       setShowModal(false);
       fetchBicicleteros();
@@ -90,39 +113,79 @@ export default function AdminBicicleteros() {
           .join("\n");
         errorMessage += `\n\nDetalles:\n${detalles}`;
       }
-      alert(errorMessage);
+      showAlert("error", errorMessage)
     }
   };
 
   // Borrar
-  const handleDelete = async (idBicicletero) => {
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este bicicletero?")) return;
+  const handleDeleteClick = (idBicicletero, nombreBicicletero, ubicacionBicicletero) => {
+    setCurrentId(idBicicletero);
+    setConfirmConfig({
+      title: "¿Estás seguro que deseas eliminar el bicicletero?",
+      message:(
+        <span>
+          Vas a eliminar a <span className="font-bold text-gray-900">{nombreBicicletero}</span> ubicado en <span className="font-bold text-gray-900">{ubicacionBicicletero}</span> de forma permanente.
+        </span>
+      ) 
+    });
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+
+    if (!currentId) return;
     try {
-      await deleteBicicletero(idBicicletero);
-      alert("Bicicletero eliminado correctamente")
+      await deleteBicicletero(currentId);
+      showAlert("success", "Bicicletero eliminado correctamente")
       fetchBicicleteros();
     } catch (err) {
       const msg = err.response?.data?.message || "No se pudo eliminar";
-      alert(msg);
-    }
+      showAlert("error", msg)
+    } finally {}
+  };
+
+  const handleCloseConfirm = () => {
+    setShowConfirm(false);
+    setCurrentId(null);
   };
 
   // Pagina visual
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
-        
-        {/*Header (Título)*/}
-        <PageTitle title="Administración de Bicicleteros" />
+      {/*Alertas*/}
+      <div className="fixed top-10 right-5 z-[100] flex flex-col items-end pointer-events-none">
+          {alertas.map((alert) => (
+              <Alert 
+                  key={alert.id}
+                  id={alert.id}
+                  type={alert.type} 
+                  message={alert.message} 
+                  onClose={removeAlert} 
+              />
+          ))}
 
-        {/*Barra de búsqueda y botón crear */}
-        <ActionToolbar
-          busqueda={busqueda}
-          setBusqueda={setBusqueda}
-          placeholder="Buscar por Nombre..."
-          buttonText="Nuevo Bicicletero"
-          onClick={handleOpenCreate}
-          buttonColor={"bg-pink-400 hover:bg-pink-500"}
-        />
+      </div>
+      {/*Alerta de confirmación*/}
+      <ConfirmAlert 
+        isOpen={showConfirm}
+        onClose={handleCloseConfirm}
+        onConfirm={handleConfirmDelete}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+      />
+
+      {/*Header (Título)*/}
+      <PageTitle title="Administración de Bicicleteros" />
+
+      {/*Barra de búsqueda y botón crear */}
+      <ActionToolbar
+        busqueda={busqueda}
+        setBusqueda={setBusqueda}
+        placeholder="Buscar por Nombre..."
+        buttonText="Nuevo Bicicletero"
+        onClick={handleOpenCreate}
+        buttonColor={"bg-blue-700 hover:bg-blue-800"}
+      />
 
       {/* Tabla de bicicleteros*/}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -153,7 +216,7 @@ export default function AdminBicicleteros() {
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                       <div className="flex justify-end gap-2">
                           <EditButton onClick={() => handleOpenEdit(bic)} />
-                          <DeleteButton onClick={() => handleDelete(bic.idBicicletero)} />
+                          <DeleteButton onClick={() => handleDeleteClick(bic.idBicicletero, bic.nombre, bic.ubicacion)} />
                       </div>
                       </td>
                   </tr>
