@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import PasswordInput from "../components/PasswordInput";
 import InputField from "../components/InputField";
 import logoUBB from "../images/logoTextoUBB.webp";
@@ -13,6 +13,7 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -70,7 +71,9 @@ export default function Login() {
       const rolUsuario = infoEncargado.esAdmin ? "admin" : "encargado";
       localStorage.setItem("rol", rolUsuario);
 
-      navigate("/");
+      // Redirigir a la página previa o al inicio
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     } catch (e) {
       setError(e.message);
     } finally {

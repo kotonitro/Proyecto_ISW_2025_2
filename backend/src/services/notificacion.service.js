@@ -11,6 +11,7 @@ export async function createNotificacion(notificacionData) {
   const hora = now.getHours();
   const minutos = now.getMinutes();
 
+  // Validaciones de horario
   if (dia === 0 || dia === 6) throw new Error("El servicio no funciona los fines de semana.");
   if (hora < 7 || (hora === 7 && minutos < 30)) throw new Error("El servicio abre a las 07:30 hrs.");
   if (hora >= 20) throw new Error("El servicio cierra a las 20:00 hrs.");
@@ -20,6 +21,8 @@ export async function createNotificacion(notificacionData) {
   const encargadoRepo = AppDataSource.getRepository(Encargado);
 
   const { mensaje, bicicleteroId, rutSolicitante } = notificacionData;
+
+  // Verificar si el usuario ya tiene una solicitud pendiente
   const solicitudPendiente = await notificacionRepo.findOne({
         where: { 
           rutSolicitante: rutSolicitante,
@@ -31,7 +34,7 @@ export async function createNotificacion(notificacionData) {
     throw new Error("Ya tienes una solicitud activa. Espera a que sea atendida.");
   }
   
-  // Verificamos que el bicicletero exista
+
   const bicicletero = await bicicleteroRepo.findOne({
     where: { idBicicletero: bicicleteroId },
   });
@@ -46,6 +49,7 @@ export async function createNotificacion(notificacionData) {
       rutSolicitante,
       estado: "Pendiente",
   });
+
   const resultado = await notificacionRepo.save(nuevaNotificacion);
   
   try {
@@ -53,18 +57,26 @@ export async function createNotificacion(notificacionData) {
       where: { activo: true },
     });
 
-    const listaEmails = encargadosActivos.map((e) => e.email).filter(Boolean);
+    const listaEmails = encargadosActivos.map((e) => e.email).filter(Boolean); 
     if (listaEmails.length > 0) {
-      const baseUrl = process.env.URL_FRONTEND || "http://localhost:3000/api";
-      const link = `${baseUrl}/notificaciones/${resultado.notificacionId}/aceptar`;
+      const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const link = `${baseUrl}/aceptar/${resultado.notificacionId}`;
 
-      await enviarAlertaCorreo(listaEmails, link, bicicleteroId, mensaje);
-      console.log("Correo enviado");
+      await enviarAlertaCorreo(
+        listaEmails, 
+        link, 
+        bicicletero.nombre,   
+        bicicletero.ubicacion, 
+        mensaje
+      );
+
+      console.log("Correo enviado exitosamente");
     } else {
-      console.warn("No hay encargados activos");
+      console.warn("No hay encargados activos para recibir el correo");
     }
   } catch (error) {
-    console.error("Falló el envío de correo.");
+    console.error("Falló el envío de correo:", error);
+
 
     await notificacionRepo.remove(resultado);
 
@@ -122,13 +134,14 @@ export async function getEstadoNotificacion(id) {
 
   const notificacion = await notificacionRepo.findOne({
     where: { notificacionId: id },
-    select: ["estado"],
+    select: ["estado", "fechaActualizacion"],
   });
 
   if (!notificacion) throw new Error("No existe");
 
-  return { estado: notificacion.estado };
+  return { estado: notificacion.estado, timestamp: notificacion.fechaActualizacion };
 }
+
 
 export async function finalizarNotificacion(idNotificacion, idEncargado) {
   const notificacionRepo = AppDataSource.getRepository(Notificacion);

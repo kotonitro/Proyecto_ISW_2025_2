@@ -7,7 +7,6 @@ import {
 } from "../services/notificacion.service.js";
 
 import { crearNotificacion } from "../validations/notificacion.validation.js";
-import { enviarAlertaCorreo } from "../utils/email.util.js";
 
 export async function handleCreateNotificacion(req, res) {
   try {
@@ -23,23 +22,6 @@ export async function handleCreateNotificacion(req, res) {
     }
 
     const nueva = await createNotificacion(value);
-
-    try {
-        const idNotif = nueva.id || nueva.notificacionId; 
-        const baseUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-        const link = `${baseUrl}/aceptar/${idNotif}`;
-        const listaDestinatarios = [process.env.EMAIL_USER]; 
-
-        await enviarAlertaCorreo(
-            listaDestinatarios,
-            link,
-            value.bicicleteroId,
-            value.mensaje
-        );
-
-    } catch (emailError) {
-        console.warn("Notificación guardada, pero el correo falló:", emailError.message);
-    }
 
     return res.status(201).json({
       message: "Solicitud enviada. Esperando a un guardia.",
