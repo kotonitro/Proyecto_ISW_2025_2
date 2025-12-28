@@ -117,9 +117,70 @@ export default function Home() {
           Bicicleteros Disponibles
         </h1>
 
+        {/* Indicadores de Carrusel (Solo Móvil) */}
+        <div className="mb-4 flex justify-between items-center md:hidden px-2 animate-pulse">
+          <span className="text-sm font-medium text-gray-500 flex items-center gap-1">
+            <svg
+              className="w-4 h-4 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M7 16l-4-4m0 0l4-4m-4 4h18"
+              />
+            </svg>
+            Desliza
+          </span>
+          <span className="text-sm font-medium text-gray-500 flex items-center gap-1">
+            Ver más
+            <svg
+              className="w-4 h-4 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </span>
+        </div>
+
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-6 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0">
+          {bicicleteros.length > 0 ? (
+            bicicleteros.map((b) => (
+              <div
+                key={b.id}
+                className="min-w-[85vw] sm:min-w-[350px] md:min-w-0 snap-center shrink-0 h-full"
+              >
+                <BicicleteroCard
+                  title={b.title}
+                  location={b.location}
+                  capacity={`${b.ocupados} / ${b.total}`}
+                  image={imageMap[b.id] || bike1}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 text-gray-500 w-full">
+              No se encontraron bicicleteros configurados en el sistema.
+            </div>
+          )}
+        </div>
+
+        {/* Espaciador */}
+        <div className="h-16 md:h-24"></div>
+
         {/* Sección de Búsqueda Rápida */}
         {!token && (
-          <div className="mb-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+          <div className="mb-12 bg-linear-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden ">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none"></div>
 
             <div className="relative z-10 md:flex items-center justify-between gap-8">
@@ -151,24 +212,6 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {bicicleteros.length > 0 ? (
-            bicicleteros.map((b) => (
-              <BicicleteroCard
-                key={b.id}
-                title={b.title}
-                location={b.location}
-                capacity={`${b.ocupados} / ${b.total}`}
-                image={imageMap[b.id] || bike1}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12 text-gray-500">
-              No se encontraron bicicleteros configurados en el sistema.
-            </div>
-          )}
-        </div>
       </main>
 
       {!token && (
