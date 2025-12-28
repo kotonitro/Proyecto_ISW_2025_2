@@ -1,41 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { 
+  getInformes, 
+  createInforme, 
+  downloadInformePdf, 
+  downloadInformeZip,
+  getBicicletas,
+  getBicicleteros
+} from '../api/informesApi'; 
 import InformesList from '../components/InformesList';
 import { TIPOS_INCIDENTE } from '../../../backend/src/utils/tiposIncidente'; 
 
 const Informes = () => {
   const hoy = new Date().toLocaleDateString('en-CA');
   const idUsuarioLogueado = Number(localStorage.getItem("idEncargado"));
-  const token = localStorage.getItem("token");
-
+  
+  // Estados
   const [listaBicicletas, setListaBicicletas] = useState([]);
   const [listaBicicleteros, setListaBicicleteros] = useState([]);
-
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+  const [archivos, setArchivos] = useState([]);
+
   const [formData, setFormData] = useState({
     descripcion: '',
     tipoIncidente: '',
     fechaInforme: hoy,
     idEncargado: idUsuarioLogueado,
-    idBicicleta: '',   
-    idBicicletero: ''  
+    idBicicleta: '',    
+    idBicicletero: ''   
   });
-
-  const [archivos, setArchivos] = useState([]);
 
   const fetchData = async () => {
     try {
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      
-      const resInformes = await axios.get('http://localhost:3000/api/informes', config);
+      const [resInformes, resBicis, resBicicleteros] = await Promise.all([
+        getInformes(),
+        getBicicletas(),
+        getBicicleteros()
+      ]);
+
       setInformes(resInformes.data.data || resInformes.data);
-
-      const resBicis = await axios.get('http://localhost:3000/api/bicicletas', config);
       setListaBicicletas(resBicis.data.data || resBicis.data);
-
-      const resBicicleteros = await axios.get('http://localhost:3000/api/bicicleteros', config);
       setListaBicicleteros(resBicicleteros.data.data || resBicicleteros.data);
 
     } catch (error) {
@@ -64,9 +68,10 @@ const Informes = () => {
     }
     e.target.value = ""; 
   };
-  
+   
   const removerArchivo = (idx) => setArchivos(prev => prev.filter((_, i) => i !== idx));
 
+  // 3. Refactorizamos el Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -84,9 +89,8 @@ const Informes = () => {
         data.append('archivosExtras', archivo);
       });
 
-      await axios.post('http://localhost:3000/api/informes', data, {
-        headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
-      });
+      // Llamada a la API importada
+      await createInforme(data);
 
       alert('¡Informe creado exitosamente!');
       
@@ -102,26 +106,24 @@ const Informes = () => {
       fetchData(); 
 
     } catch (error) {
-      console.error("Error:", error);
-      alert('Hubo un error al crear el informe.');
+      console.error("Error al crear informe:", error);
+      const msg = error.response?.data?.message || 'Hubo un error al crear el informe.';
+      alert(msg);
     } finally {
       setLoading(false);
     }
   };
+
   const tipoActual = formData.tipoIncidente; 
   const mostrarSelectorBicicleta = ['Robo', 'Daño Fisico', 'Perdida', 'ROBO', 'DAÑO FISICO', 'PERDIDA'].includes(tipoActual);
   const mostrarSelectorBicicletero = ['Mantenimiento', 'MANTENIMIENTO', 'Robo', 'Daño Fisico', 'Perdida', 'ROBO', 'DAÑO FISICO', 'PERDIDA'].includes(tipoActual);
 
+  // 4. Refactorizamos las Descargas
   const descargarPDF = async (id) => {
      try {
-       const token = localStorage.getItem("token");
-       const response = await axios.get(
-         `http://localhost:3000/api/informes/download/${id}`,
-         {
-           responseType: "blob",
-           headers: { Authorization: `Bearer ${token}` },
-         },
-       );
+       const response = await downloadInformePdf(id);
+       
+       // Crear URL temporal para descarga
        const url = window.URL.createObjectURL(new Blob([response.data]));
        const link = document.createElement("a");
        link.href = url;
@@ -130,20 +132,15 @@ const Informes = () => {
        link.click();
        link.parentNode.removeChild(link);
      } catch (error) {
+       console.error("Error PDF:", error);
        alert("Error al descargar el PDF");
      }
    };
  
    const descargarZIP = async (id) => {
      try {
-       const token = localStorage.getItem("token");
-       const response = await axios.get(
-         `http://localhost:3000/api/informes/download-zip/${id}`,
-         {
-           responseType: "blob",
-           headers: { Authorization: `Bearer ${token}` },
-         },
-       );
+       const response = await downloadInformeZip(id);
+       
        const url = window.URL.createObjectURL(new Blob([response.data]));
        const link = document.createElement("a");
        link.href = url;
@@ -152,7 +149,7 @@ const Informes = () => {
        link.click();
        link.parentNode.removeChild(link);
      } catch (error) {
-       console.error("Error descargando ZIP:", error);
+       console.error("Error ZIP:", error);
        alert("Error al descargar las evidencias.");
      }
    };
@@ -195,7 +192,7 @@ const Informes = () => {
                 />
               </div>
 
-              {/* === SELECTOR DE BICICLETAS === */}
+              {/* BICICLETAS */}
               {mostrarSelectorBicicleta && (
                 <div className="md:col-span-2 bg-red-50 p-4 rounded-lg border border-red-100 animate-fadeIn">
                   <label className="block text-sm font-bold text-red-800 mb-2">
@@ -218,7 +215,7 @@ const Informes = () => {
                 </div>
               )}
 
-              {/* SELECTOR DE BICICLETEROS */}
+              {/* BICICLETEROS */}
               {mostrarSelectorBicicletero && (
                 <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100 animate-fadeIn">
                   <label className="block text-sm font-bold text-blue-800 mb-2">
@@ -236,7 +233,7 @@ const Informes = () => {
                     <option value="">-- Seleccione Bicicletero --</option>
                     {listaBicicleteros.map((lugar) => (
                       <option key={lugar.idBicicletero} value={lugar.idBicicletero}>
-                         {lugar.nombre || `Bicicletero #${lugar.idBicicletero}`}
+                          {lugar.nombre || `Bicicletero #${lugar.idBicicletero}`}
                       </option>
                     ))}
                   </select>

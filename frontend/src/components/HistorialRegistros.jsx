@@ -77,11 +77,11 @@ export default function HistorialRegistros() {
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-50/50 border-b border-gray-100">
-              <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">ID Bicicleta</th>
-              <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Usuario</th>
-              <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Ubicación</th>
-              <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Hora Salida</th>
-              <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Estado</th>
+              <th className="px-6 py-4 text-left text-[11px] font-bold text-dark-500 uppercase tracking-wider">ID Bicicleta</th>
+              <th className="px-6 py-4 text-left text-[11px] font-bold text-dark-500 uppercase tracking-wider">Usuario</th>
+              <th className="px-6 py-4 text-left text-[11px] font-bold text-dark-500 uppercase tracking-wider">Ubicación</th>
+              <th className="px-6 py-4 text-center text-[11px] font-bold text-dark-500 uppercase tracking-wider">Hora Salida</th>
+              <th className="px-6 py-4 text-center text-[11px] font-bold text-dark-500 uppercase tracking-wider">Estado</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -92,7 +92,7 @@ export default function HistorialRegistros() {
                 <td colSpan="5" className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center opacity-40">
                     <svg className="w-12 h-12 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    <p className="text-sm font-medium">No se encontraron registros históricos</p>
+                    <p className="text-sm font-medium">No se encontraron registros para este ID</p>
                   </div>
                 </td>
               </tr>
@@ -107,7 +107,10 @@ export default function HistorialRegistros() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm font-semibold text-gray-700 block">{r.rutUsuario}</span>
+                    <div className="text-sm font-semibold text-gray-900">{r.nombreUsuario || "Usuario"} 
+                    </div>
+                      <div className="text-xs text-gray-500 mt-0.5">{r.rutUsuario}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center text-xs text-gray-500">
