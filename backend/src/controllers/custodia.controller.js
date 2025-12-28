@@ -1,4 +1,8 @@
-import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
+import {
+  handleSuccess,
+  handleErrorClient,
+  handleErrorServer,
+} from "../handlers/responseHandlers.js";
 import {
   registerEntrada,
   registerSalida,
@@ -8,6 +12,7 @@ import {
   getBicicletasRetiradas,
   deleteRegistro,
   getHistorial,
+  getUbicacionBicicleta,
 } from "../services/custodia.service.js";
 import { AppDataSource } from "../config/configDB.js"; // Verifica que la ruta sea correcta según nuestra estructura
 
@@ -19,18 +24,30 @@ export async function createEntrada(req, res) {
       idBicicletero,
       nombreUsuario,
       emailUsuario,
-      telefonoUsuario
+      telefonoUsuario,
     } = req.body;
 
-    const idEncargado = req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
+    const idEncargado =
+      req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
 
     if (!idEncargado) {
-      return handleErrorClient(res, 401, "No se pudo identificar al encargado en el token.");
+      return handleErrorClient(
+        res,
+        401,
+        "No se pudo identificar al encargado en el token.",
+      );
     }
 
     const registro = await registerEntrada(
-      { rutUsuario, idBicicleta, idBicicletero, nombreUsuario, emailUsuario, telefonoUsuario },
-      idEncargado
+      {
+        rutUsuario,
+        idBicicleta,
+        idBicicletero,
+        nombreUsuario,
+        emailUsuario,
+        telefonoUsuario,
+      },
+      idEncargado,
     );
 
     return handleSuccess(res, 201, "Entrada registrada", registro);
@@ -39,21 +56,29 @@ export async function createEntrada(req, res) {
   }
 }
 
-
 export async function createSalida(req, res) {
   try {
     console.log("Intentando salida...");
-    console.log("REQ.USER es:", req.user);           
+    console.log("REQ.USER es:", req.user);
     console.log("REQ.ENCARGADO es:", req.encargado);
     const { idRegistroAlmacen, fechaSalida } = req.body;
 
-    const idEncargado = req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
+    const idEncargado =
+      req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
 
     if (!idEncargado) {
-      return handleErrorClient(res, 401, "No se pudo identificar al encargado.");
+      return handleErrorClient(
+        res,
+        401,
+        "No se pudo identificar al encargado.",
+      );
     }
 
-    const registro = await registerSalida(idRegistroAlmacen, idEncargado, fechaSalida);
+    const registro = await registerSalida(
+      idRegistroAlmacen,
+      idEncargado,
+      fechaSalida,
+    );
 
     return handleSuccess(res, 201, "Salida registrada correctamente", registro);
   } catch (error) {
@@ -74,9 +99,19 @@ export async function getRegistros(req, res) {
 
     const registros = await getAllRegistros(filtros);
 
-    return handleSuccess(res, 200, "Registros obtenidos correctamente", registros);
+    return handleSuccess(
+      res,
+      200,
+      "Registros obtenidos correctamente",
+      registros,
+    );
   } catch (error) {
-    return handleErrorServer(res, 500, "Error al obtener registros", error.message);
+    return handleErrorServer(
+      res,
+      500,
+      "Error al obtener registros",
+      error.message,
+    );
   }
 }
 
@@ -86,12 +121,22 @@ export async function getRegistroDetalle(req, res) {
     const registro = await getRegistroById(parseInt(id));
 
     if (!registro) {
-      return handleErrorClient(res, 404, `Registro con ID ${id} no encontrado`, null);
+      return handleErrorClient(
+        res,
+        404,
+        `Registro con ID ${id} no encontrado`,
+        null,
+      );
     }
 
     return handleSuccess(res, 200, "Registro obtenido correctamente", registro);
   } catch (error) {
-    return handleErrorServer(res, 500, "Error al obtener el registro", error.message);
+    return handleErrorServer(
+      res,
+      500,
+      "Error al obtener el registro",
+      error.message,
+    );
   }
 }
 
@@ -99,9 +144,19 @@ export async function getRegistroDetalle(req, res) {
 export async function getBicicletasAlmacendasController(req, res) {
   try {
     const bicicletas = await getBicicletasAlmacenadas();
-    return handleSuccess(res, 200, "Bicicletas almacenadas obtenidas correctamente", bicicletas);
+    return handleSuccess(
+      res,
+      200,
+      "Bicicletas almacenadas obtenidas correctamente",
+      bicicletas,
+    );
   } catch (error) {
-    return handleErrorServer(res, 500, "Error al obtener bicicletas almacenadas", error.message);
+    return handleErrorServer(
+      res,
+      500,
+      "Error al obtener bicicletas almacenadas",
+      error.message,
+    );
   }
 }
 
@@ -109,9 +164,19 @@ export async function getBicicletasAlmacendasController(req, res) {
 export async function getBicicletasRetiradasController(req, res) {
   try {
     const bicicletas = await getBicicletasRetiradas();
-    return handleSuccess(res, 200, "Bicicletas retiradas obtenidas correctamente", bicicletas);
+    return handleSuccess(
+      res,
+      200,
+      "Bicicletas retiradas obtenidas correctamente",
+      bicicletas,
+    );
   } catch (error) {
-    return handleErrorServer(res, 500, "Error al obtener bicicletas retiradas", error.message);
+    return handleErrorServer(
+      res,
+      500,
+      "Error al obtener bicicletas retiradas",
+      error.message,
+    );
   }
 }
 
@@ -123,24 +188,30 @@ export async function getDisponibilidadBicicleteros(req, res) {
 
     const bicicleteros = await bicicleteroRepo.find();
 
-    const disponibilidad = await Promise.all(bicicleteros.map(async (b) => {
-      // Usar QueryBuilder para manejar NULL explícitamente
-      const ocupados = await registroRepo
-        .createQueryBuilder("registro")
-        .where("registro.idBicicletero = :idBicicletero", { idBicicletero: b.idBicicletero })
-        .andWhere("registro.fechaSalida IS NULL")
-        .getCount();
+    const disponibilidad = await Promise.all(
+      bicicleteros.map(async (b) => {
+        // Usar QueryBuilder para manejar NULL explícitamente
+        const ocupados = await registroRepo
+          .createQueryBuilder("registro")
+          .where("registro.idBicicletero = :idBicicletero", {
+            idBicicletero: b.idBicicletero,
+          })
+          .andWhere("registro.fechaSalida IS NULL")
+          .getCount();
 
-      console.log(`[CAPACIDAD] Bicicletero ${b.idBicicletero} (${b.nombre}): ${ocupados} / ${b.capacidad}`);
+        console.log(
+          `[CAPACIDAD] Bicicletero ${b.idBicicletero} (${b.nombre}): ${ocupados} / ${b.capacidad}`,
+        );
 
-      return {
-        id: b.idBicicletero,
-        title: b.nombre,
-        location: b.ubicacion,
-        ocupados: ocupados,
-        total: b.capacidad
-      };
-    }));
+        return {
+          id: b.idBicicletero,
+          title: b.nombre,
+          location: b.ubicacion,
+          ocupados: ocupados,
+          total: b.capacidad,
+        };
+      }),
+    );
 
     // Importante: Enviar la respuesta con la estructura que espera tu frontend
     return res.status(200).json({ status: "Success", data: disponibilidad });
@@ -163,7 +234,12 @@ export async function deleteRegistroController(req, res) {
     if (error.message && error.message.includes("no encontrado")) {
       return handleErrorClient(res, 404, error.message);
     }
-    return handleErrorServer(res, 500, "Error al eliminar el registro", error.message);
+    return handleErrorServer(
+      res,
+      500,
+      "Error al eliminar el registro",
+      error.message,
+    );
   }
 }
 
@@ -177,8 +253,42 @@ export async function getHistorialController(req, res) {
 
     const historial = await getHistorial(filtros);
 
-    return handleSuccess(res, 200, "Historial obtenido correctamente", historial);
+    return handleSuccess(
+      res,
+      200,
+      "Historial obtenido correctamente",
+      historial,
+    );
   } catch (error) {
-    return handleErrorServer(res, 500, "Error al obtener historial", error.message);
+    return handleErrorServer(
+      res,
+      500,
+      "Error al obtener historial",
+      error.message,
+    );
+  }
+}
+
+export async function getUbicacionController(req, res) {
+  try {
+    const { rut } = req.params;
+    if (!rut) {
+      return handleErrorClient(res, 400, "El RUT es requerido");
+    }
+
+    const ubicacion = await getUbicacionBicicleta(rut);
+    return handleSuccess(
+      res,
+      200,
+      "Ubicación obtenida correctamente",
+      ubicacion,
+    );
+  } catch (error) {
+    return handleErrorServer(
+      res,
+      500,
+      "Error al obtener la ubicación",
+      error.message,
+    );
   }
 }
