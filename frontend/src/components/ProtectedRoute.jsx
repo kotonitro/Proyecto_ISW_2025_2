@@ -1,19 +1,6 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
-/**
- * ErrorBoundary
- *
- * Componente para capturar errores en tiempo de ejecución y evitar
- * que la aplicación muestre una página en blanco. Exportado como named export
- * para que puedas envolver el <RouterProvider> o cualquier subtree:
- *
- * import { ErrorBoundary } from "./components/ProtectedRoute";
- *
- * <ErrorBoundary>
- *   <RouterProvider ... />
- * </ErrorBoundary>
- */
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -65,26 +52,20 @@ export class ErrorBoundary extends React.Component {
   }
 }
 
-/**
- * ProtectedRoute
- *
- * Envuelve rutas que requieren autenticación. Si existe un token en localStorage
- * (clave `token`) permite renderizar `children`. Si no existe, redirige a `/login`
- * preservando la ubicación previa en el estado para poder volver luego.
- *
- * Uso:
- * <ProtectedRoute><Dashboard /></ProtectedRoute>
- */
-export default function ProtectedRoute({ children }) {
-  const location = useLocation();
+export default function ProtectedRoute({ children, allowedRoles }) {
+  const token = localStorage.getItem("token");
+  const rol = localStorage.getItem("rol"); 
 
-  // Evitar acceso a `window` en entornos no-browser
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
+  // 1. Si no hay token, al login
   if (!token) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    return <Navigate to="/login" replace />;
   }
 
+  // 2. Si hay roles requeridos y el usuario no tiene el rol adecuado, al home
+  if (allowedRoles && !allowedRoles.includes(rol)) {
+    return <Navigate to="/" replace />;
+  }
+
+  // 3. Si todo está bien, renderizamos la página (children)
   return children;
 }

@@ -3,6 +3,8 @@ import PageTitle from "../components/PageTitle";
 import ActionToolbar from "../components/ActionToolbar";
 import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
+import Alert from "../components/Alert";
+import ConfirmAlert from "../components/ConfirmAlert";
 import { 
   getEncargados,
   getEncargado,
@@ -16,6 +18,7 @@ export default function AdminEncargados() {
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false)
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +31,27 @@ export default function AdminEncargados() {
     contrasena: "",
   });
 
+  const [confirmConfig, setConfirmConfig] = useState({
+    title: "",
+    message: ""
+  });
+
+  // Alertas
+  const [alertas, setAlertas] = useState([]);
+
+  const showAlert = (type, message) => {
+    const newAlert = {
+      id: Date.now(),
+      type,
+      message
+    };
+    setAlertas((prev) => [...prev, newAlert]);
+  };
+
+  const removeAlert = (idToRemove) => {
+    setAlertas((prev) => prev.filter((alerta) => alerta.id !== idToRemove));
+  };
+
   // Cargar encargados
   const fetchEncargados = async () => {
     setLoading(true);
@@ -35,8 +59,7 @@ export default function AdminEncargados() {
       const res = await getEncargados();
       setEncargados(res.data.data);
     } catch (err) {
-      console.error("Error cargando encargados:", err);
-      alert("Error al cargar la lista de encargados.");
+      showAlert("error", "Error al cargar la lista de encargados")
     } finally {
       setLoading(false);
     }
@@ -82,10 +105,10 @@ export default function AdminEncargados() {
         const dataToUpdate = { ...form };
         if (!dataToUpdate.contrasena) delete dataToUpdate.contrasena;
         await updateEncargado(currentId, dataToUpdate);
-        alert("Encargado actualizado correctamente");
+        showAlert("success", "Encargado actualizado correctamente");
       } else {
         await createEncargado(form);
-        alert("Encargado creado correctamente");
+        showAlert("success", "Encargado creado correctamente");
       }
       setShowModal(false);
       fetchEncargados();
@@ -98,27 +121,67 @@ export default function AdminEncargados() {
           .join("\n");
         errorMessage += `\n\nDetalles:\n${detalles}`;
       }
-      alert(errorMessage);
+      showAlert("error", errorMessage)
     }
   };
 
   // Borrar
-  const handleDelete = async (idEncargado) => {
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este encargado?")) return;
+  const handleDeleteClick = (idEncargado, nombreEncargado, rutEncargado) => {
+    setCurrentId(idEncargado);
+    setConfirmConfig({
+      title: "¿Estás seguro que deseas eliminar al encargado?",
+      message:(
+        <span>
+          Vas a eliminar a <span className="font-bold text-gray-900">{nombreEncargado}</span> que tiene el rut <span className="font-bold text-gray-900">{rutEncargado}</span> de forma permanente.
+        </span>
+      ) 
+    });
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+
+    if (!currentId) return;
     try {
-      await deleteEncargado(idEncargado);
-      alert("Encargado eliminado correctamente")
+      await deleteEncargado(currentId);
+      showAlert("success", "Encargado eliminado correctamente")
       fetchEncargados();
     } catch (err) {
       const msg = err.response?.data?.message || "No se pudo eliminar";
-      alert(msg);
-    }
+      showAlert("error", msg)
+    } finally {}
+  };
+
+  const handleCloseConfirm = () => {
+    setShowConfirm(false);
+    setCurrentId(null);
   };
 
   // Pagina visual
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
-      
+      {/*Alertas*/}
+      <div className="fixed top-10 right-5 z-[100] flex flex-col items-end pointer-events-none">
+          {alertas.map((alert) => (
+              <Alert 
+                  key={alert.id}
+                  id={alert.id}
+                  type={alert.type} 
+                  message={alert.message} 
+                  onClose={removeAlert} 
+              />
+          ))}
+
+      </div>
+      {/*Alerta de confirmación*/}
+      <ConfirmAlert 
+        isOpen={showConfirm}
+        onClose={handleCloseConfirm}
+        onConfirm={handleConfirmDelete}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+      />
+
       {/*Header (Título)*/}
       <PageTitle title="Administración de Encargados" />
 
@@ -182,7 +245,7 @@ export default function AdminEncargados() {
                         // Si no es admin mostrar editar y eliminar
                         <div className="flex justify-end gap-2">
                           <EditButton onClick={() => handleOpenEdit(enc)} />
-                          <DeleteButton onClick={() => handleDelete(enc.idEncargado)} />
+                          <DeleteButton onClick={() => handleDeleteClick(enc.idEncargado, enc.nombre, enc.rut)} />
                         </div>
                       )}
                     </td>
@@ -243,7 +306,7 @@ export default function AdminEncargados() {
                   <input
                     type={showPassword ? "text" : "password"}
                     required={!isEditing}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-10" // pr-10 para dar espacio al icono
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-10"
                     value={form.password}
                     onChange={(e) => setForm({ ...form, contrasena: e.target.value })}
                   />
@@ -271,7 +334,7 @@ export default function AdminEncargados() {
               </div>
               <div className="md:col-span-2 flex gap-3 mt-4">
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">Cancelar</button>
-                <button type="submit" className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 font-medium shadow-md">{isEditing ? "Guardar Cambios" : "Crear Usuario"}</button>
+                <button type="submit" className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 font-medium shadow-md">{isEditing ? "Guardar Cambios" : "Crear Encargado"}</button>
               </div>
             </form>
           </div>
