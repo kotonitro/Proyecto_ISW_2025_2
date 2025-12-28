@@ -71,7 +71,7 @@ export async function handleCreateNotificacion(req, res) {
 
 export async function handleGetNotificaciones(req, res) {
   try {
-    const idGuardia = req.encargado.idEncargado;       
+    const idGuardia = req.encargado.id;       
     const data = await getNotificaciones(idGuardia);
     return res.status(200).json(data);
   } catch (err) {
@@ -83,7 +83,7 @@ export async function handleGetNotificaciones(req, res) {
 export async function handleAceptar(req, res) {
   try {
     const { id } = req.params;
-    const idEncargado = req.encargado.idEncargado; 
+    const idEncargado = req.encargado.id; 
 
     const data = await aceptarNotificacion(parseInt(id), idEncargado);
     
@@ -117,7 +117,7 @@ export async function handleGetEstado(req, res) {
 export async function handleFinalizar(req, res) {
   try {
     const { id } = req.params;
-    const idEncargado = req.encargado.idEncargado;
+    const idEncargado = req.encargado.id;
 
     const data = await finalizarNotificacion(parseInt(id), idEncargado);
 
