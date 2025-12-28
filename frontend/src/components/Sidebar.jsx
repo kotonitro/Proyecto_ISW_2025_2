@@ -27,6 +27,10 @@ export default function Sidebar({ role }) {
           Gestión
         </p>
 
+        <Link to="/notificaciones" className={linkClasses("/notificaciones")}>
+          Notificaciones
+        </Link>
+
         <Link to="/custodia" className={linkClasses("/custodia")}>
           Custodia
         </Link>
