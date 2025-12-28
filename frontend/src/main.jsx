@@ -12,6 +12,9 @@ import AdminBicicleteros from "./pages/AdminBicicleteros";
 import Informes from "./pages/Informes";
 import Usuarios from "./pages/Usuarios";
 import CustodiaPage from "./pages/CustodiaPage";
+import VerificarEstado from "./pages/VerificarEstado";
+import NotificacionesEncargado from "./pages/NotificacionesEncargado";
+import AceptarNotificacionCorreo from "./pages/AceptarNotificacionCorreo";
 
 const router = createBrowserRouter([
   {
@@ -21,8 +24,16 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
+      { path: "verificar-estado", element: <VerificarEstado /> },
+      { path: "verificar-estado/:id", element: <VerificarEstado /> },
       { path: "usuarios", element: <Usuarios /> },
-      { path: "informes", element: <Informes /> },
+      { path: "informes", 
+        element: (
+          <ProtectedRoute>
+            <Informes />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "custodia",
         element: (
@@ -44,6 +55,18 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AdminBicicleteros />
+        path: "notificaciones",
+        element: (
+          <ProtectedRoute>
+            <NotificacionesEncargado />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "aceptar/:id",
+        element: (
+          <ProtectedRoute>
+            <AceptarNotificacionCorreo />
           </ProtectedRoute>
         ),
       },
