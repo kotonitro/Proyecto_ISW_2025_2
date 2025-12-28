@@ -75,14 +75,6 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      {
-        path: "admin/bicicleteros",
-        element: (
-          <ProtectedRoute>
-            <AdminBicicleteros />
-          </ProtectedRoute>
-        ),
-      },
     ],
   },
 ]);
