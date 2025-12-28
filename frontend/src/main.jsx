@@ -55,10 +55,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AdminBicicleteros />
-        path: "notificaciones",
-        element: (
-          <ProtectedRoute>
-            <NotificacionesEncargado />
           </ProtectedRoute>
         ),
       },
