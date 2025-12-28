@@ -15,9 +15,9 @@ export const Notificacion = new EntitySchema({
       nullable: false,
     },
     rutSolicitante: {
-            type: "varchar",
-            length: 12, 
-            nullable: false,
+      type: "varchar",
+      length: 12, 
+      nullable: false,
         },
     estado: {
       type: "enum",
