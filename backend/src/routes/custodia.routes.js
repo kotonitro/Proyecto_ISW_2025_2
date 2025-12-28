@@ -6,6 +6,8 @@ import {
   getRegistroDetalle,
   getBicicletasAlmacendasController,
   getBicicletasRetiradasController,
+  deleteRegistroController,
+  getHistorialController,
 } from "../controllers/custodia.controller.js";
 
 import { validationMiddleware } from "../middleware/validation.middleware.js";
@@ -17,7 +19,7 @@ import {
 
 
 const router = Router();
- // Registra la entrada de una bicicleta
+// Registra la entrada de una bicicleta
 
 router.post(
   "/entrada",
@@ -35,23 +37,24 @@ router.post(
 );
 
 
-  //Obtiene todos los registros (con filtros opcionales)
- 
+
+
 router.get("/registros", authMiddleware, getRegistros);
-
-
- //Obtiene un registro específico
- 
 router.get("/registros/:id", authMiddleware, getRegistroDetalle);
 
 
- // Obtiene todas las bicicletas almacenadas (fechaSalida = NULL)
- 
+// Obtiene todas las bicicletas almacenadas (fechaSalida = NULL)
 router.get("/bicicletas/almacenadas", authMiddleware, getBicicletasAlmacendasController);
 
 
- //Obtiene todas las bicicletas retiradas (fechaSalida != NULL)
- 
+//Obtiene todas las bicicletas retiradas (fechaSalida != NULL)
 router.get("/bicicletas/retiradas", authMiddleware, getBicicletasRetiradasController);
 
+
+router.delete("/registros/:id", authMiddleware, deleteRegistroController);
+
+// Obtener historial de custodia
+router.get("/historial", authMiddleware, getHistorialController);
+
 export default router;
+

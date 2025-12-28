@@ -35,7 +35,7 @@ export async function fetchBicicletasAlmacenadas() {
 
 export async function postEntrada(payload) {
   if (!payload.idBicicleta || !payload.idBicicletero) {
-     throw new Error("Datos de bicicleta o bicicletero incompletos.");
+    throw new Error("Datos de bicicleta o bicicletero incompletos.");
   }
 
   const res = await request(`/custodia/entrada`, {
@@ -63,3 +63,17 @@ export async function fetchRegistroById(id) {
   const res = await request(`/custodia/registros/${id}`);
   return res.data || res;
 }
+
+export async function deleteRegistro(idRegistroAlmacen) {
+  const res = await request(`/custodia/registros/${idRegistroAlmacen}`, {
+    method: "DELETE",
+  });
+  return res.data || res;
+}
+
+export async function fetchHistorial(filters = {}) {
+  const qs = new URLSearchParams(filters).toString();
+  const res = await request(`/custodia/historial${qs ? `?${qs}` : ""}`);
+  return res.data || res;
+}
+

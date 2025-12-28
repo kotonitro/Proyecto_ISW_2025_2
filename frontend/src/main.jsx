@@ -8,6 +8,7 @@ import Root from "./pages/Root";
 import ProtectedRoute, { ErrorBoundary } from "./components/ProtectedRoute";
 import "./index.css";
 import AdminEncargados from "./pages/AdminEncargados";
+import AdminBicicleteros from "./pages/AdminBicicleteros";
 import Informes from "./pages/Informes";
 import Usuarios from "./pages/Usuarios";
 import CustodiaPage from "./pages/CustodiaPage";
@@ -26,7 +27,14 @@ const router = createBrowserRouter([
       { path: "verificar-estado", element: <VerificarEstado /> },
       { path: "verificar-estado/:id", element: <VerificarEstado /> },
       { path: "usuarios", element: <Usuarios /> },
-      { path: "informes", element: <Informes /> },
+      {
+        path: "informes",
+        element: (
+          <ProtectedRoute>
+            <Informes />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "custodia",
         element: (
@@ -38,8 +46,16 @@ const router = createBrowserRouter([
       {
         path: "admin/encargados",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["admin"]}>
             <AdminEncargados />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/bicicleteros",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminBicicleteros />
           </ProtectedRoute>
         ),
       },

@@ -11,6 +11,8 @@ export const informeValidation = Joi.object({
   idRegistroAlmacen: Joi.number().integer().allow(null).messages({
     "number.base": "El idRegistroAlmacen debe ser un número entero",
   }),
+  idBicicleta: Joi.number().integer().allow(null, '').optional(),
+  idBicicletero: Joi.number().integer().allow(null, '').optional(),
 
   tipoIncidente: Joi.string()
     .trim()

@@ -3,6 +3,7 @@ import { Bicicleta } from "../models/bicicleta.entity.js";
 import { getUsuarioById } from "./usuario.service.js";
 
 export const bicicletaRepository = AppDataSource.getRepository(Bicicleta);
+const registroAlmacenRepository = AppDataSource.getRepository("RegistroAlmacen");
 
 export async function createBicicleta(data) {
   if (
@@ -74,6 +75,20 @@ export async function deleteBicicleta(idBicicleta) {
   if (!bicicleta) {
     throw new Error("Bicicleta no encontrada");
   }
+
+  // Verificar si la bicicleta tiene registros de custodia activos (sin salida)
+  const registrosActivos = await registroAlmacenRepository.findBy({
+    idBicicleta: parseInt(idBicicleta),
+    fechaSalida: null
+  });
+
+  if (registrosActivos && registrosActivos.length > 0) {
+    throw new Error(
+      "No se puede eliminar la bicicleta porque tiene registros de custodia activos. " +
+      "Por favor, registre la salida primero o elimine el registro de custodia."
+    );
+  }
+
   await bicicletaRepository.remove(bicicleta);
   return true;
 }
