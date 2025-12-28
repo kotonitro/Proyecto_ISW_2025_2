@@ -207,6 +207,8 @@ export async function getDisponibilidadBicicleteros(req, res) {
           location: b.ubicacion,
           ocupados: ocupados,
           total: b.capacidad,
+          activo: b.activo,
+          imagen: b.imagen
         };
       })
     );

@@ -3,20 +3,9 @@ import { useNavigate } from "react-router-dom";
 import BicicleteroCard from "../components/BicicleteroCard";
 import { crearNotificacion } from "../api/notificacionApi";
 import axios from "axios";
+import defaultImage from "../images/bicicleteroPlaceholder.jpg";
 
-// Importación de imágenes locales
-import bike1 from "../images/bike1.jpg";
-import bike2 from "../images/bike2.jpg";
-import bike3 from "../images/bike3.jpg";
-import bike4 from "../images/bike4.jpg";
-
-// Mapeo para asignar la imagen correcta según el ID que venga de la DB
-const imageMap = {
-  1: bike1,
-  2: bike2,
-  3: bike3,
-  4: bike4,
-};
+const IMAGE_BASE_URL = "http://localhost:3000/uploads/bicicleteros/";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -166,7 +155,7 @@ export default function Home() {
                   title={b.title}
                   location={b.location}
                   capacity={`${b.ocupados} / ${b.total}`}
-                  image={imageMap[b.id] || bike1}
+                  image={b.imagen ? `${IMAGE_BASE_URL}${b.imagen}` : defaultImage}
                 />
               </div>
             ))

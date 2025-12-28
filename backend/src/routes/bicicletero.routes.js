@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authMiddleware, esAdmin } from "../middleware/auth.middleware.js";
+import { uploadBicicletero } from "../middleware/upload.middleware.js";
 import {
   handleCreateBicicletero,
   handleDeleteBicicletero,
@@ -20,8 +21,8 @@ router.get("/:id", handleGetBicicletero);
 router.use(authMiddleware);
 router.use(esAdmin);
 
-router.post("/", handleCreateBicicletero);
+router.post("/", uploadBicicletero.single('imagen'), handleCreateBicicletero);
 router.delete("/:id", handleDeleteBicicletero);
-router.patch("/:id", handleUpdateBicicletero);
+router.patch("/:id", uploadBicicletero.single('imagen'), handleUpdateBicicletero);
 
 export default router;
