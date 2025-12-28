@@ -77,12 +77,12 @@ const UserForm = ({
               </label>
               <input
                 name="telefono"
-                type="number"
+                type="text"
                 value={userForm.telefono}
                 onChange={(e) =>
                   setUserForm({ ...userForm, telefono: e.target.value })
                 }
-                placeholder="912345678"
+                placeholder="12345678"
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
