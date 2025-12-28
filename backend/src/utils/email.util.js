@@ -14,7 +14,8 @@ const transporter = nodemailer.createTransport({
 export const enviarAlertaCorreo = async (
   destinatarios,
   linkAceptar,
-  bicicleteroId,
+  nombreBicicletero,    
+  ubicacionBicicletero,  
   mensajeUsuario,
 ) => {
   try {
@@ -26,15 +27,20 @@ export const enviarAlertaCorreo = async (
       from: '"Seguridad UBB" <no-reply@ubb.cl>',
       to: "guardias@ubb.cl",
       bcc: listaCorreos,
-      subject: `Asistencia requerida en Bicicletero ${bicicleteroId}`,
+      subject: `Asistencia requerida en ${nombreBicicletero}`,
       html: `
               <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
                 <h2 style="color: #444;">Solicitud de Asistencia</h2>
 
-                <p>Se ha reportado un problema en el <strong>Bicicletero #${bicicleteroId}</strong>.</p>
+                <p>Se ha reportado un problema en el siguiente punto:</p>
+                
+                <div style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p style="margin: 5px 0;"><strong>Bicicletero:</strong> ${nombreBicicletero}</p>
+                    <p style="margin: 5px 0;"><strong>Ubicación:</strong> ${ubicacionBicicletero}</p>
+                </div>
 
                 <p style="background-color: #f4f4f4; padding: 10px; border-left: 3px solid #555;">
-                  <strong>Mensaje:</strong> "${mensajeUsuario}"
+                  <strong>Mensaje del usuario:</strong> "${mensajeUsuario}"
                 </p>
 
                 <p style="margin-top: 25px;">
