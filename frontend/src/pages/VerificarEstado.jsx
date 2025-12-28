@@ -72,8 +72,8 @@ export default function VerificarEstado() {
             className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
           />
           <button 
-              type="button"  // Importante: type="button" para que no intente enviar un formulario
-              onClick={() => handleVerificarEstado(solicitudId)} // Reutiliza tu función original
+              type="button"
+              onClick={() => handleVerificarEstado(solicitudId)} 
               disabled={estadoLoading || !solicitudId} 
               className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300 disabled:bg-gray-400"
             >
