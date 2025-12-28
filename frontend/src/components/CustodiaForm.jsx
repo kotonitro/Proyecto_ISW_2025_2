@@ -37,45 +37,47 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
   const dvInputRef = useRef(null);
 
   useEffect(() => {
+    const buscarUsuario = async () => {
+      const rutCompleto = `${rutBase}-${rutDV}`;
+
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `http://localhost:3000/api/usuarios/${rutCompleto}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        if (res.data && res.data.data) {
+          const user = res.data.data;
+
+          setUserData({
+            ...user,
+            bicicletas: user.bicicletas || [],
+          });
+
+          if (user.bicicletas && user.bicicletas.length === 1) {
+            setIdBicicletaSeleccionada(
+              user.bicicletas[0].idBicicleta.toString(),
+            );
+          } else {
+            setIdBicicletaSeleccionada("");
+          }
+        }
+      } catch (e) {
+        setUserData(null);
+        setIdBicicletaSeleccionada("");
+        addAlert("error", "Usuario no encontrado.");
+      }
+    };
+
     if (rutBase.length >= 7 && rutDV.length === 1) {
       buscarUsuario();
     } else {
       setUserData(null);
     }
-  }, [rutBase, rutDV]);
-
-  const buscarUsuario = async () => {
-    const rutCompleto = `${rutBase}-${rutDV}`;
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `http://localhost:3000/api/usuarios/${rutCompleto}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-
-      if (res.data && res.data.data) {
-        const user = res.data.data;
-
-        setUserData({
-          ...user,
-          bicicletas: user.bicicletas || [],
-        });
-
-        if (user.bicicletas && user.bicicletas.length === 1) {
-          setIdBicicletaSeleccionada(user.bicicletas[0].idBicicleta.toString());
-        } else {
-          setIdBicicletaSeleccionada("");
-        }
-      }
-    } catch (e) {
-      setUserData(null);
-      setIdBicicletaSeleccionada("");
-      addAlert("error", "Usuario no encontrado.");
-    }
-  };
+  }, [rutBase, rutDV, addAlert]);
 
   const handleBaseChange = (e) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
