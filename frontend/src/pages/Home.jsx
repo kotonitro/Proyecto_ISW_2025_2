@@ -6,7 +6,7 @@ import axios from "axios";
 import Alert from "../components/Alert";
 import defaultImage from "../images/bicicleteroPlaceholder.jpg";
 
-const IMAGE_BASE_URL = `${import.meta.env.VITE_URL_IMG}/uploads/bicicleteros` || "http://localhost:3000/uploads/bicicleteros/";
+const IMAGE_BASE_URL = `${import.meta.env.VITE_URL_IMG}/uploads/bicicleteros/` || "http://localhost:3000/uploads/bicicleteros/";
 
 
 export default function Home() {
