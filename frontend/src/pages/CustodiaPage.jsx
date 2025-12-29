@@ -11,9 +11,17 @@ export default function CustodiaPage() {
 
   // Alert State
   const [alerts, setAlerts] = useState([]);
+  
   const addAlert = useCallback((type, message) => {
-    setAlerts((prev) => [...prev, { id: Date.now(), type, message }]);
-  }, []);
+  const newAlert = {
+    id: Date.now(),
+    type,
+    message,
+  };
+
+  setAlerts((prev) => [newAlert, ...prev]);
+}, []);
+
 
   const removeAlert = useCallback((id) => {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
