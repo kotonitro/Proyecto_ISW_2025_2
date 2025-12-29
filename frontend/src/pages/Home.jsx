@@ -4,6 +4,7 @@ import BicicleteroCard from "../components/BicicleteroCard";
 import { crearNotificacion } from "../api/notificacionApi";
 import axios from "axios";
 import Alert from "../components/Alert";
+import defaultImage from "../images/bicicleteroPlaceholder.jpg";
 
 const IMAGE_BASE_URL = "http://localhost:3000/uploads/bicicleteros/";
 
@@ -19,7 +20,7 @@ export default function Home() {
     rutSolicitante: "",
     mensaje: "",
   });
-  
+
   const [alertas, setAlertas] = useState([]);
 
   const showAlert = (type, message) => {
@@ -48,7 +49,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchDisponibilidad();
-    
+
     const interval = setInterval(fetchDisponibilidad, 10000);
 
     return () => clearInterval(interval);
@@ -62,7 +63,11 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.bicicleteroId || !formData.rutSolicitante || !formData.mensaje) {
+    if (
+      !formData.bicicleteroId ||
+      !formData.rutSolicitante ||
+      !formData.mensaje
+    ) {
       showAlert("error", "Todos los campos son obligatorios.");
       return;
     }
@@ -74,7 +79,10 @@ export default function Home() {
       if (newId) {
         navigate(`/verificar-estado/${newId}`);
       } else {
-        showAlert("success", response.message || "Solicitud enviada con éxito.");
+        showAlert(
+          "success",
+          response.message || "Solicitud enviada con éxito.",
+        );
         setIsModalOpen(false);
       }
 
@@ -85,7 +93,7 @@ export default function Home() {
         errorMessage = error.message;
       }
       if (error && error.errors) {
-        const details = error.errors.join('. ');
+        const details = error.errors.join(". ");
         errorMessage += `: ${details}`;
       }
       showAlert("error", errorMessage);
@@ -101,14 +109,14 @@ export default function Home() {
   }
 
   const bicicleterosActivos = bicicleteros.filter((b) => b.activo);
-  
+
   const formatRut = (rut) => {
-      let value = rut.replace(/[^0-9kK]/g, "");
-      if (value.length > 1) {
-        value = value.slice(0, -1) + "-" + value.slice(-1);
-      }
-      return value;
-    };
+    let value = rut.replace(/[^0-9kK]/g, "");
+    if (value.length > 1) {
+      value = value.slice(0, -1) + "-" + value.slice(-1);
+    }
+    return value;
+  };
 
   return (
     <div>
@@ -321,7 +329,7 @@ export default function Home() {
                       required
                     ></textarea>
                   </div>
-                  
+
                   <div className="flex justify-end gap-4">
                     <button
                       type="button"
