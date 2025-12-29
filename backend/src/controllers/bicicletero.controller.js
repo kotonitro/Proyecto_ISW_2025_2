@@ -156,7 +156,6 @@ export async function handleDeleteBicicletero(req, res) {
 
     if (Bicicletero.imagen) {
       const rutaImagen = path.join(bicicleterosDir, Bicicletero.imagen);
-      // Verificamos si el archivo existe antes de intentar borrarlo para evitar errores
       if (fs.existsSync(rutaImagen)) {
         fs.unlinkSync(rutaImagen); // Borrado síncrono
       }
@@ -165,6 +164,14 @@ export async function handleDeleteBicicletero(req, res) {
     await deleteBicicletero(idBicicletero);
     handleSuccess(res, 200, "Bicicletero eliminado correctamente.");
   } catch (error) {
+    if (error.code === "23503") {
+      return handleErrorClient(
+        res,
+        409,
+        "No se puede eliminar el bicicletero porque tiene bicicletas o informes asociados. Intenta mejor desactivarlo."
+      );
+    }
+
     handleErrorServer(
       res,
       500,
@@ -180,10 +187,8 @@ export async function handleUpdateBicicletero(req, res) {
   let bicicleteroData = { ...req.body };
 
   if (req.file) {
-    // Caso A: Subieron una imagen nueva -> Reemplazo
     bicicleteroData.imagen = req.file.filename;
   } else if (req.body.eliminarImagen === "true") {
-    // Caso B: Pidieron borrar la imagen explícitamente -> Null
     bicicleteroData.imagen = null;
   }
 
@@ -254,9 +259,6 @@ export async function handleUpdateBicicletero(req, res) {
         conflictos
       );
     }
-    
-    const debeBorrarImagenAntigua =
-      req.file || req.body.eliminarImagen === "true";
 
     if (req.file && Bicicletero.imagen) {
       const rutaImagenAntigua = path.join(bicicleterosDir, Bicicletero.imagen);
