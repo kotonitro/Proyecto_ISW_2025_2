@@ -4,11 +4,37 @@ import {handleSuccess,handleErrorClient,handleErrorServer} from "../handlers/res
 import {informeValidation,informeUpdateValidation} from "../validations/informe.validation.js";
 import {createDocumentos} from "../services/documento.service.js"
 import { getInformeZip } from "../services/informe.service.js";
+import { getEncargadoById } from "../services/encargado.service.js";
+import { getBicicletaById } from "../services/bicicleta.service.js";
+import { getBicicleteroById } from "../services/bicicletero.service.js";
+
 
 export async function handleCreateInforme(req, res) {
   const informeData = req.body;
   const archivos = req.files; 
-  informeData.fechaInforme = new Date();
+  
+  let fechaProcesada;
+  
+  if (informeData.fechaInforme) {
+        // Verifica formato DD-MM-YYYY (
+        const esFormatoChileno = /^\d{1,2}-\d{1,2}-\d{4}$/.test(informeData.fechaInforme);
+  
+        if (esFormatoChileno) {
+            const [dia, mes, anio] = informeData.fechaInforme.split('-');
+            fechaProcesada = new Date(`${anio}-${mes}-${dia}`);
+        } else {
+            fechaProcesada = new Date(informeData.fechaInforme);
+        }
+    } else {
+        fechaProcesada = new Date();
+    }
+
+  // VALIDAR SI LA FECHA ES INVALIDA 
+  if (isNaN(fechaProcesada.getTime())) {
+      return handleErrorClient(res, 400, "La fecha ingresada no tiene un formato válido.");
+  }
+
+  informeData.fechaInforme = fechaProcesada;
 
   try {
     const { error, value } = informeValidation.validate(informeData, {
@@ -23,6 +49,26 @@ export async function handleCreateInforme(req, res) {
       return handleErrorClient(res, 400, "Error de validacion en los datos.", errorDetails);
     }
 
+    // Validar Encargado
+    const encargadoExiste = await getEncargadoById(value.idEncargado);
+    if (!encargadoExiste) {
+       return handleErrorClient(res, 404, "El Encargado indicado no existe en el sistema.");
+    }
+    if (value.idBicicleta) {
+            const bicicletaExiste = await getBicicletaById(value.idBicicleta);
+            if (!bicicletaExiste) {
+                return handleErrorClient(res, 404, `La Bicicleta con ID ${value.idBicicleta} no existe.`);
+            }
+        }
+    
+        // 3. Validar Bicicletero (Solo si viene en el body)
+        if (value.idBicicletero) {
+            const bicicleteroExiste = await getBicicleteroById(value.idBicicletero);
+            if (!bicicleteroExiste) {
+                return handleErrorClient(res, 404, `El Bicicletero con ID ${value.idBicicletero} no existe.`);
+            }
+        }
+
     if (archivos && archivos.length > 0) {
       value.documentos = archivos.map((archivo) => ({
         nombreOriginal: archivo.originalname,
@@ -34,6 +80,7 @@ export async function handleCreateInforme(req, res) {
     const newInforme = await createInforme(value);
     
     handleSuccess(res, 201, "Informe creado exitosamente", newInforme);
+
   } catch (error) {
     handleErrorServer(res, 500, "Error interno al crear el informe", error.message);
   }

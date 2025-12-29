@@ -1,4 +1,5 @@
 import { Router } from "express";
+import multer from "multer";
 import {
   handleCreateInforme,
   handleGetInformes,
@@ -11,7 +12,27 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 import { uploadDocs } from "../middleware/upload.middleware.js";
 
 const router = Router();
-router.post("/", uploadDocs, handleCreateInforme);
+// Middleware para capturar errores de subida
+const uploadMiddleware = (req, res, next) => {
+  uploadDocs(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ 
+        status: 400, 
+        message: "Error en la subida de archivos", 
+        detail: err.message 
+      });
+    } else if (err) {
+      return res.status(400).json({ 
+        status: 400, 
+        message: "Archivo inválido", 
+        detail: err.message 
+      });
+    }
+    next();
+  });
+};
+router.use(authMiddleware);
+router.post("/", uploadMiddleware, handleCreateInforme);
 router.use(authMiddleware);
 router.get("/", handleGetInformes);
 router.patch("/:id", handleUpdateInforme);
