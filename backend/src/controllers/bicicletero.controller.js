@@ -1,6 +1,13 @@
 import { getBicicleteros, createBicicletero, deleteBicicletero, getBicicleteroById, getBicicleteroByUbicacion, updateBicicletero } from "../services/bicicletero.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { bicicleteroValidation, bicicleteroUpdateValidation } from "../validations/bicicletero.validation.js";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const bicicleterosDir = path.resolve(__dirname, '../../uploads/bicicleteros');
 
 export async function handleGetBicicleteros(req, res){
     try {
@@ -90,6 +97,14 @@ export async function handleDeleteBicicletero(req, res) {
             return handleErrorClient(res, 404, "Bicicletero no encontrado.");
         }
 
+        if (Bicicletero.imagen) {
+            const rutaImagen = path.join(bicicleterosDir, Bicicletero.imagen);
+            // Verificamos si el archivo existe antes de intentar borrarlo para evitar errores
+            if (fs.existsSync(rutaImagen)) {
+                fs.unlinkSync(rutaImagen); // Borrado síncrono
+            }
+        }
+
         await deleteBicicletero(idBicicletero);
         handleSuccess(res, 200, "Bicicletero eliminado correctamente.");
 
@@ -153,6 +168,13 @@ export async function handleUpdateBicicletero(req, res){
 
         if (conflictos.length > 0) {
            return handleErrorClient(res, 409, "Error de conflicto en los datos.", conflictos);
+        }
+
+        if (req.file && Bicicletero.imagen) {
+            const rutaImagenAntigua = path.join(bicicleterosDir, Bicicletero.imagen);
+            if (fs.existsSync(rutaImagenAntigua)) {
+                fs.unlinkSync(rutaImagenAntigua);
+            }
         }
         
         const updatedBicicletero = await updateBicicletero(idBicicletero, value);
