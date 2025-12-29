@@ -12,10 +12,7 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    // Guarda información adicional si es necesario (logging remoto, etc.)
     this.setState({ error, info });
-    // Log en consola para depuración local
-    // eslint-disable-next-line no-console
     console.error("ErrorBoundary caught an error:", error, info);
   }
 
@@ -55,17 +52,11 @@ export class ErrorBoundary extends React.Component {
 export default function ProtectedRoute({ children, allowedRoles }) {
   const token = localStorage.getItem("token");
   const rol = localStorage.getItem("rol");
-
-  // 1. Si no hay token, al login
   if (!token) {
     return <Navigate to="/login" replace />;
   }
-
-  // 2. Si hay roles requeridos y el usuario no tiene el rol adecuado, al home
   if (allowedRoles && !allowedRoles.includes(rol)) {
     return <Navigate to="/" replace />;
   }
-
-  // 3. Si todo está bien, renderizamos la página (children)
   return children;
 }
