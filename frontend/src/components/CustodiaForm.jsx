@@ -45,7 +45,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `http://localhost:3000/api/usuarios/${rutCompleto}`,
+          `${import.meta.env.VITE_API_URL}/usuarios/${rutCompleto}`|| `http://localhost:3000/api/usuarios/${rutCompleto}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

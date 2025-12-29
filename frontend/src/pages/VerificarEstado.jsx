@@ -54,11 +54,6 @@ export default function VerificarEstado() {
       setEstadoLoading(false);
     }
 
-    const interval = setInterval(() => {
-      if (id) handleVerificarEstado(id);
-    }, 20000);
-
-    return () => clearInterval(interval);
   }, [id, handleVerificarEstado]);
 
   if (!id) {
