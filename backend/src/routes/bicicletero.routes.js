@@ -12,7 +12,7 @@ import { getDisponibilidadBicicleteros } from "../controllers/custodia.controlle
 
 const router = Router();
 
-// Rutas pulicas
+// Rutas publicas
 router.get("/", handleGetBicicleteros);
 router.get("/disponibilidad", getDisponibilidadBicicleteros);
 router.get("/:id", handleGetBicicletero);

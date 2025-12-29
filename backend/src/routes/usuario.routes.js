@@ -27,4 +27,3 @@ router.patch("/:rut", handleUpdateUsuario);
 router.delete("/:rut", handleDeleteUsuario);
 
 export default router;
- 
