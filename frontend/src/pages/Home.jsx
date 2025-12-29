@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import BicicleteroCard from "../components/BicicleteroCard";
 import { crearNotificacion } from "../api/notificacionApi";
 import axios from "axios";
+import Alert from "../components/Alert";
 
 // Importación de imágenes locales
 import bike1 from "../images/bike1.jpg";
@@ -30,8 +31,17 @@ export default function Home() {
     rutSolicitante: "",
     mensaje: "",
   });
-  const [apiMessage, setApiMessage] = useState("");
-  const [apiError, setApiError] = useState("");
+  
+  const [alertas, setAlertas] = useState([]);
+
+  const showAlert = (type, message) => {
+    const newAlert = { id: Date.now(), type, message };
+    setAlertas((prev) => [...prev, newAlert]);
+  };
+
+  const removeAlert = (idToRemove) => {
+    setAlertas((prev) => prev.filter((alerta) => alerta.id !== idToRemove));
+  };
 
   const fetchDisponibilidad = async () => {
     try {
@@ -49,7 +59,6 @@ export default function Home() {
   useEffect(() => {
     fetchDisponibilidad();
     
-    // Polling: Actualiza los datos cada 10 segundos para que sea "en vivo"
     const interval = setInterval(fetchDisponibilidad, 10000);
     
     return () => clearInterval(interval);
@@ -62,11 +71,9 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setApiMessage("");
-    setApiError("");
 
     if (!formData.bicicleteroId || !formData.rutSolicitante || !formData.mensaje) {
-      setApiError("Todos los campos son obligatorios.");
+      showAlert("error", "Todos los campos son obligatorios.");
       return;
     }
 
@@ -75,22 +82,24 @@ export default function Home() {
       const newId = response.data?.id || response.data?.notificacionId;
 
       if (newId) {
-        // Redirige a la página de estado
         navigate(`/verificar-estado/${newId}`);
       } else {
-        // Si no hay ID, muestra un mensaje genérico
-        setApiMessage(response.message || "Solicitud enviada con éxito, pero no se recibió un ID de seguimiento.");
-        setTimeout(() => {
-            setIsModalOpen(false);
-            setApiMessage("");
-        }, 3000);
+        showAlert("success", response.message || "Solicitud enviada con éxito.");
+        setIsModalOpen(false);
       }
       
       setFormData({ bicicleteroId: "", rutSolicitante: "", mensaje: "" });
 
     } catch (error) {
-      console.error("Error al crear la notificación:", error);
-      setApiError(error.message || "Ocurrió un error al enviar la solicitud.");
+      let errorMessage = "Ocurrió un error al enviar la solicitud.";
+      if (error && error.message) {
+        errorMessage = error.message;
+      }
+      if (error && error.errors) {
+        const details = error.errors.join('. ');
+        errorMessage += `: ${details}`;
+      }
+      showAlert("error", errorMessage);
     }
   };
 
@@ -102,8 +111,28 @@ export default function Home() {
     );
   }
 
+  const formatRut = (rut) => {
+      let value = rut.replace(/[^0-9kK]/g, "");
+      if (value.length > 1) {
+        value = value.slice(0, -1) + "-" + value.slice(-1);
+      }
+      return value;
+    };
+
   return (
     <div>
+      <div className="fixed top-20 right-5 z-[100] flex flex-col items-end pointer-events-none">
+        {alertas.map((alert) => (
+          <Alert
+            key={alert.id}
+            id={alert.id}
+            type={alert.type}
+            message={alert.message}
+            onClose={removeAlert}
+          />
+        ))}
+      </div>
+
       <main className="p-6 md:p-12 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 mb-8 border-l-4 border-blue-600 pl-4">
           Bicicleteros Disponibles
@@ -130,7 +159,6 @@ export default function Home() {
 
       {!token && (
         <>
-          {/* Botón Flotante para Solicitar Guardia */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="fixed bottom-8 right-8 bg-blue-600 text-white font-bold py-4 px-6 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-110 z-40"
@@ -174,7 +202,7 @@ export default function Home() {
                       type="text"
                       id="rutSolicitante"
                       name="rutSolicitante"
-                      value={formData.rutSolicitante}
+                      value={formatRut(formData.rutSolicitante)}
                       onChange={handleInputChange}
                       className="w-full p-3 border border-gray-300 rounded-lg"
                       placeholder="Ej: 12345678-9"
@@ -198,9 +226,6 @@ export default function Home() {
                     ></textarea>
                   </div>
                   
-                  {apiMessage && <div className="mb-4 text-green-600 bg-green-100 p-3 rounded-lg">{apiMessage}</div>}
-                  {apiError && <div className="mb-4 text-red-600 bg-red-100 p-3 rounded-lg">{apiError}</div>}
-
                   <div className="flex justify-end gap-4">
                     <button
                       type="button"
