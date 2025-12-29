@@ -40,7 +40,6 @@ export default function Home() {
   useEffect(() => {
     fetchDisponibilidad();
 
-    // Polling: Actualiza los datos cada 10 segundos para que sea "en vivo"
     const interval = setInterval(fetchDisponibilidad, 10000);
 
     return () => clearInterval(interval);
@@ -70,10 +69,8 @@ export default function Home() {
       const newId = response.data?.id || response.data?.notificacionId;
 
       if (newId) {
-        // Redirige a la página de estado
         navigate(`/verificar-estado/${newId}`);
       } else {
-        // Si no hay ID, muestra un mensaje genérico
         setApiMessage(
           response.message ||
             "Solicitud enviada con éxito, pero no se recibió un ID de seguimiento.",
@@ -156,6 +153,7 @@ export default function Home() {
                   location={b.location}
                   capacity={`${b.ocupados} / ${b.total}`}
                   image={b.imagen ? `${IMAGE_BASE_URL}${b.imagen}` : defaultImage}
+                  placeholder={defaultImage}
                 />
               </div>
             ))
