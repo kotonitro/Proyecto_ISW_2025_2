@@ -12,10 +12,12 @@ export async function createNotificacion(notificacionData) {
   const minutos = now.getMinutes();
 
   // Validaciones de horario
-  if (dia === 0 || dia === 6) throw new Error("El servicio no funciona los fines de semana.");
-  if (hora < 7 || (hora === 7 && minutos < 30)) throw new Error("El servicio abre a las 07:30 hrs.");
+  if (dia === 0 || dia === 6)
+    throw new Error("El servicio no funciona los fines de semana.");
+  if (hora < 7 || (hora === 7 && minutos < 30))
+    throw new Error("El servicio abre a las 07:30 hrs.");
   if (hora >= 20) throw new Error("El servicio cierra a las 20:00 hrs.");
-  
+
   const notificacionRepo = AppDataSource.getRepository(Notificacion);
   const bicicleteroRepo = AppDataSource.getRepository(Bicicletero);
   const encargadoRepo = AppDataSource.getRepository(Encargado);
@@ -24,16 +26,17 @@ export async function createNotificacion(notificacionData) {
 
   // Verificar si el usuario ya tiene una solicitud pendiente
   const solicitudPendiente = await notificacionRepo.findOne({
-        where: { 
-          rutSolicitante: rutSolicitante,
-          estado: "Pendiente" 
-        }
-      });
-  
+    where: {
+      rutSolicitante: rutSolicitante,
+      estado: "Pendiente",
+    },
+  });
+
   if (solicitudPendiente) {
-    throw new Error("Ya tienes una solicitud activa. Espera a que sea atendida.");
+    throw new Error(
+      "Ya tienes una solicitud activa. Espera a que sea atendida."
+    );
   }
-  
 
   const bicicletero = await bicicleteroRepo.findOne({
     where: { idBicicletero: bicicleteroId },
@@ -44,29 +47,29 @@ export async function createNotificacion(notificacionData) {
   }
 
   const nuevaNotificacion = notificacionRepo.create({
-      mensaje,
-      bicicletero,
-      rutSolicitante,
-      estado: "Pendiente",
+    mensaje,
+    bicicletero,
+    rutSolicitante,
+    estado: "Pendiente",
   });
 
   const resultado = await notificacionRepo.save(nuevaNotificacion);
-  
+
   try {
     const encargadosActivos = await encargadoRepo.find({
       where: { activo: true },
     });
 
-    const listaEmails = encargadosActivos.map((e) => e.email).filter(Boolean); 
+    const listaEmails = encargadosActivos.map((e) => e.email).filter(Boolean);
     if (listaEmails.length > 0) {
       const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
       const link = `${baseUrl}/aceptar/${resultado.notificacionId}`;
 
       await enviarAlertaCorreo(
-        listaEmails, 
-        link, 
-        bicicletero.nombre,   
-        bicicletero.ubicacion, 
+        listaEmails,
+        link,
+        bicicletero.nombre,
+        bicicletero.ubicacion,
         mensaje
       );
 
@@ -77,11 +80,10 @@ export async function createNotificacion(notificacionData) {
   } catch (error) {
     console.error("Falló el envío de correo:", error);
 
-
     await notificacionRepo.remove(resultado);
 
     throw new Error(
-      "No se pudo conectar con los guardias. Intenta nuevamente.",
+      "No se pudo conectar con los guardias. Intenta nuevamente."
     );
   }
 
@@ -94,7 +96,10 @@ export async function getNotificaciones(idEncargadologueado) {
 
   const notificaciones = await notificacionRepo.find({
     relations: ["bicicletero", "encargado"],
-    where: [{ estado: "Pendiente" }, { estado: "En Camino", encargado: { idEncargado: idEncargadologueado }}],
+    where: [
+      { estado: "Pendiente" },
+      { estado: "En Camino", encargado: { idEncargado: idEncargadologueado } },
+    ],
     order: { fechaCreacion: "DESC" },
   });
 
@@ -139,9 +144,11 @@ export async function getEstadoNotificacion(id) {
 
   if (!notificacion) throw new Error("No existe");
 
-  return { estado: notificacion.estado, timestamp: notificacion.fechaActualizacion };
+  return {
+    estado: notificacion.estado,
+    timestamp: notificacion.fechaActualizacion,
+  };
 }
-
 
 export async function finalizarNotificacion(idNotificacion, idEncargado) {
   const notificacionRepo = AppDataSource.getRepository(Notificacion);
@@ -157,10 +164,10 @@ export async function finalizarNotificacion(idNotificacion, idEncargado) {
   }
 
   if (notificacion.encargado.idEncargado !== idEncargado) {
-      throw new Error("No puedes finalizar una tarea que no es tuya.");
+    throw new Error("No puedes finalizar una tarea que no es tuya.");
   }
-  
+
   notificacion.estado = "Finalizada";
-  
+
   return await notificacionRepo.save(notificacion);
 }

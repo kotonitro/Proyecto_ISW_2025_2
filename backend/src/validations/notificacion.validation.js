@@ -4,9 +4,11 @@ const validarRut = (value, helpers) => {
   if (!value) return helpers.error("any.required");
 
   const rutLimpio = value.replace(/\./g, "").replace(/-/g, "").toLowerCase();
-  
+
   if (!/^[0-9]+[0-9kK]{1}$/.test(rutLimpio)) {
-    return helpers.message("El RUT tiene caracteres inválidos (solo números y K).");
+    return helpers.message(
+      "El RUT tiene caracteres inválidos (solo números y K)."
+    );
   }
 
   if (rutLimpio.length < 8) {
@@ -36,10 +38,12 @@ const validarRut = (value, helpers) => {
 
   // Comparamos lo calculado con lo que escribió el usuario
   if (dvCalculado !== dvIngresado) {
-    return helpers.message("El RUT es inválido (Dígito verificador incorrecto).");
+    return helpers.message(
+      "El RUT es inválido (Dígito verificador incorrecto)."
+    );
   }
 
-  return value; 
+  return value;
 };
 
 export const crearNotificacion = Joi.object({
@@ -54,8 +58,8 @@ export const crearNotificacion = Joi.object({
     "number.base": "El ID del bicicletero debe ser un número",
     "number.min": "El ID del bicicletero no es válido",
   }),
-  
+
   rutSolicitante: Joi.string().required().custom(validarRut).messages({
-      "any.required": "El RUT es obligatorio."
-    }),
+    "any.required": "El RUT es obligatorio.",
+  }),
 });

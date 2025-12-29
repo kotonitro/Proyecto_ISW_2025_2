@@ -173,7 +173,7 @@ const Usuarios = () => {
         addAlert(
           "error",
           "Error al buscar usuario: " +
-            (error.response?.data?.message || error.message),
+            (error.response?.data?.message || error.message)
         );
       }
     } finally {
@@ -200,7 +200,7 @@ const Usuarios = () => {
         addAlert(
           "warning",
           "Usuario creado, pero hubo un error al crear la bicicleta: " +
-            (bikeError.response?.data?.message || bikeError.message),
+            (bikeError.response?.data?.message || bikeError.message)
         );
       }
 
@@ -242,7 +242,7 @@ const Usuarios = () => {
         addAlert(
           "error",
           "Error al crear usuario: " +
-            (error.response?.data?.message || error.message),
+            (error.response?.data?.message || error.message)
         );
       }
     }
@@ -261,7 +261,7 @@ const Usuarios = () => {
       addAlert(
         "error",
         "Error al actualizar: " +
-          (error.response?.data?.message || error.message),
+          (error.response?.data?.message || error.message)
       );
     }
   };
@@ -284,7 +284,7 @@ const Usuarios = () => {
           addAlert(
             "error",
             "Error al eliminar: " +
-              (error.response?.data?.message || error.message),
+              (error.response?.data?.message || error.message)
           );
         }
       },
@@ -314,7 +314,7 @@ const Usuarios = () => {
         addAlert(
           "error",
           "Error al agregar bicicleta: " +
-            (error.response?.data?.message || error.message),
+            (error.response?.data?.message || error.message)
         );
       }
     }
@@ -361,7 +361,7 @@ const Usuarios = () => {
       addAlert(
         "error",
         "Error al registrar ingreso: " +
-          (error.response?.data?.message || error.message),
+          (error.response?.data?.message || error.message)
       );
     }
   };

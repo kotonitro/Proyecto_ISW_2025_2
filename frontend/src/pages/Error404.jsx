@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 export default function Error404() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-150px)] text-center px-6 py-12">
-      {/* 1. Número 404*/}
+      {/*Número 404*/}
       <h1 className="text-9xl font-black text-blue-200 animate-pulse">
         404
       </h1>
 
-      {/* 2. MENSAJE DE ERROR (Debajo del número) */}
+      {/*MENSAJE DE ERROR*/}
       <div className="mt-6 mb-8 "> {/* Margen negativo para acercarlo un poco sin taparlo */}
         <h2 className="text-3xl font-bold text-gray-800 md:text-4xl">
           ¡Ups! Página no encontrada
@@ -19,7 +19,7 @@ export default function Error404() {
         </p>
       </div>
 
-      {/* 3. BOTÓN DE REGRESO */}
+      {/*BOTÓN DE REGRESO*/}
       <Link 
         to="/"
         className="px-8 py-3 bg-blue-700 text-white rounded-full font-semibold shadow-lg hover:bg-blue-800 hover:scale-105 transition-all duration-200 flex items-center gap-2"

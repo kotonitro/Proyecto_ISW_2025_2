@@ -250,10 +250,12 @@ export default function AdminBicicleteros() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {bicicleterosFiltrados.map((bic) => {
-                  
                   // 4. Calculamos la URL para cada fila
-                  const imageUrl = bic.imagen 
-                    ? `${IMAGE_BASE_URL}${bic.imagen.replace(/^bicicleteros\//, '')}` 
+                  const imageUrl = bic.imagen
+                    ? `${IMAGE_BASE_URL}${bic.imagen.replace(
+                        /^bicicleteros\//,
+                        ""
+                      )}`
                     : defaultImage;
 
                   return (
@@ -286,16 +288,14 @@ export default function AdminBicicleteros() {
 
                       <td className="px-6 py-4 text-center">
                         <div className="flex justify-center group relative">
-                          <img 
-                            src={imageUrl} 
-                            alt="Bicicletero" 
+                          <img
+                            src={imageUrl}
+                            alt="Bicicletero"
                             className="h-10 w-10 rounded-full object-cover border border-gray-200 shadow-sm bg-white cursor-pointer hover:scale-110 transition-transform hover:ring-2 hover:ring-blue-400"
-                            
                             // 5. Al hacer click, pasamos la URL al estado
                             onClick={() => setPreviewImage(imageUrl)}
-                            
                             onError={(e) => {
-                              e.target.onerror = null; 
+                              e.target.onerror = null;
                               e.target.src = defaultImage;
                             }}
                           />
@@ -397,7 +397,7 @@ export default function AdminBicicleteros() {
                   type="number"
                   required
                   min="1"
-                  placeholder="12"
+                  placeholder="15"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                   value={form.capacidad}
                   onChange={(e) =>

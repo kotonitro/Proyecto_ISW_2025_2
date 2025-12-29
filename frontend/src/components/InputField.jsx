@@ -1,14 +1,14 @@
 import React from "react";
 
-export default function InputField({ 
-  type = "text", 
-  value, 
-  onChange, 
-  placeholder, 
-  required = false, 
-  name, 
+export default function InputField({
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  name,
   id,
-  disabled 
+  disabled,
 }) {
   return (
     <input

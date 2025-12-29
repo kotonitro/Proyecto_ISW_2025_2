@@ -28,17 +28,17 @@ export const Bicicletero = new EntitySchema({
       type: "int",
       nullable: false,
     },
-    imagen:{
+    imagen: {
       type: "varchar",
       lenght: 255,
       nullable: true,
-    }
+    },
   },
   relations: {
     registrosAlmacen: {
       type: "one-to-many",
-      target: "RegistroAlmacen", 
-      inverseSide: "bicicletero", 
-    }
-  }
+      target: "RegistroAlmacen",
+      inverseSide: "bicicletero",
+    },
+  },
 });

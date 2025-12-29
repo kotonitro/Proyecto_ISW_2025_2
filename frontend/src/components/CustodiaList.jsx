@@ -40,13 +40,13 @@ export default function CustodiaList({ addAlert, openConfirm }) {
         } catch (e) {
           addAlert("error", e.message || String(e));
         }
-      },
+      }
     );
   }
 
   return (
     <>
-    {/* encabezados*/}
+      {/* encabezados*/}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-xl font-bold text-blue-900 flex items-center gap-2">
@@ -130,7 +130,7 @@ export default function CustodiaList({ addAlert, openConfirm }) {
                         {r.rutUsuario}
                       </div>
                     </td>
-              
+
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {LISTA_BICICLETEROS.find((b) => b.id === r.idBicicletero)
                         ?.nombre || `ID: ${r.idBicicletero}`}

@@ -7,12 +7,12 @@ import Alert from "../components/Alert";
 import ConfirmAlert from "../components/ConfirmAlert";
 import StatusButton from "../components/StatusButton";
 import PasswordInput from "../components/PasswordInput";
-import { 
+import {
   getEncargados,
   getEncargado,
-  createEncargado, 
-  deleteEncargado, 
-  updateEncargado 
+  createEncargado,
+  deleteEncargado,
+  updateEncargado,
 } from "../api/encargadoApi";
 
 export default function AdminEncargados() {
@@ -20,7 +20,7 @@ export default function AdminEncargados() {
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,7 @@ export default function AdminEncargados() {
 
   const [confirmConfig, setConfirmConfig] = useState({
     title: "",
-    message: ""
+    message: "",
   });
 
   // Alertas
@@ -45,7 +45,7 @@ export default function AdminEncargados() {
     const newAlert = {
       id: Date.now(),
       type,
-      message
+      message,
     };
     setAlertas((prev) => [newAlert, ...prev]);
   };
@@ -61,7 +61,7 @@ export default function AdminEncargados() {
       const res = await getEncargados();
       setEncargados(res.data.data);
     } catch (err) {
-      showAlert("error", "Error al cargar la lista de encargados")
+      showAlert("error", "Error al cargar la lista de encargados");
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ export default function AdminEncargados() {
     setIsEditing(false);
     setShowModal(true);
   };
-  
+
   // Abrir al editar
   const handleOpenEdit = (enc) => {
     setForm({
@@ -92,7 +92,7 @@ export default function AdminEncargados() {
       rut: enc.rut || "",
       telefono: enc.telefono || "",
       contrasena: "",
-      activo: enc.activo
+      activo: enc.activo,
     });
     setCurrentId(enc.idEncargado);
     setShowPassword(false);
@@ -124,7 +124,7 @@ export default function AdminEncargados() {
           .join("\n");
         errorMessage += `\n\nDetalles:\n${detalles}`;
       }
-      showAlert("error", errorMessage)
+      showAlert("error", errorMessage);
     }
   };
 
@@ -133,26 +133,29 @@ export default function AdminEncargados() {
     setCurrentId(idEncargado);
     setConfirmConfig({
       title: "¿Estás seguro que deseas eliminar al encargado?",
-      message:(
+      message: (
         <span>
-          Vas a eliminar a <span className="font-bold text-gray-900">{nombreEncargado}</span> rut <span className="font-bold text-gray-900">{rutEncargado}</span> de forma permanente.
+          Vas a eliminar a{" "}
+          <span className="font-bold text-gray-900">{nombreEncargado}</span> rut{" "}
+          <span className="font-bold text-gray-900">{rutEncargado}</span> de
+          forma permanente.
         </span>
-      ) 
+      ),
     });
     setShowConfirm(true);
   };
 
   const handleConfirmDelete = async () => {
-
     if (!currentId) return;
     try {
       await deleteEncargado(currentId);
-      showAlert("success", "Encargado eliminado correctamente")
+      showAlert("success", "Encargado eliminado correctamente");
       fetchEncargados();
     } catch (err) {
       const msg = err.response?.data?.message || "No se pudo eliminar";
-      showAlert("error", msg)
-    } finally {}
+      showAlert("error", msg);
+    } finally {
+    }
   };
 
   const handleCloseConfirm = () => {
@@ -165,19 +168,18 @@ export default function AdminEncargados() {
     <div className="p-6 max-w-7xl mx-auto space-y-8">
       {/*Alertas*/}
       <div className="fixed top-10 right-5 z-[100] flex flex-col items-end pointer-events-none">
-          {alertas.map((alert) => (
-              <Alert 
-                  key={alert.id}
-                  id={alert.id}
-                  type={alert.type} 
-                  message={alert.message} 
-                  onClose={removeAlert} 
-              />
-          ))}
-
+        {alertas.map((alert) => (
+          <Alert
+            key={alert.id}
+            id={alert.id}
+            type={alert.type}
+            message={alert.message}
+            onClose={removeAlert}
+          />
+        ))}
       </div>
       {/*Alerta de confirmación*/}
-      <ConfirmAlert 
+      <ConfirmAlert
         isOpen={showConfirm}
         onClose={handleCloseConfirm}
         onConfirm={handleConfirmDelete}
@@ -201,7 +203,9 @@ export default function AdminEncargados() {
       {/* Tabla de encargados */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-10 text-center text-gray-500">Cargando encargados...</div>
+          <div className="p-10 text-center text-gray-500">
+            Cargando encargados...
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-gray-600">
@@ -219,11 +223,22 @@ export default function AdminEncargados() {
               <tbody className="divide-y divide-gray-200">
                 {/*Datos*/}
                 {encargadosFiltrados.map((enc) => (
-                  <tr key={enc.idEncargado} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-black whitespace-nowrap">{enc.rut}</td>
-                    <td className="px-6 py-4 font-mono text-gray-600">{enc.nombre}</td>
-                    <td className="px-6 py-4 font-mono text-gray-600">{enc.email}</td>
-                    <td className="px-6 py-4 font-mono text-gray-600 whitespace-nowrap">+569 {enc.telefono}</td>
+                  <tr
+                    key={enc.idEncargado}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 font-mono text-black whitespace-nowrap">
+                      {enc.rut}
+                    </td>
+                    <td className="px-6 py-4 font-mono text-gray-600">
+                      {enc.nombre}
+                    </td>
+                    <td className="px-6 py-4 font-mono text-gray-600">
+                      {enc.email}
+                    </td>
+                    <td className="px-6 py-4 font-mono text-gray-600 whitespace-nowrap">
+                      +569 {enc.telefono}
+                    </td>
                     <td className="px-6 py-4 text-center">
                       {enc.esAdmin ? (
                         <span className="bg-purple-100 text-purple-700 border border-purple-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
@@ -251,8 +266,17 @@ export default function AdminEncargados() {
                       {enc.esAdmin ? (
                         // Si es admin mostrar protegido (no se puede modificar)
                         <span className="inline-flex items-center gap-1 px-3 py-2 rounded-md bg-gray-200 text-gray-600 text-sm font-medium border border-gray-100 select-none">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3 w-3"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           Protegido
                         </span>
@@ -260,7 +284,15 @@ export default function AdminEncargados() {
                         // Si no es admin mostrar editar y eliminar
                         <div className="flex justify-end gap-2">
                           <EditButton onClick={() => handleOpenEdit(enc)} />
-                          <DeleteButton onClick={() => handleDeleteClick(enc.idEncargado, enc.nombre, enc.rut)} />
+                          <DeleteButton
+                            onClick={() =>
+                              handleDeleteClick(
+                                enc.idEncargado,
+                                enc.nombre,
+                                enc.rut
+                              )
+                            }
+                          />
                         </div>
                       )}
                     </td>
@@ -269,8 +301,13 @@ export default function AdminEncargados() {
                 {/*Si no hay datos*/}
                 {encargadosFiltrados.length === 0 && (
                   <tr>
-                    <td colSpan="7" className="px-6 py-6 text-center text-gray-400">
-                      {busqueda ? "No se encontraron encargados con ese Rut." : "No hay encargados registrados."}
+                    <td
+                      colSpan="7"
+                      className="px-6 py-6 text-center text-gray-400"
+                    >
+                      {busqueda
+                        ? "No se encontraron encargados con ese Rut."
+                        : "No hay encargados registrados."}
                     </td>
                   </tr>
                 )}
@@ -287,28 +324,74 @@ export default function AdminEncargados() {
               <h3 className="text-lg font-bold text-gray-800">
                 {isEditing ? "Editar Encargado" : "Registrar Personal"}
               </h3>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 font-bold">✕</button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 font-bold"
+              >
+                ✕
+              </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form
+              onSubmit={handleSubmit}
+              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               {/*Nombre*/}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                <input type="text" required placeholder="Juan Perez" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Juan Perez"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={form.nombre}
+                  onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                />
               </div>
               {/*Rut*/}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Rut</label>
-                <input type="text" required placeholder="12345678-9" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rut
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="12345678-9"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={form.rut}
+                  onChange={(e) => setForm({ ...form, rut: e.target.value })}
+                />
               </div>
               {/*Teléfono*/}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                <input type="text" required placeholder="12345678" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Teléfono
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="12345678"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={form.telefono}
+                  onChange={(e) =>
+                    setForm({ ...form, telefono: e.target.value })
+                  }
+                />
               </div>
               {/*Email*/}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                <input type="email" required placeholder="encargado@dominio.com" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Correo Electrónico
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="encargado@dominio.com"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
               </div>
               {/*Contraseña*/}
               <div className="md:col-span-2">
@@ -317,9 +400,15 @@ export default function AdminEncargados() {
                 </label>
                 <PasswordInput
                   value={form.contrasena}
-                  onChange={(e) => setForm({ ...form, contrasena: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, contrasena: e.target.value })
+                  }
                   required={!isEditing}
-                  placeholder={isEditing ? "Dejar en blanco para mantener la actual" : "********"}
+                  placeholder={
+                    isEditing
+                      ? "Dejar en blanco para mantener la actual"
+                      : "********"
+                  }
                 />
               </div>
 
@@ -337,8 +426,19 @@ export default function AdminEncargados() {
               )}
 
               <div className="md:col-span-2 flex gap-3 mt-4">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">Cancelar</button>
-                <button type="submit" className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 font-medium shadow-md">{isEditing ? "Guardar Cambios" : "Crear Encargado"}</button>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 font-medium shadow-md"
+                >
+                  {isEditing ? "Guardar Cambios" : "Crear Encargado"}
+                </button>
               </div>
             </form>
           </div>

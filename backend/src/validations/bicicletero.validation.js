@@ -23,7 +23,7 @@ export const bicicleteroValidation = Joi.object({
     "any.required": "La capacidad es obligatoria.",
   }),
 
-  imagen: Joi.string().optional().allow(null, '').messages({
+  imagen: Joi.string().optional().allow(null, "").messages({
     "string.base": "La imagen debe ser un nombre de archivo (texto).",
   }),
 })
@@ -34,7 +34,7 @@ export const bicicleteroUpdateValidation = bicicleteroValidation
   .fork(["nombre", "ubicacion", "capacidad"], (schema) => schema.optional())
   .append({
     activo: Joi.boolean().optional(),
-    eliminarImagen: Joi.string().optional().allow('true', 'false', '')
+    eliminarImagen: Joi.string().optional().allow("true", "false", ""),
   })
   .min(1)
   .required()

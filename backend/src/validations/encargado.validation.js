@@ -29,17 +29,16 @@ function validateRut(value, helpers) {
 }
 
 export const encargadoValidation = Joi.object({
-
   rut: Joi.string()
     .trim()
     .max(10)
     .required()
     .custom(validateRut, "RUT validation")
     .messages({
-    "any.required": "El RUT es obligatorio.",
-    "string.max": "El RUT debe tener como máximo 10 caracteres.",
-    "string.base": "El RUT debe ser una cadena.",
-  }),
+      "any.required": "El RUT es obligatorio.",
+      "string.max": "El RUT debe tener como máximo 10 caracteres.",
+      "string.base": "El RUT debe ser una cadena.",
+    }),
 
   nombre: Joi.string()
     .trim()
@@ -72,7 +71,8 @@ export const encargadoValidation = Joi.object({
     .messages({
       "string.min": "La contraseña debe tener al menos 8 caracteres.",
       "string.max": "La contraseña debe tener como máximo 16 caracteres.",
-      "string.pattern.base": "La contraseña debe contener una mayuscula, un número y un caracter especial.",
+      "string.pattern.base":
+        "La contraseña debe contener una mayuscula, un número y un caracter especial.",
       "any.required": "La contraseña es obligatoria.",
     }),
 
@@ -81,15 +81,24 @@ export const encargadoValidation = Joi.object({
     .pattern(/^\d{8}$/)
     .required()
     .messages({
-      "string.pattern.base": "El teléfono debe contener sólo números y obligatoriamente 8 dígitos.",
+      "string.pattern.base":
+        "El teléfono debe contener sólo números y obligatoriamente 8 dígitos.",
       "any.required": "El teléfono es obligatorio.",
     }),
-}).required().messages({"any.required": "La petición no puede estar vacia."});;
+})
+  .required()
+  .messages({ "any.required": "La petición no puede estar vacia." });
 
-export const encargadoUpdateValidation = encargadoValidation.fork(
-  ["rut", "nombre", "email", "contrasena", "telefono"],
-  (schema) => schema.optional()).append({
-    activo: Joi.boolean().optional()
-  }).min(1).required().messages({
-  "object.min": "Debe haber al menos un campo para actualizar.",
-  "any.required": "La petición no puede estar vacia."});
+export const encargadoUpdateValidation = encargadoValidation
+  .fork(["rut", "nombre", "email", "contrasena", "telefono"], (schema) =>
+    schema.optional()
+  )
+  .append({
+    activo: Joi.boolean().optional(),
+  })
+  .min(1)
+  .required()
+  .messages({
+    "object.min": "Debe haber al menos un campo para actualizar.",
+    "any.required": "La petición no puede estar vacia.",
+  });

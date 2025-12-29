@@ -19,13 +19,13 @@ export async function createAdmin() {
     await Promise.all([
       encargadoRepository.save(
         encargadoRepository.create({
-          nombre: "Admin",
+          nombre: "Administrador",
           esAdmin: true,
           rut: "12345678-9",
           email: "admin@example.com",
           contrasena: await encryptPassword("123456"),
           telefono: "12345678",
-        }),
+        })
       ),
     ]);
     console.log("Admin creado satisfactoriamente");
@@ -47,31 +47,31 @@ export async function createBicicleteros() {
     await Promise.all([
       bicicleteroRepository.save(
         bicicleteroRepository.create({
-          nombre: "Bicicletero 1",
-          ubicacion: "Av. Principal",
+          nombre: "Bicicletero Face",
+          ubicacion: "Frente a edificio Face",
           capacidad: 15,
-        }),
+        })
       ),
       bicicleteroRepository.save(
         bicicleteroRepository.create({
-          nombre: "Bicicletero 2",
-          ubicacion: "Plaza Central",
+          nombre: "Bicicletero Gantes",
+          ubicacion: "Detrás de edificio Gantes",
           capacidad: 15,
-        }),
+        })
       ),
       bicicleteroRepository.save(
         bicicleteroRepository.create({
-          nombre: "Bicicletero 3",
-          ubicacion: "Parque Norte",
+          nombre: "Bicicletero Entrada",
+          ubicacion: "Delante de entrada principal",
           capacidad: 15,
-        }),
+        })
       ),
       bicicleteroRepository.save(
         bicicleteroRepository.create({
-          nombre: "Bicicletero 4",
-          ubicacion: "Calle Secundaria",
+          nombre: "Bicicletero Idiomas",
+          ubicacion: "Al lado de edificio Idiomas",
           capacidad: 15,
-        }),
+        })
       ),
     ]);
     console.log("Bicicleteros creados satisfactoriamente");

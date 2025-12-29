@@ -30,7 +30,7 @@ export async function createEncargado(data) {
     rut: data.rut,
     nombre: data.nombre,
     contrasena: await bcrypt.hash(data.contrasena, 10),
-    telefono: data.telefono
+    telefono: data.telefono,
   });
 
   return await encargadoRepository.save(newEncargado);
@@ -44,7 +44,7 @@ export async function deleteEncargado(idEncargado) {
 
 export async function updateEncargado(idEncargado, data) {
   const Encargado = await getEncargadoById(idEncargado);
-  if (data.contrasena){
+  if (data.contrasena) {
     data.contrasena = await bcrypt.hash(data.contrasena, 10);
   }
   encargadoRepository.merge(Encargado, data);

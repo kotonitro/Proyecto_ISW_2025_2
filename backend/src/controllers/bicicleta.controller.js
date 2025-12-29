@@ -19,14 +19,14 @@ export async function handleGetBicicletas(req, res) {
       res,
       200,
       "Bicicletas obtenidas correctamente",
-      bicicletas,
+      bicicletas
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener bicicletas",
-      error.message,
+      error.message
     );
   }
 }
@@ -39,14 +39,14 @@ export async function handleGetBicicletasByUsuario(req, res) {
       res,
       200,
       `Bicicletas del usuario ${idUsuario} obtenidas correctamente`,
-      bicicletas,
+      bicicletas
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener bicicletas por usuario",
-      error.message,
+      error.message
     );
   }
 }
@@ -68,7 +68,7 @@ export async function handleCreateBicicleta(req, res) {
         res,
         400,
         "Error de validación en los datos.",
-        errorDetails,
+        errorDetails
       );
     }
 
@@ -82,7 +82,7 @@ export async function handleCreateBicicleta(req, res) {
       res,
       201,
       "Bicicleta creada correctamente",
-      newBicicleta,
+      newBicicleta
     );
   } catch (error) {
     // Errores del service relacionados con usuario inexistente
@@ -93,7 +93,7 @@ export async function handleCreateBicicleta(req, res) {
       res,
       500,
       "Error al crear la bicicleta",
-      error.message,
+      error.message
     );
   }
 }
@@ -114,7 +114,7 @@ export async function handleUpdateBicicleta(req, res) {
     // Validar campos parciales: usar el esquema pero permitiendo campos opcionales
     const partialSchema = bicicletaValidation.fork(
       Object.keys(bicicletaValidation.describe().keys),
-      (schema) => schema.optional(),
+      (schema) => schema.optional()
     );
     const { error } = partialSchema.validate(updateData, { abortEarly: false });
     if (error) {
@@ -126,7 +126,7 @@ export async function handleUpdateBicicleta(req, res) {
         res,
         400,
         "Error de validación en los datos de actualización.",
-        errorDetails,
+        errorDetails
       );
     }
 
@@ -136,7 +136,7 @@ export async function handleUpdateBicicleta(req, res) {
       res,
       200,
       "Bicicleta actualizada correctamente",
-      updated,
+      updated
     );
   } catch (error) {
     if (
@@ -152,7 +152,7 @@ export async function handleUpdateBicicleta(req, res) {
       res,
       500,
       "Error al actualizar la bicicleta",
-      error.message,
+      error.message
     );
   }
 }
@@ -182,7 +182,7 @@ export async function handleDeleteBicicleta(req, res) {
       res,
       500,
       "Error al eliminar la bicicleta",
-      error.message,
+      error.message
     );
   }
 }

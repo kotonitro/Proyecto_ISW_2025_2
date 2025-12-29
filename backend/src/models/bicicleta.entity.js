@@ -38,8 +38,8 @@ export const Bicicleta = new EntitySchema({
     },
     registrosAlmacen: {
       type: "one-to-many",
-      target: "RegistroAlmacen", 
-      inverseSide: "bicicleta", 
+      target: "RegistroAlmacen",
+      inverseSide: "bicicleta",
     },
   },
 });

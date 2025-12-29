@@ -16,7 +16,7 @@ export async function getBicicleteroByUbicacion(ubicacion) {
 }
 
 export async function getBicicleteros() {
-  return await bicicleteroRepository.find();;
+  return await bicicleteroRepository.find();
 }
 
 export async function createBicicletero(data) {

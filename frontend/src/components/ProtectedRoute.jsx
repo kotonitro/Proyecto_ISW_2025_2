@@ -54,7 +54,7 @@ export class ErrorBoundary extends React.Component {
 
 export default function ProtectedRoute({ children, allowedRoles }) {
   const token = localStorage.getItem("token");
-  const rol = localStorage.getItem("rol"); 
+  const rol = localStorage.getItem("rol");
 
   // 1. Si no hay token, al login
   if (!token) {

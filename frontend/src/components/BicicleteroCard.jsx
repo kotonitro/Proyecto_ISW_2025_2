@@ -1,6 +1,5 @@
 import React from "react";
 
-
 export default function BicicleteroCard({
   title,
   location,
@@ -9,8 +8,6 @@ export default function BicicleteroCard({
   onClick,
   placeholder,
 }) {
-  const fallbackImage = "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1200&q=80&auto=format&fit=crop&s=placeholder";
-
   const effectiveFallback = placeholder || defaultFallback;
 
   const handleKeyDown = (e) => {

@@ -35,7 +35,7 @@ export default function Home() {
   const fetchDisponibilidad = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/bicicleteros/disponibilidad",
+        "http://localhost:3000/api/bicicleteros/disponibilidad"
       );
       if (res.data && res.data.data) {
         setBicicleteros(res.data.data);
@@ -81,7 +81,7 @@ export default function Home() {
       } else {
         showAlert(
           "success",
-          response.message || "Solicitud enviada con éxito.",
+          response.message || "Solicitud enviada con éxito."
         );
         setIsModalOpen(false);
       }

@@ -1,10 +1,13 @@
 import { loginEncargado } from "../services/auth.service.js";
-import { handleSuccess, handleErrorClient} from "../handlers/responseHandlers.js";
+import {
+  handleSuccess,
+  handleErrorClient,
+} from "../handlers/responseHandlers.js";
 
 export async function handleLogin(req, res) {
   try {
     const { email, contrasena } = req.body;
-    
+
     if (!email || !contrasena) {
       return handleErrorClient(res, 400, "Email y contraseña son requeridos");
     }

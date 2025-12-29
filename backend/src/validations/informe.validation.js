@@ -11,8 +11,8 @@ export const informeValidation = Joi.object({
   idRegistroAlmacen: Joi.number().integer().allow(null).messages({
     "number.base": "El idRegistroAlmacen debe ser un número entero",
   }),
-  idBicicleta: Joi.number().integer().allow(null, '').optional(),
-  idBicicletero: Joi.number().integer().allow(null, '').optional(),
+  idBicicleta: Joi.number().integer().allow(null, "").optional(),
+  idBicicletero: Joi.number().integer().allow(null, "").optional(),
 
   tipoIncidente: Joi.string()
     .trim()
@@ -20,7 +20,9 @@ export const informeValidation = Joi.object({
     .valid(...TIPOS_INCIDENTE)
     .required()
     .messages({
-      "any.only": `El tipo de incidente debe ser uno de: ${TIPOS_INCIDENTE.join(", ")}`,
+      "any.only": `El tipo de incidente debe ser uno de: ${TIPOS_INCIDENTE.join(
+        ", "
+      )}`,
       "any.required": "El tipo de incidente es obligatorio",
     }),
 
@@ -30,7 +32,7 @@ export const informeValidation = Joi.object({
     "any.required": "La descripción es obligatoria",
   }),
 
-  fechaInforme: Joi.date().max('now').required().messages({
+  fechaInforme: Joi.date().max("now").required().messages({
     "date.base": "La fecha de informe no es válida",
     "date.max": "La fecha de informe no puede ser una fecha futura",
     "any.required": "La fecha de informe es obligatoria",
@@ -46,7 +48,7 @@ export const informeUpdateValidation = informeValidation
       "descripcion",
       "fechaInforme",
     ],
-    (schema) => schema.optional(),
+    (schema) => schema.optional()
   )
   .min(1)
   .required()

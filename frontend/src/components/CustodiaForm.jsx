@@ -48,7 +48,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
           `http://localhost:3000/api/usuarios/${rutCompleto}`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          },
+          }
         );
 
         if (res.data && res.data.data) {
@@ -61,7 +61,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
 
           if (user.bicicletas && user.bicicletas.length === 1) {
             setIdBicicletaSeleccionada(
-              user.bicicletas[0].idBicicleta.toString(),
+              user.bicicletas[0].idBicicleta.toString()
             );
           } else {
             setIdBicicletaSeleccionada("");
@@ -88,9 +88,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
         const res = await getBicicleteros();
         const list = res.data && res.data.data ? res.data.data : res.data;
         if (mounted) setBicicleteros(list || []);
-      } catch (e) {
-        
-      }
+      } catch (e) {}
     }
 
     loadBicicleteros();
@@ -307,7 +305,7 @@ export default function CustodiaForm({ onSuccess, addAlert }) {
                   >
                     {b.nombre}
                   </option>
-                ),
+                )
               )}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">

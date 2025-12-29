@@ -14,14 +14,14 @@ export async function loginEncargado(email, contrasena) {
   }
 
   if (!encargado.activo) {
-    throw new Error("Encargado inactivo.")
+    throw new Error("Encargado inactivo.");
   }
 
-  const payload = { 
-    id: encargado.idEncargado, 
+  const payload = {
+    id: encargado.idEncargado,
     email: encargado.email,
     esAdmin: encargado.esAdmin,
-    nombre: encargado.nombre
+    nombre: encargado.nombre,
   };
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 

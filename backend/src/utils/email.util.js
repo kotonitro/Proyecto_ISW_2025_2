@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
 export const enviarAlertaCorreo = async (
   destinatarios,
   linkAceptar,
-  nombreBicicletero,    
-  ubicacionBicicletero,  
-  mensajeUsuario,
+  nombreBicicletero,
+  ubicacionBicicletero,
+  mensajeUsuario
 ) => {
   try {
     const listaCorreos = Array.isArray(destinatarios)

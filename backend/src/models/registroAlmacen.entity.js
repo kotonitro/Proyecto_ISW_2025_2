@@ -72,10 +72,10 @@ export const RegistroAlmacen = new EntitySchema({
         name: "idEncargado",
       },
     },
-  informes: {
+    informes: {
       type: "one-to-many",
       target: "Informe",
-      inverseSide: "registrosAlmacen"
+      inverseSide: "registrosAlmacen",
     },
   },
 });

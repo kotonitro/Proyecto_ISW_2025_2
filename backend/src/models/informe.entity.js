@@ -48,24 +48,24 @@ export const Informe = new EntitySchema({
       },
     },
     documentos: {
-          target: "Documento", 
-          type: "one-to-many", 
-          inverseSide: "informe", 
-          cascade: true, 
-        },
-     bicicleta: {  
-           target: "Bicicleta",
-           type: "many-to-one",
-           joinColumn: {
-             name: "idBicicleta",
-           },
-  },
-      bicicletero: {
-          target: "Bicicletero",
-          type: "many-to-one",
-          joinColumn: {
-            name: "idBicicletero", 
-          },
-  },
+      target: "Documento",
+      type: "one-to-many",
+      inverseSide: "informe",
+      cascade: true,
+    },
+    bicicleta: {
+      target: "Bicicleta",
+      type: "many-to-one",
+      joinColumn: {
+        name: "idBicicleta",
+      },
+    },
+    bicicletero: {
+      target: "Bicicletero",
+      type: "many-to-one",
+      joinColumn: {
+        name: "idBicicletero",
+      },
+    },
   },
 });

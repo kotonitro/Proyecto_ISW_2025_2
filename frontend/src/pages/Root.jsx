@@ -26,11 +26,9 @@ export default function Root() {
 
   return (
     <div className="flex flex-col h-screen font-sans text-gray-900 overflow-hidden">
-
       <header className="bg-blue-700 text-white shadow-md z-30 shrink-0 h-18">
         <div className="w-full px-8 h-full flex items-center justify-between">
           <div className="flex items-center gap-3">
-
             {token && (
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -80,7 +78,6 @@ export default function Root() {
           </div>
 
           <nav className="flex gap-4 items-center">
-
             {!token && location.pathname !== "/login" && (
               <div className="flex items-center gap-4">
                 <span className="text-white text-sm font-medium hidden sm:block">
@@ -91,8 +88,19 @@ export default function Root() {
                   className="flex items-center gap-2 bg-white text-blue-700 border border-white/40 py-2 px-4 rounded-lg no-underline font-semibold hover:bg-gray-100 transition-colors text-sm"
                 >
                   <span>Ingresar</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
                   </svg>
                 </Link>
               </div>
@@ -107,8 +115,19 @@ export default function Root() {
                   onClick={handleLogout}
                   className="flex items-center gap-2 bg-red-600 text-white border-none py-2 px-4 rounded-lg cursor-pointer font-semibold hover:bg-red-700 transition-colors text-sm"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                    />
                   </svg>
                   <span>Salir</span>
                 </button>
@@ -131,7 +150,11 @@ export default function Root() {
             className={`
                           bg-blue-900 text-white z-40 transition-transform duration-300 ease-in-out
                           absolute top-0 left-0 h-full w-64 shadow-xl
-                          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                          ${
+                            isSidebarOpen
+                              ? "translate-x-0"
+                              : "-translate-x-full"
+                          }
                         `}
           >
             <div className="w-64 h-full">
@@ -140,10 +163,7 @@ export default function Root() {
           </aside>
         )}
         <main className="flex-1 overflow-y-auto p-6 bg-blue-50 scroll-smooth w-full">
-          {token && (
-            <div className="mb-4 pb-4">
-            </div>
-          )}
+          {token && <div className="mb-4 pb-4"></div>}
 
           <Outlet />
 

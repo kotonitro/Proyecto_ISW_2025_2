@@ -1,10 +1,12 @@
 import { AppDataSource } from "../config/configDB.js";
 import { RegistroAlmacen } from "../models/registroAlmacen.entity.js";
 
-export const registroAlmacenRepository = AppDataSource.getRepository(RegistroAlmacen);
+export const registroAlmacenRepository =
+  AppDataSource.getRepository(RegistroAlmacen);
 export const usuarioRepository = AppDataSource.getRepository("Usuario");
 export const bicicletaRepository = AppDataSource.getRepository("Bicicleta");
-export const historialCustodiaRepository =AppDataSource.getRepository("HistorialCustodia");
+export const historialCustodiaRepository =
+  AppDataSource.getRepository("HistorialCustodia");
 
 export function isWithinAllowedHours() {
   const now = new Date();

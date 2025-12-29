@@ -3,7 +3,8 @@ import { Bicicleta } from "../models/bicicleta.entity.js";
 import { getUsuarioById } from "./usuario.service.js";
 
 export const bicicletaRepository = AppDataSource.getRepository(Bicicleta);
-const registroAlmacenRepository = AppDataSource.getRepository("RegistroAlmacen");
+const registroAlmacenRepository =
+  AppDataSource.getRepository("RegistroAlmacen");
 
 export async function createBicicleta(data) {
   if (
@@ -17,7 +18,7 @@ export async function createBicicleta(data) {
   const usuario = await getUsuarioById(parseInt(data.idUsuario));
   if (!usuario) {
     throw new Error(
-      "Usuario no encontrado. No se puede crear la bicicleta sin un usuario válido",
+      "Usuario no encontrado. No se puede crear la bicicleta sin un usuario válido"
     );
   }
 
@@ -60,7 +61,7 @@ export async function updateBicicleta(idBicicleta, data) {
     const usuario = await getUsuarioById(parseInt(data.idUsuario));
     if (!usuario) {
       throw new Error(
-        "Usuario no encontrado. No se puede reasignar la bicicleta a un usuario inexistente",
+        "Usuario no encontrado. No se puede reasignar la bicicleta a un usuario inexistente"
       );
     }
   }
@@ -79,13 +80,13 @@ export async function deleteBicicleta(idBicicleta) {
   // Verificar si la bicicleta tiene registros de custodia activos (sin salida)
   const registrosActivos = await registroAlmacenRepository.findBy({
     idBicicleta: parseInt(idBicicleta),
-    fechaSalida: null
+    fechaSalida: null,
   });
 
   if (registrosActivos && registrosActivos.length > 0) {
     throw new Error(
       "No se puede eliminar la bicicleta porque tiene registros de custodia activos. " +
-      "Por favor, registre la salida primero o elimine el registro de custodia."
+        "Por favor, registre la salida primero o elimine el registro de custodia."
     );
   }
 
