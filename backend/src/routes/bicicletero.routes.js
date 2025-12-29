@@ -21,8 +21,8 @@ router.get("/:id", handleGetBicicletero);
 router.use(authMiddleware);
 router.use(esAdmin);
 
-router.post("/", uploadBicicletero.single('imagen'), handleCreateBicicletero);
+router.post("/", uploadBicicletero, handleCreateBicicletero);
 router.delete("/:id", handleDeleteBicicletero);
-router.patch("/:id", uploadBicicletero.single('imagen'), handleUpdateBicicletero);
+router.patch("/:id", uploadBicicletero, handleUpdateBicicletero);
 
 export default router;

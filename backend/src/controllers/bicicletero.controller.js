@@ -260,7 +260,10 @@ export async function handleUpdateBicicletero(req, res) {
       );
     }
 
-    if (req.file && Bicicletero.imagen) {
+    const debeBorrarImagenAntigua =
+      req.file || req.body.eliminarImagen === "true";
+
+    if (debeBorrarImagenAntigua && Bicicletero.imagen) {
       const rutaImagenAntigua = path.join(bicicleterosDir, Bicicletero.imagen);
       if (fs.existsSync(rutaImagenAntigua)) {
         fs.unlinkSync(rutaImagenAntigua);
