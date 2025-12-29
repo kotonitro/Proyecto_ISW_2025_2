@@ -1,0 +1,29 @@
+meta {
+  name: Crear Bicicleta - Usuario No Existente
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/bicicletas
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "marca": "Test",
+    "modelo": "Fail",
+    "color": "Negro",
+    "idUsuario": 999999
+  }
+}
+
+assert {
+  res.status: eq 404
+  res.body.message: contains Usuario no encontrado
+}
