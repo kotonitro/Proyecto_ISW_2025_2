@@ -7,11 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const baseUploadsDir = path.resolve(__dirname, '../../uploads');
 
-// Función auxiliar para crear configuración de Multer por carpeta
 const createStorage = (folderName) => {
   const finalDir = path.join(baseUploadsDir, folderName);
 
-  // Asegurar que la carpeta existe
   if (!fs.existsSync(finalDir)) {
     fs.mkdirSync(finalDir, { recursive: true });
     console.log(`=> Carpeta creada: ${finalDir}`);
@@ -23,7 +21,6 @@ const createStorage = (folderName) => {
     },
     filename: (req, file, cb) => {
       const timestamp = Date.now();
-      // Limpiamos el nombre de espacios y caracteres raros
       const safeName = file.originalname.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
       cb(null, `${timestamp}_${safeName}`);
     }
@@ -41,25 +38,16 @@ const fileFilter = (req, file, cb) => {
 
 const limits = { fileSize: 10 * 1024 * 1024 }; // 10 MB
 
-// --- EXPORTAMOS MIDDLEWARES ESPECÍFICOS ---
-
-// 1. Para Bicicleteros (Guarda en uploads/bicicleteros)
+// Para Bicicleteros
 export const uploadBicicletero = multer({ 
   storage: createStorage('bicicleteros'),
   fileFilter,
   limits
 });
 
-// 2. Para Informes (Guarda en uploads/informes)
-export const uploadInforme = multer({ 
-  storage: createStorage('informes'),
-  fileFilter,
-  limits
-});
-
-// 3. Genérico (Para compatibilidad con tu código anterior si lo usas)
+// Para documentos de informes
 export const uploadDocs = multer({
-  storage: createStorage('otros'),
+  storage: createStorage('informes'),
   fileFilter,
   limits
 }).array('archivosExtras', 5);

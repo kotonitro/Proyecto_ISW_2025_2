@@ -1,32 +1,17 @@
 import React from "react";
 
-/**
- * BicicleteroCard
- *
- * Usa clases CSS del proyecto definidas en `src/index.css`:
- * - .bicicletero-card
- * - .bicicletero-image
- * - .bicicletero-panel
- * - .bicicletero-title
- * - .bicicletero-text
- * - .bicicletero-capacity
- *
- * Props:
- * - title: string
- * - location: string
- * - capacity: string
- * - image: string (url or import)
- * - onClick: function (opcional) para manejar clicks
- */
+
 export default function BicicleteroCard({
   title,
   location,
   capacity,
   image,
   onClick,
+  placeholder,
 }) {
-  const fallbackImage =
-    "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1200&q=80&auto=format&fit=crop&s=placeholder";
+  const fallbackImage = "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1200&q=80&auto=format&fit=crop&s=placeholder";
+
+  const effectiveFallback = placeholder || defaultFallback;
 
   const handleKeyDown = (e) => {
     if (!onClick) return;
@@ -47,9 +32,15 @@ export default function BicicleteroCard({
     >
       <div className="h-48 w-full relative overflow-hidden">
         <img
-          src={image || fallbackImage}
+          src={image || effectiveFallback}
           alt={title || "Bicicletero"}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            if (e.target.src !== effectiveFallback) {
+              e.target.onerror = null;
+              e.target.src = effectiveFallback;
+            }
+          }}
         />
       </div>
 
