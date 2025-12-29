@@ -6,7 +6,8 @@ import axios from "axios";
 import Alert from "../components/Alert";
 import defaultImage from "../images/bicicleteroPlaceholder.jpg";
 
-const IMAGE_BASE_URL = "http://localhost:3000/uploads/bicicleteros/";
+const IMAGE_BASE_URL = `${import.meta.env.VITE_URL_IMG}/uploads/bicicleteros` || "http://localhost:3000/uploads/bicicleteros/";
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function Home() {
   const fetchDisponibilidad = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/bicicleteros/disponibilidad"
+        `${import.meta.env.VITE_API_URL}/bicicleteros/disponibilidad` || "http://localhost:3000/api/bicicleteros/disponibilidad"
       );
       if (res.data && res.data.data) {
         setBicicleteros(res.data.data);

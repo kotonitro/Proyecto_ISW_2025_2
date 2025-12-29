@@ -16,7 +16,7 @@ import {
   updateBicicletero,
 } from "../api/bicicleteroApi";
 
-const IMAGE_BASE_URL = "http://localhost:3000/uploads/bicicleteros/";
+const IMAGE_BASE_URL = `${import.meta.env.VITE_URL_IMG}/uploads/bicicleteros` || "http://localhost:3000/uploads/bicicleteros/";
 
 export default function AdminBicicleteros() {
   const [bicicleteros, setBicicleteros] = useState([]);
