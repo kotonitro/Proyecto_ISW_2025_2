@@ -35,7 +35,12 @@ export async function handleGetBicicletero(req, res) {
 }
 
 export async function handleCreateBicicletero(req, res) {
-    const bicicleteroData = req.body;
+
+    let bicicleteroData = { ...req.body };
+
+    if (req.file) {
+        bicicleteroData.imagen = req.file.filename;
+    }
 
     try {
         
@@ -64,11 +69,11 @@ export async function handleCreateBicicletero(req, res) {
 
         const newBicicletero = await createBicicletero(value);
         handleSuccess(res, 201, "Bicicletero creado correctamente.", newBicicletero);
+
     } catch (error) {
         handleErrorServer(res, 500, "Error interno al crear el bicicletero.", error.message);
     }
 }
-
 export async function handleDeleteBicicletero(req, res) {
     const { id } = req.params;
     const idBicicletero = parseInt(id, 10);
@@ -97,6 +102,10 @@ export async function handleUpdateBicicletero(req, res){
     const { id } = req.params;
     const idBicicletero = parseInt(id, 10);
     const bicicleteroData = req.body;
+
+    if (req.file) {
+        bicicleteroData.imagen = req.file.filename;
+    }
 
     if (isNaN(idBicicletero)) {
         return handleErrorClient(res, 400, "El ID del bicicletero debe ser un número.");

@@ -50,7 +50,6 @@ export async function createBicicleteros() {
           nombre: "Bicicletero 1",
           ubicacion: "Av. Principal",
           capacidad: 15,
-          imagen: `${baseUrl}/bike1.jpg`,
         }),
       ),
       bicicleteroRepository.save(
@@ -58,7 +57,6 @@ export async function createBicicleteros() {
           nombre: "Bicicletero 2",
           ubicacion: "Plaza Central",
           capacidad: 15,
-          imagen: `${baseUrl}/bike2.jpg`,
         }),
       ),
       bicicleteroRepository.save(
@@ -66,7 +64,6 @@ export async function createBicicleteros() {
           nombre: "Bicicletero 3",
           ubicacion: "Parque Norte",
           capacidad: 15,
-          imagen: `${baseUrl}/bike3.jpg`,
         }),
       ),
       bicicleteroRepository.save(
@@ -74,7 +71,6 @@ export async function createBicicleteros() {
           nombre: "Bicicletero 4",
           ubicacion: "Calle Secundaria",
           capacidad: 15,
-          imagen: `${baseUrl}/bike4.jpg`,
         }),
       ),
     ]);
