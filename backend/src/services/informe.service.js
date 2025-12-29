@@ -66,7 +66,7 @@ export async function getInformeZip(idInforme) {
       console.log("1. Nombre en BD (ruta):", nombreFisico);
 
       if (nombreFisico) {
-        const filePath = path.join(__dirname, "../../uploads", nombreFisico);
+        const filePath = path.join(__dirname, "../../uploads/informes", nombreFisico);
         
         console.log("2. Ruta absoluta generada:", filePath);
         

@@ -106,23 +106,22 @@ export default function AdminBicicleteros() {
     formData.append("nombre", form.nombre);
     formData.append("ubicacion", form.ubicacion);
     formData.append("capacidad", form.capacidad);
-    formData.append("activo", form.activo ? "true" : "false");
-
     if (imagenFile) {
       formData.append("imagen", imagenFile);
     }
 
     try {
       if (isEditing) {
-        const dataToUpdate = { ...form };
-        await updateBicicletero(currentId, dataToUpdate);
+        formData.append("activo", form.activo ? "true" : "false");
+        await updateBicicletero(currentId, formData);
         showAlert("success", "Bicicletero actualizado correctamente");
       } else {
-        await createBicicletero(form);
+        await createBicicletero(formData);
         showAlert("success", "Bicicletero creado correctamente");
       }
       setShowModal(false);
       fetchBicicleteros();
+
     } catch (err) {
       const errorData = err.response?.data;
       let errorMessage = errorData?.message || "Ocurrió un error al guardar";

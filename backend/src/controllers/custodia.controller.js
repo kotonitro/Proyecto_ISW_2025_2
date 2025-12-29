@@ -1,8 +1,4 @@
-import {
-  handleSuccess,
-  handleErrorClient,
-  handleErrorServer,
-} from "../handlers/responseHandlers.js";
+import {handleSuccess,handleErrorClient,handleErrorServer,} from "../handlers/responseHandlers.js";
 import {
   registerEntrada,
   registerSalida,
@@ -15,18 +11,18 @@ import {
   getUbicacionBicicleta,
 } from "../services/custodia.service.js";
 import { AppDataSource } from "../config/configDB.js";
+import { registroEntradaValidation, registroSalidaValidation } from "../validations/registroAlmacen.validation.js";
 
 export async function createEntrada(req, res) {
   try {
-    const {
-      rutUsuario,
-      idBicicleta,
-      idBicicletero,
-      nombreUsuario,
-      emailUsuario,
-      telefonoUsuario,
-    } = req.body;
+    
+    const { error, value } = registroEntradaValidation.validate(req.body);
 
+    if (error) {
+      return handleErrorClient(res, 400, error.details[0].message);
+    }
+
+  
     const idEncargado =
       req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
 
@@ -38,17 +34,7 @@ export async function createEntrada(req, res) {
       );
     }
 
-    const registro = await registerEntrada(
-      {
-        rutUsuario,
-        idBicicleta,
-        idBicicletero,
-        nombreUsuario,
-        emailUsuario,
-        telefonoUsuario,
-      },
-      idEncargado
-    );
+    const registro = await registerEntrada(value, idEncargado);
 
     return handleSuccess(res, 201, "Entrada registrada", registro);
   } catch (error) {
@@ -59,9 +45,12 @@ export async function createEntrada(req, res) {
 export async function createSalida(req, res) {
   try {
     console.log("Intentando salida...");
-    console.log("REQ.USER es:", req.user);
-    console.log("REQ.ENCARGADO es:", req.encargado);
-    const { idRegistroAlmacen, fechaSalida } = req.body;
+  
+    const { error, value } = registroSalidaValidation.validate(req.body);
+
+    if (error) {
+      return handleErrorClient(res, 400, error.details[0].message);
+    }
 
     const idEncargado =
       req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
@@ -73,6 +62,8 @@ export async function createSalida(req, res) {
         "No se pudo identificar al encargado."
       );
     }
+
+    const { idRegistroAlmacen, fechaSalida } = value;
 
     const registro = await registerSalida(
       idRegistroAlmacen,

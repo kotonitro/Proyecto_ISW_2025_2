@@ -175,6 +175,7 @@ export default function Home() {
                   location={b.location}
                   capacity={`${b.ocupados} / ${b.total}`}
                   image={b.imagen ? `${IMAGE_BASE_URL}${b.imagen}` : defaultImage}
+                  placeholder={defaultImage}
                 />
               </div>
             ))
