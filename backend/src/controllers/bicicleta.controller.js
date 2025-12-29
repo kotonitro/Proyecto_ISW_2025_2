@@ -172,6 +172,12 @@ export async function handleDeleteBicicleta(req, res) {
     ) {
       return handleErrorClient(res, 404, error.message);
     }
+    if (
+      error.message &&
+      error.message.toLowerCase().includes("registros de custodia activos")
+    ) {
+      return handleErrorClient(res, 409, error.message);
+    }
     return handleErrorServer(
       res,
       500,
