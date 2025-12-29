@@ -42,6 +42,19 @@ export default function HistorialRegistros() {
 
   return (
     <div className="animate-in fade-in duration-500">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-blue-900 flex items-center gap-2">
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5v2a2 2 0 002 2h2a2 2 0 002-2V5M7 20h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2z" />
+            </svg>
+            Historial
+            <span className="ml-3 inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-xs font-bold uppercase">
+              RETIRADAS
+            </span>
+          </h2>
+        </div>
+      </div>
       <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50/50 p-5 rounded-xl border border-blue-100 shadow-sm">
         
         <div className="relative">
@@ -82,15 +95,14 @@ export default function HistorialRegistros() {
               <th className="px-6 py-4 text-left text-[10px] font-bold text-blue-700 uppercase tracking-wider">Ubicación</th>
               <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Fecha Entrada</th>
               <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Fecha Salida</th>
-              <th className="px-6 py-4 text-center text-[10px] font-bold text-blue-700 uppercase tracking-wider">Estado</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-blue-50/50">
             {loading ? (
-              <tr><td colSpan="6" className="px-6 py-20 text-center"><div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></td></tr>
+              <tr><td colSpan="5" className="px-6 py-20 text-center"><div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></td></tr>
             ) : registros.length === 0 ? (
               <tr>
-                <td colSpan="6" className="px-6 py-20 text-center">
+                <td colSpan="5" className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center opacity-40">
                     <svg className="w-12 h-12 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     <p className="text-sm font-medium text-gray-500">No se encontraron registros</p>
@@ -122,11 +134,6 @@ export default function HistorialRegistros() {
                   </td>
                   <td className="px-6 py-4 text-center text-xs text-gray-600 font-mono">
                     {r.fechaSalida ? new Date(r.fechaSalida).toLocaleString('es-CL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '-'}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 uppercase border border-blue-100">
-                      Retirada
-                    </span>
                   </td>
                 </tr>
               ))
