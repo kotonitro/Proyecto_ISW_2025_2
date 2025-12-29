@@ -7,6 +7,7 @@ import Alert from "../components/Alert";
 import ConfirmAlert from "../components/ConfirmAlert";
 import StatusButton from "../components/StatusButton";
 import defaultImage from "../images/bicicleteroPlaceholder.jpg";
+import ImagePreviewModal from "../components/ImagePreviewModal";
 import {
   getBicicleteros,
   getBicicletero,
@@ -26,6 +27,9 @@ export default function AdminBicicleteros() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [imagenFile, setImagenFile] = useState(null);
+  const [deleteImage, setDeleteImage] = useState(false); // Para marcar que queremos borrar
+  const [currentImage, setCurrentImage] = useState(null); // Para saber si el item editado tiene imagen
+  const [previewImage, setPreviewImage] = useState(null);
 
   const [confirmConfig, setConfirmConfig] = useState({
     title: "",
@@ -80,6 +84,8 @@ export default function AdminBicicleteros() {
   const handleOpenCreate = () => {
     setForm({ nombre: "", ubicacion: "", capacidad: "" });
     setImagenFile(null);
+    setCurrentImage(null); // Limpiar
+    setDeleteImage(false); // Limpiar
     setIsEditing(false);
     setShowModal(true);
   };
@@ -94,6 +100,8 @@ export default function AdminBicicleteros() {
     });
     setCurrentId(bic.idBicicletero);
     setImagenFile(null);
+    setCurrentImage(bic.imagen); // Guardamos la imagen actual del registro
+    setDeleteImage(false); // Reseteamos el flag
     setIsEditing(true);
     setShowModal(true);
   };
@@ -113,6 +121,9 @@ export default function AdminBicicleteros() {
     try {
       if (isEditing) {
         formData.append("activo", form.activo ? "true" : "false");
+        if (deleteImage) {
+          formData.append("eliminarImagen", "true");
+        }
         await updateBicicletero(currentId, formData);
         showAlert("success", "Bicicletero actualizado correctamente");
       } else {
@@ -121,7 +132,6 @@ export default function AdminBicicleteros() {
       }
       setShowModal(false);
       fetchBicicleteros();
-
     } catch (err) {
       const errorData = err.response?.data;
       let errorMessage = errorData?.message || "Ocurrió un error al guardar";
@@ -201,6 +211,11 @@ export default function AdminBicicleteros() {
         message={confirmConfig.message}
       />
 
+      <ImagePreviewModal
+        image={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
+
       {/*Header (Título)*/}
       <PageTitle title="Administración de Bicicleteros" />
 
@@ -234,76 +249,83 @@ export default function AdminBicicleteros() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {/*Datos*/}
-                {bicicleterosFiltrados.map((bic) => (
-                  <tr
-                    key={bic.idBicicletero}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 font-mono text-black">
-                      {bic.nombre}
-                    </td>
-                    <td className="px-6 py-4 font-mono text-gray-600">
-                      {bic.ubicacion}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800 border border-green-200">
-                        {bic.capacidad}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      {bic.activo ? (
-                        <span className="bg-green-100 text-green-700 border border-green-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
-                          Activo
-                        </span>
-                      ) : (
-                        <span className="bg-red-100 text-red-700 border border-red-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
-                          Inactivo
-                        </span>
-                      )}
-                    </td>
+                {bicicleterosFiltrados.map((bic) => {
+                  
+                  // 4. Calculamos la URL para cada fila
+                  const imageUrl = bic.imagen 
+                    ? `${IMAGE_BASE_URL}${bic.imagen.replace(/^bicicleteros\//, '')}` 
+                    : defaultImage;
 
-                    <td className="px-6 py-4 text-center">
-                      <div className="flex justify-center">
-                        <img 
-                          src={
-                            bic.imagen 
-                              // Si existe imagen, construimos la URL limpiando posibles prefijos antiguos
-                              ? `${IMAGE_BASE_URL}${bic.imagen.replace(/^bicicleteros\//, '')}` 
-                              // Si es null/false, usamos la imagen por defecto
-                              : defaultImage
-                          } 
-                          alt="Bicicletero" 
-                          className="h-10 w-10 rounded-full object-cover border border-gray-200 shadow-sm bg-white"
-                          // Si la imagen existe pero falla al cargar (ej: 404), cambiamos al default
-                          onError={(e) => {
-                            e.target.onerror = null; 
-                            e.target.src = defaultImage;
-                          }}
-                        />
-                      </div>
-                    </td>
+                  return (
+                    <tr
+                      key={bic.idBicicletero}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 py-4 font-mono text-black">
+                        {bic.nombre}
+                      </td>
+                      <td className="px-6 py-4 font-mono text-gray-600">
+                        {bic.ubicacion}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800 border border-green-200">
+                          {bic.capacidad}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {bic.activo ? (
+                          <span className="bg-green-100 text-green-700 border border-green-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                            Activo
+                          </span>
+                        ) : (
+                          <span className="bg-red-100 text-red-700 border border-red-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                            Inactivo
+                          </span>
+                        )}
+                      </td>
 
-                    <td className="px-6 py-4 text-right whitespace-nowrap">
-                      <div className="flex justify-end gap-2">
-                        <EditButton onClick={() => handleOpenEdit(bic)} />
-                        <DeleteButton
-                          onClick={() =>
-                            handleDeleteClick(
-                              bic.idBicicletero,
-                              bic.nombre,
-                              bic.ubicacion
-                            )
-                          }
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex justify-center group relative">
+                          <img 
+                            src={imageUrl} 
+                            alt="Bicicletero" 
+                            className="h-10 w-10 rounded-full object-cover border border-gray-200 shadow-sm bg-white cursor-pointer hover:scale-110 transition-transform hover:ring-2 hover:ring-blue-400"
+                            
+                            // 5. Al hacer click, pasamos la URL al estado
+                            onClick={() => setPreviewImage(imageUrl)}
+                            
+                            onError={(e) => {
+                              e.target.onerror = null; 
+                              e.target.src = defaultImage;
+                            }}
+                          />
+                          <span className="absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                            Ver imagen
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 text-right whitespace-nowrap">
+                        <div className="flex justify-end gap-2">
+                          <EditButton onClick={() => handleOpenEdit(bic)} />
+                          <DeleteButton
+                            onClick={() =>
+                              handleDeleteClick(
+                                bic.idBicicletero,
+                                bic.nombre,
+                                bic.ubicacion
+                              )
+                            }
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
                 {bicicleterosFiltrados.length === 0 && (
                   <tr>
                     <td
-                      colSpan="5"
+                      colSpan="6"
                       className="px-6 py-6 text-center text-gray-400"
                     >
                       {busqueda
@@ -320,7 +342,7 @@ export default function AdminBicicleteros() {
       {/*Formulario*/}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 max-h-[90vh] overflow-y-auto">
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-lg font-bold text-gray-800">
                 {isEditing ? "Editar Bicicletero" : "Nuevo Bicicletero"}
@@ -334,7 +356,7 @@ export default function AdminBicicleteros() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {/*Nombre*/}
+              {/* Nombre */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Nombre del Bicicletero
@@ -349,7 +371,7 @@ export default function AdminBicicleteros() {
                 />
               </div>
 
-              {/*Ubicación*/}
+              {/* Ubicación */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Ubicación
@@ -366,7 +388,7 @@ export default function AdminBicicleteros() {
                 />
               </div>
 
-              {/*Capacidad*/}
+              {/* Capacidad */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Capacidad Máxima
@@ -383,6 +405,7 @@ export default function AdminBicicleteros() {
                   }
                 />
               </div>
+
               {/* Input Imagen */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -393,10 +416,48 @@ export default function AdminBicicleteros() {
                     </span>
                   )}
                 </label>
+
+                {/* Eliminar imagen actual */}
+                {isEditing && currentImage && !deleteImage && !imagenFile && (
+                  <div className="mb-2 flex items-center justify-between p-2 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">
+                        Imagen actual asignada
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteImage(true)}
+                      className="text-xs text-red-600 hover:text-red-800 font-bold hover:underline"
+                    >
+                      Quitar Imagen
+                    </button>
+                  </div>
+                )}
+
+                {/* Mensaje de confirmación de borrado */}
+                {deleteImage && !imagenFile && (
+                  <div className="mb-2 p-2 bg-red-50 border border-red-100 rounded-lg flex justify-between items-center">
+                    <span className="text-xs text-red-600">
+                      La imagen se eliminará al guardar.
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteImage(false)}
+                      className="text-xs text-blue-600 hover:underline"
+                    >
+                      Deshacer
+                    </button>
+                  </div>
+                )}
+
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setImagenFile(e.target.files[0])}
+                  onChange={(e) => {
+                    setImagenFile(e.target.files[0]);
+                    setDeleteImage(false);
+                  }}
                   className="block w-full text-sm text-gray-500
                           file:mr-4 file:py-2 file:px-4
                           file:rounded-full file:border-0
