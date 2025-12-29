@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Ajusta la URL si tu backend tiene otro prefijo
-const API_URL = "http://localhost:3000/api/bicicleteros";
+const API_URL = `${import.meta.env.VITE_API_URL}/bicicleteros` || "http://localhost:3000/api/bicicleteros";
 
 const api = axios.create({
   baseURL: API_URL,

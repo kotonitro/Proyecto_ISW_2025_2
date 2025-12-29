@@ -32,7 +32,7 @@ export default function UbicacionBicicleta() {
 
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/custodia/ubicacion/${rut}`
+        `${import.meta.env.VITE_API_URL}/custodia/ubicacion/${rut}` || "http://localhost:3000/api/custodia/ubicacion/${rut}"
       );
 
       if (response.data && response.data.data) {
