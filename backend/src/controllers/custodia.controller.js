@@ -1,4 +1,8 @@
-import {handleSuccess,handleErrorClient,handleErrorServer,} from "../handlers/responseHandlers.js";
+import {
+  handleSuccess,
+  handleErrorClient,
+  handleErrorServer,
+} from "../handlers/responseHandlers.js";
 import {
   registerEntrada,
   registerSalida,
@@ -11,18 +15,19 @@ import {
   getUbicacionBicicleta,
 } from "../services/custodia.service.js";
 import { AppDataSource } from "../config/configDB.js";
-import { registroEntradaValidation, registroSalidaValidation } from "../validations/registroAlmacen.validation.js";
+import {
+  registroEntradaValidation,
+  registroSalidaValidation,
+} from "../validations/registroAlmacen.validation.js";
 
 export async function createEntrada(req, res) {
   try {
-    
     const { error, value } = registroEntradaValidation.validate(req.body);
 
     if (error) {
       return handleErrorClient(res, 400, error.details[0].message);
     }
 
-  
     const idEncargado =
       req.encargado.idEncargado || req.encargado.idUsuario || req.encargado.id;
 
@@ -30,7 +35,7 @@ export async function createEntrada(req, res) {
       return handleErrorClient(
         res,
         401,
-        "No se pudo identificar al encargado en el token."
+        "No se pudo identificar al encargado en el token.",
       );
     }
 
@@ -38,14 +43,29 @@ export async function createEntrada(req, res) {
 
     return handleSuccess(res, 201, "Entrada registrada", registro);
   } catch (error) {
-    return handleErrorClient(res, 400, error.message);
+    if (error.message.includes("no existe")) {
+      return handleErrorClient(res, 404, error.message);
+    }
+    if (
+      error.message.includes("no coincide") ||
+      error.message.includes("sólo está permitido") ||
+      error.message.includes("ya almacenada")
+    ) {
+      return handleErrorClient(res, 400, error.message);
+    }
+    return handleErrorServer(
+      res,
+      500,
+      "Error al registrar entrada",
+      error.message,
+    );
   }
 }
 
 export async function createSalida(req, res) {
   try {
     console.log("Intentando salida...");
-  
+
     const { error, value } = registroSalidaValidation.validate(req.body);
 
     if (error) {
@@ -59,7 +79,7 @@ export async function createSalida(req, res) {
       return handleErrorClient(
         res,
         401,
-        "No se pudo identificar al encargado."
+        "No se pudo identificar al encargado.",
       );
     }
 
@@ -68,12 +88,23 @@ export async function createSalida(req, res) {
     const registro = await registerSalida(
       idRegistroAlmacen,
       idEncargado,
-      fechaSalida
+      fechaSalida,
     );
 
     return handleSuccess(res, 201, "Salida registrada correctamente", registro);
   } catch (error) {
-    return handleErrorClient(res, 400, error.message);
+    if (error.message.includes("no existe")) {
+      return handleErrorClient(res, 404, error.message);
+    }
+    if (error.message.includes("sólo está permitida")) {
+      return handleErrorClient(res, 400, error.message);
+    }
+    return handleErrorServer(
+      res,
+      500,
+      "Error al registrar salida",
+      error.message,
+    );
   }
 }
 
@@ -94,14 +125,14 @@ export async function getRegistros(req, res) {
       res,
       200,
       "Registros obtenidos correctamente",
-      registros
+      registros,
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener registros",
-      error.message
+      error.message,
     );
   }
 }
@@ -116,7 +147,7 @@ export async function getRegistroDetalle(req, res) {
         res,
         404,
         `Registro con ID ${id} no encontrado`,
-        null
+        null,
       );
     }
 
@@ -126,7 +157,7 @@ export async function getRegistroDetalle(req, res) {
       res,
       500,
       "Error al obtener el registro",
-      error.message
+      error.message,
     );
   }
 }
@@ -139,14 +170,14 @@ export async function getBicicletasAlmacendasController(req, res) {
       res,
       200,
       "Bicicletas almacenadas obtenidas correctamente",
-      bicicletas
+      bicicletas,
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener bicicletas almacenadas",
-      error.message
+      error.message,
     );
   }
 }
@@ -159,14 +190,14 @@ export async function getBicicletasRetiradasController(req, res) {
       res,
       200,
       "Bicicletas retiradas obtenidas correctamente",
-      bicicletas
+      bicicletas,
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener bicicletas retiradas",
-      error.message
+      error.message,
     );
   }
 }
@@ -189,7 +220,7 @@ export async function getDisponibilidadBicicleteros(req, res) {
           .getCount();
 
         console.log(
-          `[CAPACIDAD] Bicicletero ${b.idBicicletero} (${b.nombre}): ${ocupados} / ${b.capacidad}`
+          `[CAPACIDAD] Bicicletero ${b.idBicicletero} (${b.nombre}): ${ocupados} / ${b.capacidad}`,
         );
 
         return {
@@ -199,9 +230,9 @@ export async function getDisponibilidadBicicleteros(req, res) {
           ocupados: ocupados,
           total: b.capacidad,
           activo: b.activo,
-          imagen: b.imagen
+          imagen: b.imagen,
         };
-      })
+      }),
     );
 
     // Enviar la respuesta con la estructura que necesitamos
@@ -229,7 +260,7 @@ export async function deleteRegistroController(req, res) {
       res,
       500,
       "Error al eliminar el registro",
-      error.message
+      error.message,
     );
   }
 }
@@ -248,14 +279,14 @@ export async function getHistorialController(req, res) {
       res,
       200,
       "Historial obtenido correctamente",
-      historial
+      historial,
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener historial",
-      error.message
+      error.message,
     );
   }
 }
@@ -272,14 +303,14 @@ export async function getUbicacionController(req, res) {
       res,
       200,
       "Ubicación obtenida correctamente",
-      ubicacion
+      ubicacion,
     );
   } catch (error) {
     return handleErrorServer(
       res,
       500,
       "Error al obtener la ubicación",
-      error.message
+      error.message,
     );
   }
 }
