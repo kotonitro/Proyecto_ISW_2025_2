@@ -1,0 +1,29 @@
+meta {
+  name: Crear Usuario - Telefono Duplicado
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/usuarios
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "rut": "99999999-9",
+    "nombre": "Test Telefono",
+    "email": "telefono@test.com",
+    "telefono": 12345678
+  }
+}
+
+assert {
+  res.status: eq 409
+  res.body.message: contains teléfono
+}
