@@ -54,6 +54,12 @@ const uploadBicicleteroMulter = multer({
   limits
 }).single('imagen');
 
+const uploadDocsMulter = multer({
+  storage: createStorage('informes'),
+  fileFilter: docFilter, // <--- CORRECCIÓN 1: La propiedad debe llamarse 'fileFilter'
+  limits
+}).array('archivosExtras', 5);
+
 // Para Bicicleteros
 export const uploadBicicletero = (req, res, next) => {
   uploadBicicleteroMulter(req, res, (err) => {
@@ -65,8 +71,11 @@ export const uploadBicicletero = (req, res, next) => {
 };
 
 // Para documentos de informes
-export const uploadDocs = multer({
-  storage: createStorage('informes'),
-  docFilter,
-  limits
-}).array('archivosExtras', 5);
+export const uploadDocs = (req, res, next) => {
+  uploadDocsMulter(req, res, (err) => {
+    if (err) {
+      return handleErrorClient(res, 400, "Error al subir documentos: " + err.message);
+    }
+    next();
+  });
+};

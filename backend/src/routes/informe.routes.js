@@ -32,7 +32,7 @@ const uploadMiddleware = (req, res, next) => {
   });
 };
 router.use(authMiddleware);
-router.post("/", uploadMiddleware, handleCreateInforme);
+router.post("/", uploadDocs, handleCreateInforme);
 router.use(authMiddleware);
 router.get("/", handleGetInformes);
 router.patch("/:id", handleUpdateInforme);
