@@ -1,6 +1,18 @@
-import React from 'react';
+import React from "react";
 
-const UserSearch = ({ rutSearch, setRutSearch, handleSearch, loading, setIsCreating, setCurrentUser, setUserForm, setBikeForm, setUserBicicletas, formatRut, COLOR_PALETA }) => {
+const UserSearch = ({
+  rutSearch,
+  setRutSearch,
+  handleSearch,
+  loading,
+  setIsCreating,
+  setCurrentUser,
+  setUserForm,
+  setBikeForm,
+  setUserBicicletas,
+  formatRut,
+  COLOR_PALETA,
+}) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-100 flex flex-col md:flex-row gap-4 items-stretch md:items-end">
       <div className="flex-1">
@@ -27,7 +39,7 @@ const UserSearch = ({ rutSearch, setRutSearch, handleSearch, loading, setIsCreat
           setIsCreating(true);
           setCurrentUser(null);
           setUserForm({ rut: "", nombre: "", email: "", telefono: "" });
-          setBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
+          setBikeForm({ marca: "", modelo: "", color: "" });
           setUserBicicletas([]);
         }}
         className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 font-bold shadow-md transition-all w-full md:w-auto"

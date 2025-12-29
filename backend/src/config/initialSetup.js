@@ -22,10 +22,10 @@ export async function createAdmin() {
           nombre: "Administrador",
           esAdmin: true,
           rut: "12345678-9",
-          email: "admin@example.com",
+          email: "bicicleterosubb@gmail.com",
           contrasena: await encryptPassword("123456"),
           telefono: "12345678",
-        })
+        }),
       ),
     ]);
     console.log("Admin creado satisfactoriamente");
@@ -50,28 +50,28 @@ export async function createBicicleteros() {
           nombre: "Bicicletero Face",
           ubicacion: "Frente a edificio Face",
           capacidad: 15,
-        })
+        }),
       ),
       bicicleteroRepository.save(
         bicicleteroRepository.create({
           nombre: "Bicicletero Gantes",
           ubicacion: "Detrás de edificio Gantes",
           capacidad: 15,
-        })
+        }),
       ),
       bicicleteroRepository.save(
         bicicleteroRepository.create({
           nombre: "Bicicletero Entrada",
           ubicacion: "Delante de entrada principal",
           capacidad: 15,
-        })
+        }),
       ),
       bicicleteroRepository.save(
         bicicleteroRepository.create({
           nombre: "Bicicletero Idiomas",
           ubicacion: "Al lado de edificio Idiomas",
           capacidad: 15,
-        })
+        }),
       ),
     ]);
     console.log("Bicicleteros creados satisfactoriamente");

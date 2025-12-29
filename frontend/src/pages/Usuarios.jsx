@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   getUsuarioByRut,
   createUsuario,
@@ -10,6 +10,7 @@ import {
   createBicicleta,
   deleteBicicleta,
 } from "../api/bicicletaApi";
+import { getBicicleteros } from "../api/bicicleteroApi";
 import { postEntrada } from "../api/custodiaApi";
 import UserSearch from "../components/UserSearch";
 import UserForm from "../components/UserForm";
@@ -18,19 +19,13 @@ import CheckInModal from "../components/CheckInModal";
 import Alert from "../components/Alert";
 import ConfirmAlert from "../components/ConfirmAlert";
 
-const LISTA_BICICLETEROS = [
-  { id: 1, nombre: "Bicicletero 1 - Av. Principal" },
-  { id: 2, nombre: "Bicicletero 2 - Plaza Central" },
-  { id: 3, nombre: "Bicicletero 3 - Parque Norte" },
-  { id: 4, nombre: "Bicicletero 4 - Calle Secundaria" },
-];
-
 const Usuarios = () => {
   const [rutSearch, setRutSearch] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [userBicicletas, setUserBicicletas] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [listaBicicleteros, setListaBicicleteros] = useState([]);
 
   // Alert & Confirm States
   const [alerts, setAlerts] = useState([]);
@@ -40,6 +35,23 @@ const Usuarios = () => {
     message: "",
     onConfirm: null,
   });
+
+  useEffect(() => {
+    const fetchBicicleteros = async () => {
+      try {
+        const response = await getBicicleteros();
+        // Map backend data to { id, nombre } format expected by CheckInModal
+        const mappedBicicleteros = response.data.data.map((b) => ({
+          id: b.idBicicletero,
+          nombre: `${b.nombre} - ${b.ubicacion}`,
+        }));
+        setListaBicicleteros(mappedBicicleteros);
+      } catch (error) {
+        console.error("Error fetching bicicleteros:", error);
+      }
+    };
+    fetchBicicleteros();
+  }, []);
 
   const addAlert = (type, message) => {
     setAlerts((prev) => [...prev, { id: Date.now(), type, message }]);
@@ -166,14 +178,14 @@ const Usuarios = () => {
               email: "",
               telefono: "",
             });
-            setBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
+            setBikeForm({ marca: "", modelo: "", color: "" });
           },
         });
       } else {
         addAlert(
           "error",
           "Error al buscar usuario: " +
-            (error.response?.data?.message || error.message)
+            (error.response?.data?.message || error.message),
         );
       }
     } finally {
@@ -200,7 +212,7 @@ const Usuarios = () => {
         addAlert(
           "warning",
           "Usuario creado, pero hubo un error al crear la bicicleta: " +
-            (bikeError.response?.data?.message || bikeError.message)
+            (bikeError.response?.data?.message || bikeError.message),
         );
       }
 
@@ -242,7 +254,7 @@ const Usuarios = () => {
         addAlert(
           "error",
           "Error al crear usuario: " +
-            (error.response?.data?.message || error.message)
+            (error.response?.data?.message || error.message),
         );
       }
     }
@@ -261,7 +273,7 @@ const Usuarios = () => {
       addAlert(
         "error",
         "Error al actualizar: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message),
       );
     }
   };
@@ -284,7 +296,7 @@ const Usuarios = () => {
           addAlert(
             "error",
             "Error al eliminar: " +
-              (error.response?.data?.message || error.message)
+              (error.response?.data?.message || error.message),
           );
         }
       },
@@ -301,7 +313,7 @@ const Usuarios = () => {
       });
       addAlert("success", "Bicicleta agregada");
       setShowAddBike(false);
-      setNewBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
+      setNewBikeForm({ marca: "", modelo: "", color: "" });
       const bikeRes = await getBicicletasByUsuario(currentUser.idUsuario);
       setUserBicicletas(bikeRes.data.data);
     } catch (error) {
@@ -314,7 +326,7 @@ const Usuarios = () => {
         addAlert(
           "error",
           "Error al agregar bicicleta: " +
-            (error.response?.data?.message || error.message)
+            (error.response?.data?.message || error.message),
         );
       }
     }
@@ -361,7 +373,7 @@ const Usuarios = () => {
       addAlert(
         "error",
         "Error al registrar ingreso: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message),
       );
     }
   };
@@ -458,7 +470,7 @@ const Usuarios = () => {
         idBicicletero={idBicicletero}
         setIdBicicletero={setIdBicicletero}
         handleConfirmCheckIn={handleConfirmCheckIn}
-        LISTA_BICICLETEROS={LISTA_BICICLETEROS}
+        LISTA_BICICLETEROS={listaBicicleteros}
       />
     </div>
   );

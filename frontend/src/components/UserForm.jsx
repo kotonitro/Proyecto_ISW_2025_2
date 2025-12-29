@@ -133,6 +133,9 @@ const UserForm = ({
                 className="w-full px-3 py-2 border rounded-lg bg-white"
                 required
               >
+                <option value="" disabled>
+                  Seleccione color
+                </option>
                 {COLOR_PALETA.map((c) => (
                   <option key={c} value={c}>
                     {c.charAt(0).toUpperCase() + c.slice(1)}
