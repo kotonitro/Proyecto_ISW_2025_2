@@ -9,6 +9,10 @@ export const Bicicletero = new EntitySchema({
       type: "int",
       generated: "increment",
     },
+    activo: {
+      type: "boolean",
+      default: true,
+    },
     nombre: {
       type: "varchar",
       length: 100,

@@ -135,7 +135,7 @@ export default function AdminEncargados() {
       title: "¿Estás seguro que deseas eliminar al encargado?",
       message:(
         <span>
-          Vas a eliminar a <span className="font-bold text-gray-900">{nombreEncargado}</span> que tiene el rut <span className="font-bold text-gray-900">{rutEncargado}</span> de forma permanente.
+          Vas a eliminar a <span className="font-bold text-gray-900">{nombreEncargado}</span> rut <span className="font-bold text-gray-900">{rutEncargado}</span> de forma permanente.
         </span>
       ) 
     });

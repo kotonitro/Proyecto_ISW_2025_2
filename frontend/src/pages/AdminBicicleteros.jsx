@@ -5,6 +5,7 @@ import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
 import Alert from "../components/Alert";
 import ConfirmAlert from "../components/ConfirmAlert"
+import StatusButton from "../components/StatusButton";
 import { 
   getBicicleteros,
   getBicicletero, 
@@ -84,6 +85,7 @@ export default function AdminBicicleteros() {
       nombre: bic.nombre || "",
       ubicacion: bic.ubicacion || "",
       capacidad: bic.capacidad || "",
+      activo: bic.activo
     });
     setCurrentId(bic.idBicicletero);
     setIsEditing(true);
@@ -124,7 +126,7 @@ export default function AdminBicicleteros() {
       title: "¿Estás seguro que deseas eliminar el bicicletero?",
       message:(
         <span>
-          Vas a eliminar a <span className="font-bold text-gray-900">{nombreBicicletero}</span> ubicado en <span className="font-bold text-gray-900">{ubicacionBicicletero}</span> de forma permanente.
+          Vas a eliminar <span className="font-bold text-gray-900">{nombreBicicletero}</span> ubicado en <span className="font-bold text-gray-900">{ubicacionBicicletero}</span> de forma permanente.
         </span>
       ) 
     });
@@ -199,6 +201,7 @@ export default function AdminBicicleteros() {
                   <th className="px-6 py-4">NOMBRE</th>
                   <th className="px-6 py-4">UBICACIÓN</th>
                   <th className="px-6 py-4 text-center">CAPACIDAD</th>
+                  <th className="px-6 py-3 text-center">ESTADO</th>
                   <th className="px-6 py-4 text-right">ACCIONES</th>
                   </tr>
               </thead>
@@ -213,6 +216,17 @@ export default function AdminBicicleteros() {
                             {bic.capacidad}
                         </span>
                       </td>
+                      <td className="px-6 py-4 text-center">
+                        {bic.activo ? (
+                          <span className="bg-green-100 text-green-700 border border-green-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                            Activo
+                          </span>
+                        ) : (
+                          <span className="bg-red-100 text-red-700 border border-red-700 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                            Inactivo
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                       <div className="flex justify-end gap-2">
                           <EditButton onClick={() => handleOpenEdit(bic)} />
@@ -223,7 +237,7 @@ export default function AdminBicicleteros() {
                 ))}
                 {bicicleterosFiltrados.length === 0 && (
                 <tr>
-                    <td colSpan="4" className="px-6 py-6 text-center text-gray-400">
+                    <td colSpan="5" className="px-6 py-6 text-center text-gray-400">
                     {busqueda ? "No se encontraron bicicleteros con ese nombre." : "No hay bicicleteros registrados."}
                     </td>
                 </tr>
@@ -285,6 +299,20 @@ export default function AdminBicicleteros() {
                   onChange={(e) => setForm({ ...form, capacidad: e.target.value })} 
                   />
               </div>
+
+              {isEditing && (
+                <div className="md:col-span-2 mt-2">
+                  <StatusButton
+                    isActive={form.activo}
+                    onToggle={() => setForm({ ...form, activo: !form.activo })}
+                    activeLabel="Activo"
+                    inactiveLabel="Inactivo"
+                    topText={"Estado actual del bicicletero"}
+                    bottomText={"Haga click para cambiar el estado"}
+                  />
+                </div>
+              )}
+
               <div className="flex gap-3 pt-4 border-t border-gray-100 mt-2">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors">
                   Cancelar
