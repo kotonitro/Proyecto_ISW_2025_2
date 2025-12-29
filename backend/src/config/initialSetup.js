@@ -1,4 +1,5 @@
 import { Encargado } from "../models/encargado.entity.js";
+import { Bicicletero } from "../models/bicicletero.entity.js";
 import { AppDataSource } from "./configDB.js";
 import bcrypt from "bcrypt";
 
@@ -15,8 +16,6 @@ export async function createAdmin() {
     const count = await encargadoRepository.count();
     if (count > 0) return;
 
-    const now = new Date();
-
     await Promise.all([
       encargadoRepository.save(
         encargadoRepository.create({
@@ -32,5 +31,51 @@ export async function createAdmin() {
     console.log("Admin creado satisfactoriamente");
   } catch (error) {
     console.error("Error al crear el administrador:", error);
+  }
+}
+
+export async function createBicicleteros() {
+  try {
+    const bicicleteroRepository = AppDataSource.getRepository(Bicicletero);
+    const count = await bicicleteroRepository.count();
+    if (count > 0) return;
+
+    // Asumiendo que el servidor corre en el puerto 3000 por defecto.
+    // Si usas variable de entorno PORT, podrías importarla, pero localhost:3000 es estándar para desarrollo.
+    const baseUrl = "http://localhost:3000/uploads";
+
+    await Promise.all([
+      bicicleteroRepository.save(
+        bicicleteroRepository.create({
+          nombre: "Bicicletero 1",
+          ubicacion: "Av. Principal",
+          capacidad: 15,
+        }),
+      ),
+      bicicleteroRepository.save(
+        bicicleteroRepository.create({
+          nombre: "Bicicletero 2",
+          ubicacion: "Plaza Central",
+          capacidad: 15,
+        }),
+      ),
+      bicicleteroRepository.save(
+        bicicleteroRepository.create({
+          nombre: "Bicicletero 3",
+          ubicacion: "Parque Norte",
+          capacidad: 15,
+        }),
+      ),
+      bicicleteroRepository.save(
+        bicicleteroRepository.create({
+          nombre: "Bicicletero 4",
+          ubicacion: "Calle Secundaria",
+          capacidad: 15,
+        }),
+      ),
+    ]);
+    console.log("Bicicleteros creados satisfactoriamente");
+  } catch (error) {
+    console.error("Error al crear los bicicleteros:", error);
   }
 }

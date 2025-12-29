@@ -15,6 +15,8 @@ import UserSearch from "../components/UserSearch";
 import UserForm from "../components/UserForm";
 import BikeList from "../components/BikeList";
 import CheckInModal from "../components/CheckInModal";
+import Alert from "../components/Alert";
+import ConfirmAlert from "../components/ConfirmAlert";
 
 const LISTA_BICICLETEROS = [
   { id: 1, nombre: "Bicicletero 1 - Av. Principal" },
@@ -29,6 +31,23 @@ const Usuarios = () => {
   const [userBicicletas, setUserBicicletas] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Alert & Confirm States
+  const [alerts, setAlerts] = useState([]);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+
+  const addAlert = (type, message) => {
+    setAlerts((prev) => [...prev, { id: Date.now(), type, message }]);
+  };
+
+  const removeAlert = (id) => {
+    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+  };
 
   // Form states
   const [userForm, setUserForm] = useState({
@@ -134,24 +153,25 @@ const Usuarios = () => {
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        if (
-          window.confirm(
-            "Usuario no encontrado. ¿Desea crear un nuevo usuario?",
-          )
-        ) {
-          setIsCreating(true);
-          setCurrentUser(null);
-          // Pre-fill the formatted RUT in the new form
-          setUserForm({
-            rut: rutSearch,
-            nombre: "",
-            email: "",
-            telefono: "",
-          });
-          setBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
-        }
+        setConfirmDialog({
+          isOpen: true,
+          title: "Usuario no encontrado",
+          message: "Usuario no encontrado. ¿Desea crear un nuevo usuario?",
+          onConfirm: () => {
+            setIsCreating(true);
+            setCurrentUser(null);
+            setUserForm({
+              rut: rutSearch,
+              nombre: "",
+              email: "",
+              telefono: "",
+            });
+            setBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
+          },
+        });
       } else {
-        alert(
+        addAlert(
+          "error",
           "Error al buscar usuario: " +
             (error.response?.data?.message || error.message),
         );
@@ -165,7 +185,6 @@ const Usuarios = () => {
     e.preventDefault();
     try {
       // 1. Create User
-      // Ensure telefono is string to satisfy Joi validation
       const userData = { ...userForm, telefono: String(userForm.telefono) };
       const userRes = await createUsuario(userData);
       const newUser = userRes.data.data;
@@ -178,14 +197,14 @@ const Usuarios = () => {
         });
       } catch (bikeError) {
         console.error("Error al crear bicicleta inicial:", bikeError);
-        alert(
+        addAlert(
+          "warning",
           "Usuario creado, pero hubo un error al crear la bicicleta: " +
             (bikeError.response?.data?.message || bikeError.message),
         );
-        // We still proceed to show the user
       }
 
-      alert("Usuario creado exitosamente");
+      addAlert("success", "Usuario creado exitosamente");
       setIsCreating(false);
       setRutSearch(newUser.rut);
       setCurrentUser(newUser);
@@ -201,24 +220,27 @@ const Usuarios = () => {
       }
 
       if (createdBike) {
-        if (
-          window.confirm(
+        setConfirmDialog({
+          isOpen: true,
+          title: "Ingreso a Custodia",
+          message:
             "¿Desea registrar el ingreso a custodia de la bicicleta ahora?",
-          )
-        ) {
-          setCheckInUser(newUser);
-          setCheckInBike(createdBike);
-          setShowCheckInModal(true);
-        }
+          onConfirm: () => {
+            setCheckInUser(newUser);
+            setCheckInBike(createdBike);
+            setShowCheckInModal(true);
+          },
+        });
       }
     } catch (error) {
       console.error("Error creating user:", error);
       const errorDetails = error.response?.data?.errorDetails;
       if (errorDetails && Array.isArray(errorDetails)) {
         const messages = errorDetails.map((d) => `• ${d.message}`).join("\n");
-        alert(`Error de validación:\n${messages}`);
+        addAlert("error", `Error de validación:\n${messages}`);
       } else {
-        alert(
+        addAlert(
+          "error",
           "Error al crear usuario: " +
             (error.response?.data?.message || error.message),
         );
@@ -230,15 +252,14 @@ const Usuarios = () => {
     e.preventDefault();
     if (!currentUser) return;
     try {
-      // Exclude rut from update body as per controller logic (although controller handles it)
       const { rut, ...updateData } = userForm;
       await updateUsuario(currentUser.rut, updateData);
-      alert("Usuario actualizado");
-      // Refresh data?
+      addAlert("success", "Usuario actualizado");
       const res = await getUsuarioByRut(currentUser.rut);
       setCurrentUser(res.data.data);
     } catch (error) {
-      alert(
+      addAlert(
+        "error",
         "Error al actualizar: " +
           (error.response?.data?.message || error.message),
       );
@@ -246,25 +267,28 @@ const Usuarios = () => {
   };
 
   const handleDeleteUser = async () => {
-    if (
-      !window.confirm(
+    setConfirmDialog({
+      isOpen: true,
+      title: "Eliminar Usuario",
+      message:
         "¿Está seguro de eliminar este usuario? Esto eliminará también sus bicicletas.",
-      )
-    )
-      return;
-    try {
-      await deleteUsuario(currentUser.rut);
-      alert("Usuario eliminado");
-      setCurrentUser(null);
-      setUserBicicletas([]);
-      setRutSearch("");
-      setUserForm({ rut: "", nombre: "", email: "", telefono: "" });
-    } catch (error) {
-      alert(
-        "Error al eliminar: " +
-          (error.response?.data?.message || error.message),
-      );
-    }
+      onConfirm: async () => {
+        try {
+          await deleteUsuario(currentUser.rut);
+          addAlert("success", "Usuario eliminado");
+          setCurrentUser(null);
+          setUserBicicletas([]);
+          setRutSearch("");
+          setUserForm({ rut: "", nombre: "", email: "", telefono: "" });
+        } catch (error) {
+          addAlert(
+            "error",
+            "Error al eliminar: " +
+              (error.response?.data?.message || error.message),
+          );
+        }
+      },
+    });
   };
 
   const handleAddBike = async (e) => {
@@ -275,10 +299,9 @@ const Usuarios = () => {
         ...newBikeForm,
         idUsuario: currentUser.idUsuario,
       });
-      alert("Bicicleta agregada");
+      addAlert("success", "Bicicleta agregada");
       setShowAddBike(false);
       setNewBikeForm({ marca: "", modelo: "", color: COLOR_PALETA[0] });
-      // Refresh bikes
       const bikeRes = await getBicicletasByUsuario(currentUser.idUsuario);
       setUserBicicletas(bikeRes.data.data);
     } catch (error) {
@@ -286,9 +309,10 @@ const Usuarios = () => {
       const errorDetails = error.response?.data?.errorDetails;
       if (errorDetails && Array.isArray(errorDetails)) {
         const messages = errorDetails.map((d) => `• ${d.message}`).join("\n");
-        alert(`Error de validación:\n${messages}`);
+        addAlert("error", `Error de validación:\n${messages}`);
       } else {
-        alert(
+        addAlert(
+          "error",
           "Error al agregar bicicleta: " +
             (error.response?.data?.message || error.message),
         );
@@ -296,21 +320,27 @@ const Usuarios = () => {
     }
   };
 
-  const handleDeleteBike = async (idBicicleta) => {
-    if (!window.confirm("¿Eliminar bicicleta?")) return;
-    try {
-      await deleteBicicleta(idBicicleta);
-      // Refresh
-      const bikeRes = await getBicicletasByUsuario(currentUser.idUsuario);
-      setUserBicicletas(bikeRes.data.data);
-    } catch (error) {
-      alert("Error al eliminar bicicleta");
-    }
+  const handleDeleteBike = (idBicicleta) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Eliminar Bicicleta",
+      message: "¿Eliminar bicicleta?",
+      onConfirm: async () => {
+        try {
+          await deleteBicicleta(idBicicleta);
+          const bikeRes = await getBicicletasByUsuario(currentUser.idUsuario);
+          setUserBicicletas(bikeRes.data.data);
+          addAlert("success", "Bicicleta eliminada");
+        } catch (error) {
+          addAlert("error", "Error al eliminar bicicleta");
+        }
+      },
+    });
   };
 
   const handleConfirmCheckIn = async () => {
     if (!idBicicletero) {
-      alert("Debe seleccionar un bicicletero");
+      addAlert("warning", "Debe seleccionar un bicicletero");
       return;
     }
     try {
@@ -318,14 +348,18 @@ const Usuarios = () => {
         rutUsuario: checkInUser.rut,
         idBicicleta: checkInBike.idBicicleta,
         idBicicletero: parseInt(idBicicletero),
+        nombreUsuario: checkInUser.nombre,
+        emailUsuario: checkInUser.email,
+        telefonoUsuario: parseInt(checkInUser.telefono),
       });
-      alert("¡Ingreso a custodia registrado con éxito!");
+      addAlert("success", "¡Ingreso a custodia registrado con éxito!");
       setShowCheckInModal(false);
       setCheckInUser(null);
       setCheckInBike(null);
       setIdBicicletero("");
     } catch (error) {
-      alert(
+      addAlert(
+        "error",
         "Error al registrar ingreso: " +
           (error.response?.data?.message || error.message),
       );
@@ -333,10 +367,31 @@ const Usuarios = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto relative">
       <h1 className="text-3xl font-bold mb-8 text-gray-800 border-l-4 border-blue-600 pl-4">
         Gestión de Usuarios
       </h1>
+
+      {/* Alerts Container */}
+      <div className="fixed top-20 right-4 z-50 flex flex-col gap-2">
+        {alerts.map((alert) => (
+          <Alert
+            key={alert.id}
+            id={alert.id}
+            type={alert.type}
+            message={alert.message}
+            onClose={removeAlert}
+          />
+        ))}
+      </div>
+
+      <ConfirmAlert
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={confirmDialog.onConfirm}
+        onClose={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+      />
 
       <UserSearch
         rutSearch={rutSearch}
