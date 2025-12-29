@@ -100,6 +100,8 @@ export default function Home() {
     );
   }
 
+  const bicicleterosActivos = bicicleteros.filter((b) => b.activo);
+  
   const formatRut = (rut) => {
       let value = rut.replace(/[^0-9kK]/g, "");
       if (value.length > 1) {
@@ -174,7 +176,9 @@ export default function Home() {
                   title={b.title}
                   location={b.location}
                   capacity={`${b.ocupados} / ${b.total}`}
-                  image={b.imagen ? `${IMAGE_BASE_URL}${b.imagen}` : defaultImage}
+                  image={
+                    b.imagen ? `${IMAGE_BASE_URL}${b.imagen}` : defaultImage
+                  }
                   placeholder={defaultImage}
                 />
               </div>
@@ -204,7 +208,7 @@ export default function Home() {
                   se encuentra tu bicicleta.
                 </p>
                 <button
-                  onClick={() => navigate("/verificar-estado")}
+                  onClick={() => navigate("/ubicacion-bicicleta")}
                   className="bg-white text-blue-700 font-bold py-3 px-8 rounded-lg shadow-md hover:bg-blue-50 transition-transform transform hover:-translate-y-1"
                 >
                   Buscar Mi Bicicleta

@@ -13,6 +13,7 @@ import Informes from "./pages/Informes";
 import Usuarios from "./pages/Usuarios";
 import CustodiaPage from "./pages/CustodiaPage";
 import VerificarEstado from "./pages/VerificarEstado";
+import UbicacionBicicleta from "./pages/UbicacionBicicleta";
 import NotificacionesEncargado from "./pages/NotificacionesEncargado";
 import AceptarNotificacionCorreo from "./pages/AceptarNotificacionCorreo";
 
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "verificar-estado", element: <VerificarEstado /> },
       { path: "verificar-estado/:id", element: <VerificarEstado /> },
+      { path: "ubicacion-bicicleta", element: <UbicacionBicicleta /> },
       { path: "usuarios", element: <Usuarios /> },
       {
         path: "informes",
