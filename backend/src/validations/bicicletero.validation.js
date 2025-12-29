@@ -34,6 +34,7 @@ export const bicicleteroUpdateValidation = bicicleteroValidation
   .fork(["nombre", "ubicacion", "capacidad"], (schema) => schema.optional())
   .append({
     activo: Joi.boolean().optional(),
+    eliminarImagen: Joi.string().optional().allow('true', 'false', '')
   })
   .min(1)
   .required()
