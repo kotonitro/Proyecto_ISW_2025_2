@@ -101,7 +101,7 @@ export async function handleDeleteBicicletero(req, res) {
 export async function handleUpdateBicicletero(req, res){
     const { id } = req.params;
     const idBicicletero = parseInt(id, 10);
-    const bicicleteroData = req.body;
+    let bicicleteroData = { ...req.body };
 
     if (req.file) {
         bicicleteroData.imagen = req.file.filename;
